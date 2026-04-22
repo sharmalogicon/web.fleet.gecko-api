@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//d/SHARMA/PROJECT/DMS PROJECT 08102022/dms.web/dms.web/src/**)",
+      "Read(//d/SHARMA/PROJECT/gecko/EDI/app.gecko-api/**)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ]
+  }
+}
