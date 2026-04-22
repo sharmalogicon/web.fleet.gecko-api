@@ -28,8 +28,8 @@
 ## Phase 2 — Master Data
 
 ### Driver
-- ⬜ `/master/drivers` — Driver list (DataTable: code, name, license, status, expiry)
-- ⬜ `/master/drivers/[id]` — Driver profile form (tabs: General, License, Emergency Contact)
+- ✅ `/master/drivers` — Driver list (DataTable: code, name, license, status, expiry)
+- ✅ `/master/drivers/[id]` — Driver profile form (tabs: General, License, Emergency Contact)
 - ⬜ `/master/drivers/[id]/images` — Driver photo upload & gallery
 
 ### Equipment
@@ -200,7 +200,7 @@
 | Phase | Module | Total Pages | Done |
 |-------|--------|-------------|------|
 | ✅ 1 | Shell + Dashboard | 1 | 1 |
-| ⬜ 2 | Master Data | 13 | 0 |
+| 🔄 2 | Master Data | 13 | 2 |
 | ⬜ 3 | Fleet Operations (Work) | 8 | 0 |
 | ⬜ 4 | Fuel, Meters & Inventory | 20 | 0 |
 | ⬜ 5 | Tire & Incidents | 11 | 0 |

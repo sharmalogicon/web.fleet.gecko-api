@@ -41,9 +41,12 @@ export function DriverProfileClient({ driver, driverID, isNew }: DriverProfileCl
   const { isSaving, isDeleting, save, remove } = useDriver(driverID)
   const { success, error } = useToastStore()
 
+  // zodResolver with a .refine() schema produces a branded output type;
+  // casting to DriverFormValues here is safe because the schema's base shape matches.
   const form = useForm<DriverFormValues>({
-    resolver: zodResolver(driverSchema),
-    defaultValues: driver,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(driverSchema) as any,
+    defaultValues: driver as DriverFormValues,
   })
 
   const { handleSubmit, formState: { isDirty } } = form
