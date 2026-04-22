@@ -6,7 +6,9 @@
     "dev": "next dev -p 5001",
     "build": "next build",
     "start": "next start -p 5001",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
