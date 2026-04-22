@@ -33,43 +33,58 @@ export function DriversListClient({ initialData }: DriversListClientProps) {
   const { success, error } = useToastStore()
 
   const columns = [
-    col.accessor('driverCode', {
-      header: 'Code',
-      size: 100,
-      cell: (info) => (
-        <span className="font-mono text-xs text-gray-500">{info.getValue()}</span>
-      ),
-    }),
-    col.accessor('driverName', {
-      header: 'Name',
-      cell: (info) => (
-        <button
-          type="button"
-          onClick={() => router.push(`/master/drivers/${info.row.original.driverID}`)}
-          className="text-blue-600 hover:underline text-left font-medium"
-        >
-          {info.getValue()}
-        </button>
-      ),
-    }),
-    col.accessor('licenseNo', {
-      header: 'License No.',
-      cell: (info) => info.getValue() || '—',
-    }),
-    col.accessor('licenseExpiryDate', {
-      header: 'License Expiry',
+    col.display({
+      id: 'driver',
+      header: 'Driver',
       cell: (info) => {
-        const val = info.getValue()
-        const expired = isDateExpired(val)
+        const d = info.row.original
         return (
-          <span className={expired ? 'text-red-600 font-medium' : ''}>
-            {formatDate(val)}
-          </span>
+          <div className="flex flex-col gap-0.5">
+            <button
+              type="button"
+              onClick={() => router.push(`/master/drivers/${d.driverID}`)}
+              className="text-blue-600 hover:underline text-left font-medium"
+            >
+              {d.driverName}
+            </button>
+            <span className="text-xs text-gray-400 font-mono">{d.driverCode}</span>
+          </div>
+        )
+      },
+    }),
+    col.display({
+      id: 'license',
+      header: 'License',
+      cell: (info) => {
+        const { licenseNo, licenseExpiryDate } = info.row.original
+        const expired = isDateExpired(licenseExpiryDate)
+        return (
+          <div className="flex flex-col gap-0.5">
+            <span className="text-sm">{licenseNo || '—'}</span>
+            <span className={`text-xs ${expired ? 'text-red-500 font-medium' : 'text-gray-400'}`}>
+              {licenseExpiryDate ? formatDate(licenseExpiryDate) : '—'}
+            </span>
+          </div>
+        )
+      },
+    }),
+    col.display({
+      id: 'contact',
+      header: 'Contact',
+      cell: (info) => {
+        const { mobilePhoneNumber, phoneNumber } = info.row.original
+        const phone = mobilePhoneNumber || phoneNumber
+        return (
+          <div className="flex flex-col gap-0.5">
+            <span className="text-sm">{phone || '—'}</span>
+            <span className="text-xs text-gray-400">{info.row.original.position || ''}</span>
+          </div>
         )
       },
     }),
     col.accessor('status', {
       header: 'Status',
+      size: 120,
       cell: (info) => <StatusBadge status={info.getValue()} />,
     }),
     col.display({

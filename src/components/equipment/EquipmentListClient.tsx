@@ -23,39 +23,58 @@ export function EquipmentListClient({ initialData }: EquipmentListClientProps) {
   const { success, error } = useToastStore()
 
   const columns = [
-    col.accessor('code', {
-      header: 'Code',
-      size: 100,
-      cell: (info) => <span className="font-mono text-xs text-gray-500">{info.getValue()}</span>,
-    }),
-    col.accessor('registrationNo', {
-      header: 'Reg. No.',
-      cell: (info) => info.getValue() || '—',
-    }),
-    col.accessor('category', {
-      header: 'Category',
-      cell: (info) => info.getValue() || '—',
-    }),
     col.display({
-      id: 'brandModel',
-      header: 'Brand / Model',
+      id: 'equipment',
+      header: 'Equipment',
       cell: (info) => {
-        const { brand, model } = info.row.original
-        if (!brand && !model) return '—'
-        return `${brand ?? ''} ${model ?? ''}`.trim()
+        const e = info.row.original
+        return (
+          <div className="flex flex-col gap-0.5">
+            <button
+              type="button"
+              onClick={() => router.push(`/master/equipment/${e.equipmentID}`)}
+              className="text-blue-600 hover:underline text-left font-medium font-mono"
+            >
+              {e.code}
+            </button>
+            <span className="text-xs text-gray-400">{e.registrationNo || '—'}</span>
+          </div>
+        )
       },
     }),
-    col.accessor('currentMeter', {
+    col.display({
+      id: 'type',
+      header: 'Category / Brand',
+      cell: (info) => {
+        const { category, brand, model } = info.row.original
+        return (
+          <div className="flex flex-col gap-0.5">
+            <span className="text-sm font-medium">{category || '—'}</span>
+            <span className="text-xs text-gray-400">
+              {[brand, model].filter(Boolean).join(' ') || '—'}
+            </span>
+          </div>
+        )
+      },
+    }),
+    col.display({
+      id: 'meter',
       header: 'Meter',
       cell: (info) => {
-        const val = info.getValue()
-        const type = info.row.original.meterType
-        if (val == null) return '—'
-        return `${val.toLocaleString()} ${type ?? ''}`
+        const { currentMeter, meterType } = info.row.original
+        return (
+          <div className="flex flex-col gap-0.5">
+            <span className="text-sm">
+              {currentMeter != null ? currentMeter.toLocaleString() : '—'}
+            </span>
+            <span className="text-xs text-gray-400">{meterType || ''}</span>
+          </div>
+        )
       },
     }),
     col.accessor('status', {
       header: 'Status',
+      size: 130,
       cell: (info) => <StatusBadge status={info.getValue()} />,
     }),
     col.display({
