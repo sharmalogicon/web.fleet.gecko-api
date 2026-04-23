@@ -145,19 +145,18 @@
 
 ## Phase 8 — Inquiry Pages (Read-Only + Export)
 
-- ⬜ `/inquiry/work-orders` — Work order inquiry (filters: date range, equipment, status)
-- ⬜ `/inquiry/wip` — Work in progress inquiry
-- ⬜ `/inquiry/purchase-orders` — Purchase order inquiry
-- ⬜ `/inquiry/tire-changes` — Tire change history inquiry
-- ⬜ `/inquiry/truck-movements` — Truck movement inquiry
+- ✅ `/inquiry/work-orders` — WO inquiry (filters: WO no, equipment, type, status, date range) — read-only DataTable
+- ✅ `/inquiry/wip` — WIP inquiry (OPEN + IN_PROGRESS WOs with days-open counter, orange if > 7 days)
+- ✅ `/inquiry/purchase-orders` — PO inquiry (doc no, vendor, status filter — read-only with amounts)
+- ✅ `/inquiry/tire-changes` — Tire change history inquiry (transaction no, equipment, date range)
+- ✅ `/inquiry/truck-movements` — Truck movement inquiry (truck no, trip type, booking/container info)
 
 ---
 
 ## Phase 9 — Reports
 
-- ⬜ `/reports/management` — Management report viewer (type selector + date params)
-- ⬜ Modal: Report parameter dialog (date range, equipment filter, export format)
-- ⬜ `/reports/operations` — Operation report viewer
+- ✅ `/reports/management` — Two-panel: Report selector tree (9 reports) + parameter form + placeholder preview with Export PDF/Excel buttons (disabled in mock mode)
+- ✅ `/reports/operations` — Two-panel: Report selector tree (10 reports) + extended parameter form (conditional fields for PO/Tire reports) + preview
 
 ---
 
@@ -208,7 +207,7 @@
 | ✅ 5 | Tire & Incidents | 11 | 11 |
 | ✅ 6 | Tariff | 4 | 4 |
 | ✅ 7 | Invoice | 11 | 11 |
-| ⬜ 8 | Inquiry | 5 | 0 |
-| ⬜ 9 | Reports | 3 | 0 |
+| ✅ 8 | Inquiry | 5 | 5 |
+| ✅ 9 | Reports | 2 | 2 |
 | ⬜ 10 | Shared Components + i18n | — | partial |
-| | **Total** | **82** | **68** |
+| | **Total** | **82** | **75** |
