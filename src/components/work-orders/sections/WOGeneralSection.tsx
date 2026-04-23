@@ -1,6 +1,7 @@
 'use client'
 import type { UseFormReturn } from 'react-hook-form'
 import type { WorkOrderFormValues } from '@/types/work-order'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<WorkOrderFormValues>
@@ -51,6 +52,7 @@ function fmt(val: number | undefined) {
 }
 
 export function WOGeneralSection({ form, isNew }: Props) {
+  const { t } = useT()
   const { register, watch } = form
   const isApproved = watch('isApproved')
   const totals = {
@@ -63,7 +65,7 @@ export function WOGeneralSection({ form, isNew }: Props) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <Field label="WO Number">
+      <Field label={t('form.woNo')}>
         <input
           {...register('documentNo')}
           readOnly
@@ -74,13 +76,13 @@ export function WOGeneralSection({ form, isNew }: Props) {
       <Field label="WR Reference">
         <input {...register('woRequestNo')} className={ic()} />
       </Field>
-      <Field label="Order Date">
+      <Field label={t('form.orderDate')}>
         <input type="date" {...register('orderDate')} className={ic()} />
       </Field>
       <Field label="Start Date">
         <input type="date" {...register('startDate')} className={ic()} />
       </Field>
-      <Field label="Status">
+      <Field label={t('form.status')}>
         <select {...register('status')} className={ic()}>
           {STATUS_OPTIONS.map((s) => (
             <option key={s} value={s}>
@@ -89,7 +91,7 @@ export function WOGeneralSection({ form, isNew }: Props) {
           ))}
         </select>
       </Field>
-      <Field label="Priority">
+      <Field label={t('form.priority')}>
         <select {...register('priority')} className={ic()}>
           <option value="">— Select —</option>
           {PRIORITY_OPTIONS.map((p) => (
@@ -99,13 +101,13 @@ export function WOGeneralSection({ form, isNew }: Props) {
           ))}
         </select>
       </Field>
-      <Field label="Equipment Code">
+      <Field label={t('form.equipmentCode')}>
         <input {...register('equipmentCode')} className={ic()} />
       </Field>
-      <Field label="Driver">
+      <Field label={t('form.driver')}>
         <input {...register('driverName')} className={ic()} />
       </Field>
-      <Field label="Service Category">
+      <Field label={t('form.category')}>
         <select {...register('serviceTypeCategory')} className={ic()}>
           <option value="">— Select —</option>
           {CATEGORY_OPTIONS.map((c) => (
@@ -118,22 +120,22 @@ export function WOGeneralSection({ form, isNew }: Props) {
       <Field label="Billing Customer">
         <input {...register('billingCustomerName')} className={ic()} />
       </Field>
-      <Field label="Vendor Name">
+      <Field label={t('form.vendor')}>
         <input {...register('vendorName')} className={ic()} />
       </Field>
       <Field label="Vendor Code">
         <input {...register('vendorCode')} className={ic()} />
       </Field>
-      <Field label="Vendor Invoice No.">
+      <Field label={t('form.invoiceNo')}>
         <input {...register('vendorInvoiceNo')} className={ic()} />
       </Field>
       <Field label="WO Invoice No.">
         <input {...register('woInvoiceNo')} className={ic()} />
       </Field>
-      <Field label="Claim No.">
+      <Field label={t('form.claimNo')}>
         <input {...register('claimNo')} className={ic()} />
       </Field>
-      <Field label="Meter Reading">
+      <Field label={t('form.meterReading')}>
         <input type="number" {...register('meterRead')} className={ic()} />
       </Field>
       <Field label="VAT (%)">
@@ -175,7 +177,7 @@ export function WOGeneralSection({ form, isNew }: Props) {
         )}
       </div>
 
-      <Field label="Remarks">
+      <Field label={t('common.remarks')}>
         <textarea
           {...register('remarks')}
           rows={3}

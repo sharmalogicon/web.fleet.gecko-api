@@ -1,6 +1,7 @@
 'use client'
 import type { UseFormReturn } from 'react-hook-form'
 import type { VendorInvoiceFormValues } from '@/types/vendor-invoice'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<VendorInvoiceFormValues>
@@ -39,6 +40,7 @@ function formatCurrency(value?: number): string {
 }
 
 export function InvoiceHeaderSection({ form, isNew }: Props) {
+  const { t } = useT()
   const {
     register,
     watch,
@@ -54,7 +56,7 @@ export function InvoiceHeaderSection({ form, isNew }: Props) {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Field label="Document No. *" error={errors.documentNo?.message}>
+        <Field label={`${t('form.documentNo')} *`} error={errors.documentNo?.message}>
           <input
             {...register('documentNo')}
             disabled={!isNew}
@@ -63,11 +65,11 @@ export function InvoiceHeaderSection({ form, isNew }: Props) {
           />
         </Field>
 
-        <Field label="Document Date *" error={errors.documentDate?.message}>
+        <Field label={`${t('form.date')} *`} error={errors.documentDate?.message}>
           <input type="date" {...register('documentDate')} className={ic()} />
         </Field>
 
-        <Field label="Vendor Invoice No.">
+        <Field label={t('form.invoiceNo')}>
           <input
             {...register('vendorInvoiceNo')}
             className={ic()}
@@ -75,7 +77,7 @@ export function InvoiceHeaderSection({ form, isNew }: Props) {
           />
         </Field>
 
-        <Field label="Customer Name">
+        <Field label={t('form.customer')}>
           <input
             {...register('customerName')}
             className={ic()}
@@ -100,7 +102,7 @@ export function InvoiceHeaderSection({ form, isNew }: Props) {
         </Field>
 
         <div className="sm:col-span-2 lg:col-span-3">
-          <Field label="Address">
+          <Field label={t('form.address')}>
             <input
               {...register('address')}
               className={ic()}
@@ -150,7 +152,7 @@ export function InvoiceHeaderSection({ form, isNew }: Props) {
         </div>
 
         <div className="sm:col-span-2 lg:col-span-3">
-          <Field label="Remarks">
+          <Field label={t('common.remarks')}>
             <textarea
               {...register('remarks')}
               rows={3}

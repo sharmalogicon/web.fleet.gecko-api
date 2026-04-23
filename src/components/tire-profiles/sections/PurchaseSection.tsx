@@ -1,6 +1,7 @@
 'use client'
 import type { UseFormReturn } from 'react-hook-form'
 import type { TireProfileFormValues } from '@/types/tire-profile'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<TireProfileFormValues>
@@ -33,6 +34,7 @@ function ic(ro?: boolean) {
 }
 
 export function PurchaseSection({ form }: Props) {
+  const { t } = useT()
   const { register } = form
 
   return (
@@ -67,7 +69,7 @@ export function PurchaseSection({ form }: Props) {
         />
       </Field>
 
-      <Field label="PO No.">
+      <Field label={t('form.poNo')}>
         <input
           {...register('poNo')}
           className={ic()}

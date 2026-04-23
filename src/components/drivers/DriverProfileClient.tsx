@@ -79,12 +79,12 @@ export function DriverProfileClient({ driver, driverID, isNew }: DriverProfileCl
   }
 
   const driverName = form.watch('driverName')
-  const title = isNew ? STRINGS.newTitle : STRINGS.editTitle(driverName)
+  const title = isNew ? `${t('common.new')} ${t('nav.drivers')}` : driverName || t('nav.drivers')
 
   const tabs = [
-    { id: 'general', label: 'General', content: <GeneralSection form={form} /> },
-    { id: 'license', label: 'License', content: <LicenseSection form={form} /> },
-    { id: 'emergency', label: 'Emergency Contact', content: <EmergencyContactSection form={form} /> },
+    { id: 'general', label: t('form.general'), content: <GeneralSection form={form} /> },
+    { id: 'license', label: t('form.license'), content: <LicenseSection form={form} /> },
+    { id: 'emergency', label: t('form.emergency'), content: <EmergencyContactSection form={form} /> },
   ]
 
   return (

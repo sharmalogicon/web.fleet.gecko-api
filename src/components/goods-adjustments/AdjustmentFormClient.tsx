@@ -62,18 +62,18 @@ export function AdjustmentFormClient({ goodsAdjustment, adjustmentID, isNew }: P
 
   const documentNo = watch('documentNo')
   const adjustmentType = watch('adjustmentType')
-  const title = isNew ? 'New Goods Adjustment' : documentNo || 'Goods Adjustment'
+  const title = isNew ? `${t('common.new')} ${t('nav.goodsAdjustments')}` : documentNo || t('nav.goodsAdjustments')
   const typeLabel = ADJUSTMENT_TYPE_MAP[adjustmentType] ?? adjustmentType
 
   const tabs = [
     {
       id: 'header',
-      label: 'Header',
+      label: t('form.header'),
       content: <AdjustmentHeaderSection form={form} isNew={isNew} />,
     },
     {
       id: 'lines',
-      label: `Line Items (${goodsAdjustment.lines.length})`,
+      label: `${t('form.lineItems')} (${goodsAdjustment.lines.length})`,
       content: <AdjustmentLinesSection lines={goodsAdjustment.lines} />,
     },
   ]

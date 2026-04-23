@@ -67,8 +67,8 @@ export function MeterHrLogFormClient({ meterHrLog, meterHrLogID, isNew }: Props)
   const sequenceNo = watch('sequenceNo')
   const equipmentCode = watch('equipmentCode')
   const title = isNew
-    ? 'New Meter Hour Log'
-    : sequenceNo || equipmentCode || 'Meter Hour Log'
+    ? `${t('common.new')} ${t('nav.meterHrLogs')}`
+    : sequenceNo || equipmentCode || t('nav.meterHrLogs')
 
   const handleSave = handleSubmit(async (values) => {
     try {
@@ -103,7 +103,7 @@ export function MeterHrLogFormClient({ meterHrLog, meterHrLogID, isNew }: Props)
   const tabs = [
     {
       id: 'reading',
-      label: 'Reading',
+      label: t('form.reading'),
       content: (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <Field label="Equipment Code *" error={errors.equipmentCode?.message}>
@@ -144,7 +144,7 @@ export function MeterHrLogFormClient({ meterHrLog, meterHrLogID, isNew }: Props)
     },
     {
       id: 'meters',
-      label: 'Meters',
+      label: t('form.meters'),
       content: (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <Field label="Meter Reading (km) *" error={errors.meterRead?.message}>

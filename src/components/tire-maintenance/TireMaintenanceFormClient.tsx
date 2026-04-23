@@ -61,17 +61,17 @@ export function TireMaintenanceFormClient({ tireMaintenance, maintenanceID, isNe
   }
 
   const documentNo = watch('documentNo')
-  const title = isNew ? 'New Tire Maintenance' : documentNo || 'Tire Maintenance'
+  const title = isNew ? `${t('common.new')} ${t('nav.tireMaintenance')}` : documentNo || t('nav.tireMaintenance')
 
   const tabs = [
     {
       id: 'header',
-      label: 'Maintenance Details',
+      label: t('form.header'),
       content: <MaintenanceHeaderSection form={form} isNew={isNew} />,
     },
     {
       id: 'lines',
-      label: 'Maintenance Lines',
+      label: t('form.lineItems'),
       content: <MaintenanceLinesSection lines={tireMaintenance.lines} />,
     },
   ]

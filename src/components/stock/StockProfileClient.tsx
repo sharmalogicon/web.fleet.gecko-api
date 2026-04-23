@@ -63,17 +63,17 @@ export function StockProfileClient({ stock, stockID, isNew }: Props) {
   }
 
   const code = form.watch('code')
-  const title = isNew ? 'New Stock Item' : code || 'Stock Profile'
+  const title = isNew ? `${t('common.new')} ${t('nav.stock')}` : code || t('nav.stock')
 
   const tabs = [
     {
       id: 'general',
-      label: 'General Information',
+      label: t('form.general'),
       content: <GeneralInfoSection form={form} isNew={isNew} />,
     },
     {
       id: 'inventory',
-      label: 'Inventory',
+      label: t('nav.inventory'),
       content: <InventorySection form={form} />,
     },
   ]

@@ -158,9 +158,9 @@ export function EquipmentTypeFormClient({ record, recordID, isNew }: Props) {
   return (
     <>
       <FormLayout
-        title={isNew ? 'New Equipment Type' : preview}
+        title={isNew ? `${t('common.new')} ${t('nav.equipmentTypes')}` : preview}
         subtitle={isNew ? 'Define a new equipment type and size' : recordID}
-        tabs={[{ id: 'detail', label: 'Detail', content }]}
+        tabs={[{ id: 'detail', label: t('common.details'), content }]}
         isNew={isNew}
         actions={
           <div className="flex items-center gap-2">

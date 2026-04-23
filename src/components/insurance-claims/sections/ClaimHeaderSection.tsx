@@ -1,6 +1,7 @@
 'use client'
 import type { UseFormReturn } from 'react-hook-form'
 import type { InsuranceClaimFormValues, InsuranceClaim } from '@/types/insurance-claim'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<InsuranceClaimFormValues>
@@ -48,6 +49,7 @@ function ReadonlyAmount({ label, value }: { label: string; value?: number }) {
 }
 
 export function ClaimHeaderSection({ form, isNew, lines }: Props) {
+  const { t } = useT()
   const {
     register,
     watch,
@@ -63,7 +65,7 @@ export function ClaimHeaderSection({ form, isNew, lines }: Props) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Field label="Document No. *" error={errors.documentNo?.message}>
+        <Field label={`${t('form.documentNo')} *`} error={errors.documentNo?.message}>
           <input
             {...register('documentNo')}
             disabled={!isNew}
@@ -72,7 +74,7 @@ export function ClaimHeaderSection({ form, isNew, lines }: Props) {
           />
         </Field>
 
-        <Field label="Document Date *" error={errors.documentDate?.message}>
+        <Field label={`${t('form.date')} *`} error={errors.documentDate?.message}>
           <input
             type="date"
             {...register('documentDate')}
@@ -80,7 +82,7 @@ export function ClaimHeaderSection({ form, isNew, lines }: Props) {
           />
         </Field>
 
-        <Field label="Accident Ref No. *" error={errors.accidentRefNo?.message}>
+        <Field label={`${t('form.accidentNo')} *`} error={errors.accidentRefNo?.message}>
           <input
             {...register('accidentRefNo')}
             className={ic()}
@@ -88,7 +90,7 @@ export function ClaimHeaderSection({ form, isNew, lines }: Props) {
           />
         </Field>
 
-        <Field label="Claim Ref No.">
+        <Field label={t('form.claimNo')}>
           <input
             {...register('claimRefNo')}
             className={ic()}
@@ -96,7 +98,7 @@ export function ClaimHeaderSection({ form, isNew, lines }: Props) {
           />
         </Field>
 
-        <Field label="Equipment Code">
+        <Field label={t('form.equipmentCode')}>
           <input
             {...register('equipmentCode')}
             className={ic()}
@@ -104,7 +106,7 @@ export function ClaimHeaderSection({ form, isNew, lines }: Props) {
           />
         </Field>
 
-        <Field label="Equipment Category">
+        <Field label={t('form.category')}>
           <input
             {...register('equipmentCategory')}
             className={ic()}
@@ -112,7 +114,7 @@ export function ClaimHeaderSection({ form, isNew, lines }: Props) {
           />
         </Field>
 
-        <Field label="Driver Name">
+        <Field label={t('form.driverName')}>
           <input
             {...register('driverName')}
             className={ic()}
@@ -128,7 +130,7 @@ export function ClaimHeaderSection({ form, isNew, lines }: Props) {
           />
         </Field>
 
-        <Field label="Vendor Name">
+        <Field label={t('form.vendor')}>
           <input
             {...register('vendorName')}
             className={ic()}
@@ -136,7 +138,7 @@ export function ClaimHeaderSection({ form, isNew, lines }: Props) {
           />
         </Field>
 
-        <Field label="Contact Person">
+        <Field label={t('form.contactPerson')}>
           <input
             {...register('contactPerson')}
             className={ic()}
@@ -170,7 +172,7 @@ export function ClaimHeaderSection({ form, isNew, lines }: Props) {
           />
         </Field>
 
-        <Field label="Remarks" fullWidth>
+        <Field label={t('common.remarks')} fullWidth>
           <textarea
             {...register('remarks')}
             rows={2}

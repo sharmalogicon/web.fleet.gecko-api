@@ -90,7 +90,7 @@ export function TireProfileListClient({ initialData }: TireProfileListClientProp
     }),
     col.display({
       id: 'equipment',
-      header: 'Equipment',
+      header: () => t('common.equipment'),
       cell: (info) => {
         const r = info.row.original
         if (!r.equipmentCode) {

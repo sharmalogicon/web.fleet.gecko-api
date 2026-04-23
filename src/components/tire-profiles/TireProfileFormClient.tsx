@@ -63,27 +63,27 @@ export function TireProfileFormClient({ tireProfile, tireProfileID, isNew }: Pro
   }
 
   const serialNo = watch('serialNo')
-  const title = isNew ? 'New Tire Profile' : serialNo || 'Tire Profile'
+  const title = isNew ? `${t('common.new')} ${t('nav.tireProfiles')}` : serialNo || t('nav.tireProfiles')
 
   const tabs = [
     {
       id: 'general',
-      label: 'General',
+      label: t('form.general'),
       content: <GeneralSection form={form} isNew={isNew} />,
     },
     {
       id: 'mileage',
-      label: 'Mileage & Recap',
+      label: t('form.mileageRecap'),
       content: <MileageSection form={form} existing={tireProfile} />,
     },
     {
       id: 'purchase',
-      label: 'Purchase Info',
+      label: t('form.purchaseInfo'),
       content: <PurchaseSection form={form} />,
     },
     {
       id: 'equipment',
-      label: 'Equipment Installation',
+      label: t('form.installation'),
       content: <EquipmentSection form={form} />,
     },
   ]

@@ -1,6 +1,7 @@
 'use client'
 import type { UseFormReturn } from 'react-hook-form'
 import type { GoodsRequisitionFormValues } from '@/types/goods-requisition'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<GoodsRequisitionFormValues>
@@ -34,6 +35,7 @@ function ic(ro?: boolean) {
 }
 
 export function RequisitionHeaderSection({ form, isNew }: Props) {
+  const { t } = useT()
   const {
     register,
     formState: { errors },
@@ -41,7 +43,7 @@ export function RequisitionHeaderSection({ form, isNew }: Props) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <Field label="Document No. *" error={errors.documentNo?.message}>
+      <Field label={`${t('form.documentNo')} *`} error={errors.documentNo?.message}>
         <input
           {...register('documentNo')}
           disabled={!isNew}
@@ -50,15 +52,15 @@ export function RequisitionHeaderSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Document Date *" error={errors.documentDate?.message}>
+      <Field label={`${t('form.date')} *`} error={errors.documentDate?.message}>
         <input type="date" {...register('documentDate')} className={ic()} />
       </Field>
 
-      <Field label="Required By *" error={errors.requireDate?.message}>
+      <Field label={`${t('form.requiredDate')} *`} error={errors.requireDate?.message}>
         <input type="date" {...register('requireDate')} className={ic()} />
       </Field>
 
-      <Field label="Work Order No.">
+      <Field label={t('form.woNo')}>
         <input
           {...register('workOrderNo')}
           className={ic(true)}
@@ -67,7 +69,7 @@ export function RequisitionHeaderSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Job Ref No. (Claim No.)">
+      <Field label={t('form.claimNo')}>
         <input
           {...register('jobRefNo')}
           className={ic(true)}
@@ -76,7 +78,7 @@ export function RequisitionHeaderSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Equipment Code">
+      <Field label={t('form.equipmentCode')}>
         <input
           {...register('equipmentCode')}
           className={ic(true)}
@@ -104,7 +106,7 @@ export function RequisitionHeaderSection({ form, isNew }: Props) {
       </Field>
 
       <div className="sm:col-span-2 lg:col-span-3">
-        <Field label="Remarks">
+        <Field label={t('common.remarks')}>
           <textarea
             {...register('remarks')}
             rows={3}

@@ -56,7 +56,7 @@ export function ServiceTypeFormClient({ record, recordID, isNew }: Props) {
   }
 
   const code = form.watch('code')
-  const title = isNew ? 'New Service Type' : (code || 'Service Type')
+  const title = isNew ? `${t('common.new')} ${t('nav.serviceTypes')}` : (code || t('nav.serviceTypes'))
 
   const content = (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -95,7 +95,7 @@ export function ServiceTypeFormClient({ record, recordID, isNew }: Props) {
       <FormLayout
         title={title}
         subtitle={isNew ? 'Define a new service type' : recordID}
-        tabs={[{ id: 'detail', label: 'Service Type Details', content }]}
+        tabs={[{ id: 'detail', label: t('common.details'), content }]}
         isNew={isNew}
         actions={
           <div className="flex items-center gap-2">

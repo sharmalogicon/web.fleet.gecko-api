@@ -80,14 +80,14 @@ export function PMScheduleFormClient({ schedule, pmID, isNew }: Props) {
   }
 
   const scheduleNo = watch('scheduleNo')
-  const title = isNew ? 'New PM Schedule' : scheduleNo || 'PM Schedule'
+  const title = isNew ? `${t('common.new')} ${t('nav.pmScheduler')}` : scheduleNo || t('nav.pmScheduler')
 
   const pm = schedule as PMSchedule
 
   const tabs = [
     {
       id: 'details',
-      label: 'Schedule Details',
+      label: t('form.schedule'),
       content: (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1">
@@ -225,7 +225,7 @@ export function PMScheduleFormClient({ schedule, pmID, isNew }: Props) {
     },
     {
       id: 'services',
-      label: `Services (${pm.services?.length ?? 0})`,
+      label: `${t('form.services')} (${pm.services?.length ?? 0})`,
       content:
         !pm.services || pm.services.length === 0 ? (
           <p className="text-sm text-gray-400 py-4 text-center">No service lines added</p>

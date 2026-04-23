@@ -1,6 +1,7 @@
 'use client'
 import type { UseFormReturn } from 'react-hook-form'
 import type { FuelLogFormValues } from '@/types/fuel-log'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<FuelLogFormValues>
@@ -33,6 +34,7 @@ function ic(ro?: boolean) {
 }
 
 export function FuelEntrySection({ form }: Props) {
+  const { t } = useT()
   const {
     register,
     formState: { errors },
@@ -40,7 +42,7 @@ export function FuelEntrySection({ form }: Props) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <Field label="Equipment Code *" error={errors.equipmentCode?.message}>
+      <Field label={`${t('form.equipmentCode')} *`} error={errors.equipmentCode?.message}>
         <input
           {...register('equipmentCode')}
           className={ic()}
@@ -52,7 +54,7 @@ export function FuelEntrySection({ form }: Props) {
         <input type="date" {...register('meterUpdateDate')} className={ic()} />
       </Field>
 
-      <Field label="Voucher No.">
+      <Field label={t('form.voucherNo')}>
         <input
           {...register('voucherNo')}
           className={ic()}
@@ -60,7 +62,7 @@ export function FuelEntrySection({ form }: Props) {
         />
       </Field>
 
-      <Field label="Tank Meter (Liters) *" error={errors.tankMeter?.message}>
+      <Field label={`${t('form.liters')} *`} error={errors.tankMeter?.message}>
         <input
           type="number"
           step="0.01"
@@ -71,7 +73,7 @@ export function FuelEntrySection({ form }: Props) {
         />
       </Field>
 
-      <Field label="Meter Reading (km)">
+      <Field label={t('form.odometer')}>
         <input
           type="number"
           step="1"
@@ -82,7 +84,7 @@ export function FuelEntrySection({ form }: Props) {
         />
       </Field>
 
-      <Field label="Hour Meter (hrs)">
+      <Field label={t('form.hourMeter')}>
         <input
           type="number"
           step="0.1"
@@ -93,7 +95,7 @@ export function FuelEntrySection({ form }: Props) {
         />
       </Field>
 
-      <Field label="Driver Name">
+      <Field label={t('form.driverName')}>
         <input {...register('driverName')} className={ic()} placeholder="Driver full name" />
       </Field>
 
@@ -101,7 +103,7 @@ export function FuelEntrySection({ form }: Props) {
         <input {...register('driverCard')} className={ic()} placeholder="e.g. DRV-001" />
       </Field>
 
-      <Field label="Remarks">
+      <Field label={t('common.remarks')}>
         <textarea
           {...register('remarks')}
           rows={3}

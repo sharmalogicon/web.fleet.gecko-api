@@ -77,17 +77,17 @@ export function CustomerRateFormClient({ rate, rateID, isNew }: Props) {
   }
 
   const quotationNo = watch('quotationNo')
-  const title = isNew ? 'New Customer Rate' : quotationNo || 'Customer Rate'
+  const title = isNew ? `${t('common.new')} ${t('nav.customerRates')}` : quotationNo || t('nav.customerRates')
 
   const tabs = [
     {
       id: 'header',
-      label: 'Rate Details',
+      label: t('form.rateHeader'),
       content: <RateHeaderSection form={form} isNew={isNew} />,
     },
     {
       id: 'lines',
-      label: 'Charge Details',
+      label: t('form.chargeDetails'),
       content: <RateLinesSection lines={rate.lines} />,
     },
   ]

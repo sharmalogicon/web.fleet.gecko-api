@@ -77,18 +77,18 @@ export function VendorPaymentFormClient({ vendorPayment, vendorPaymentID, isNew 
   }
 
   const receiptNo = watch('receiptNo')
-  const title = isNew ? 'New Vendor Payment' : receiptNo || 'Vendor Payment'
+  const title = isNew ? `${t('common.new')} ${t('nav.vendorPayments')}` : receiptNo || t('nav.vendorPayments')
   const isApproved = currentPayment.isApproved
 
   const tabs = [
     {
       id: 'header',
-      label: 'Payment Header',
+      label: t('form.header'),
       content: <PaymentHeaderSection form={form} isNew={isNew} />,
     },
     {
       id: 'lines',
-      label: `Payment Lines (${currentPayment.lines.length})`,
+      label: `${t('form.lineItems')} (${currentPayment.lines.length})`,
       content: <PaymentLinesSection lines={currentPayment.lines} />,
     },
   ]

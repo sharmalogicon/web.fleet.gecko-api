@@ -61,19 +61,19 @@ export function VendorInvoiceFormClient({ vendorInvoice, vendorInvoiceID, isNew 
   }
 
   const documentNo = watch('documentNo')
-  const title = isNew ? 'New Vendor Invoice' : documentNo || 'Vendor Invoice'
+  const title = isNew ? `${t('common.new')} ${t('nav.vendorInvoices')}` : documentNo || t('nav.vendorInvoices')
 
   const canDelete = !isNew && vendorInvoice.status === 'ACTIVE' && vendorInvoice.lines.length === 0
 
   const tabs = [
     {
       id: 'header',
-      label: 'Invoice Header',
+      label: t('form.invoiceHeader'),
       content: <InvoiceHeaderSection form={form} isNew={isNew} />,
     },
     {
       id: 'lines',
-      label: `Line Items (${vendorInvoice.lines.length})`,
+      label: `${t('form.lineItems')} (${vendorInvoice.lines.length})`,
       content: <InvoiceLinesSection lines={vendorInvoice.lines} />,
     },
   ]

@@ -86,12 +86,12 @@ export function GoodsRequestFormClient({ goodsRequest, goodsRequestID, isNew }: 
   }
 
   const reqNo = watch('reqNo')
-  const title = isNew ? 'New Goods Request' : reqNo || 'Goods Request'
+  const title = isNew ? `${t('common.new')} ${t('nav.goodsRequests')}` : reqNo || t('nav.goodsRequests')
 
   const tabs = [
     {
       id: 'details',
-      label: 'Details',
+      label: t('common.details'),
       content: (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <Field label="Request No. *" error={errors.reqNo?.message}>

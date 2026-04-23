@@ -2,6 +2,7 @@
 
 import type { UseFormReturn } from 'react-hook-form'
 import type { StockFormValues } from '@/types/stock'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<StockFormValues>
@@ -41,6 +42,7 @@ function fmt(value: number | undefined): string {
 }
 
 export function InventorySection({ form }: Props) {
+  const { t } = useT()
   const { register, watch } = form
 
   const totalQtyOnHand = watch('totalQtyOnHand')
@@ -109,7 +111,7 @@ export function InventorySection({ form }: Props) {
           Inventory Settings
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Field label="Selling Price">
+          <Field label={t('form.sellingPrice')}>
             <input
               type="number"
               step="0.01"
@@ -120,7 +122,7 @@ export function InventorySection({ form }: Props) {
             />
           </Field>
 
-          <Field label="Markup / Claim (%)">
+          <Field label={t('form.markup')}>
             <input
               type="number"
               step="0.01"
@@ -131,7 +133,7 @@ export function InventorySection({ form }: Props) {
             />
           </Field>
 
-          <Field label="Re-Order Level">
+          <Field label={t('form.reorderPoint')}>
             <input
               type="number"
               {...register('reOrderLevel')}
@@ -140,7 +142,7 @@ export function InventorySection({ form }: Props) {
             />
           </Field>
 
-          <Field label="Min Qty">
+          <Field label={t('form.minStock')}>
             <input
               type="number"
               {...register('minQty')}
@@ -149,7 +151,7 @@ export function InventorySection({ form }: Props) {
             />
           </Field>
 
-          <Field label="Max Qty">
+          <Field label={t('form.maxStock')}>
             <input
               type="number"
               {...register('maxQty')}
@@ -158,7 +160,7 @@ export function InventorySection({ form }: Props) {
             />
           </Field>
 
-          <Field label="Re-Order Qty">
+          <Field label={t('form.reorderQty')}>
             <input
               type="number"
               {...register('reOrderQty')}

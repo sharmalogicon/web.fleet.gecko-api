@@ -1,6 +1,7 @@
 'use client'
 import type { UseFormReturn } from 'react-hook-form'
 import type { TireProfileFormValues } from '@/types/tire-profile'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<TireProfileFormValues>
@@ -37,6 +38,7 @@ const TYRE_STATUSES = ['NEW', 'USED', 'RECAP', 'SCRAP'] as const
 const TYRE_CONDITIONS = ['GOOD', 'FAIR', 'POOR'] as const
 
 export function GeneralSection({ form, isNew }: Props) {
+  const { t } = useT()
   const {
     register,
     formState: { errors },
@@ -44,7 +46,7 @@ export function GeneralSection({ form, isNew }: Props) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <Field label="Serial No. *" error={errors.serialNo?.message}>
+      <Field label={`${t('form.serialNo')} *`} error={errors.serialNo?.message}>
         <input
           {...register('serialNo')}
           disabled={!isNew}
@@ -53,7 +55,7 @@ export function GeneralSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Brand *" error={errors.brand?.message}>
+      <Field label={`${t('form.brand')} *`} error={errors.brand?.message}>
         <input
           {...register('brand')}
           className={ic()}
@@ -61,7 +63,7 @@ export function GeneralSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Model">
+      <Field label={t('form.model')}>
         <input
           {...register('model')}
           className={ic()}
@@ -69,7 +71,7 @@ export function GeneralSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Tyre Size *" error={errors.tyreSize?.message}>
+      <Field label={`${t('form.tireSize')} *`} error={errors.tyreSize?.message}>
         <input
           {...register('tyreSize')}
           className={ic()}
@@ -77,7 +79,7 @@ export function GeneralSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Status *" error={errors.tyreStatus?.message}>
+      <Field label={`${t('form.status')} *`} error={errors.tyreStatus?.message}>
         <select {...register('tyreStatus')} className={ic()}>
           {TYRE_STATUSES.map((s) => (
             <option key={s} value={s}>
@@ -87,7 +89,7 @@ export function GeneralSection({ form, isNew }: Props) {
         </select>
       </Field>
 
-      <Field label="Condition *" error={errors.condition?.message}>
+      <Field label={`${t('form.condition')} *`} error={errors.condition?.message}>
         <select {...register('condition')} className={ic()}>
           {TYRE_CONDITIONS.map((c) => (
             <option key={c} value={c}>
@@ -118,7 +120,7 @@ export function GeneralSection({ form, isNew }: Props) {
       </Field>
 
       <div className="sm:col-span-2 lg:col-span-3">
-        <Field label="Remarks">
+        <Field label={t('common.remarks')}>
           <textarea
             {...register('remarks')}
             rows={3}

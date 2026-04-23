@@ -77,17 +77,17 @@ export function StandardRateFormClient({ rate, rateID, isNew }: Props) {
   }
 
   const rateCode = watch('rateCode')
-  const title = isNew ? 'New Standard Rate' : rateCode || 'Standard Rate'
+  const title = isNew ? `${t('common.new')} ${t('nav.standardRates')}` : rateCode || t('nav.standardRates')
 
   const tabs = [
     {
       id: 'header',
-      label: 'Rate Header',
+      label: t('form.rateHeader'),
       content: <StandardRateHeaderSection form={form} isNew={isNew} />,
     },
     {
       id: 'lines',
-      label: 'Rate Lines',
+      label: t('form.rateLines'),
       content: <StandardRateLinesSection lines={rate.lines} />,
     },
   ]

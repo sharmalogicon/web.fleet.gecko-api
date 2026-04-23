@@ -95,7 +95,7 @@ export function TransporterFormClient({ transporter, transporterID, isNew }: Pro
   }
 
   const name = form.watch('transporterName')
-  const title = isNew ? 'New Transporter' : name || 'Transporter'
+  const title = isNew ? `${t('common.new')} ${t('nav.transporters')}` : name || t('nav.transporters')
 
   const registrationContent = (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

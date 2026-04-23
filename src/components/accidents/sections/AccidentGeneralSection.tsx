@@ -1,6 +1,7 @@
 'use client'
 import type { UseFormReturn } from 'react-hook-form'
 import type { AccidentReportFormValues } from '@/types/accident-report'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<AccidentReportFormValues>
@@ -39,6 +40,7 @@ const ACCIDENT_TYPES = ['COLLISION', 'ROLLOVER', 'FIRE', 'THEFT', 'OTHER'] as co
 const RESPONSIBILITIES = ['DRIVER', 'THIRD_PARTY', 'SHARED', 'UNKNOWN'] as const
 
 export function AccidentGeneralSection({ form, isNew }: Props) {
+  const { t } = useT()
   const {
     register,
     formState: { errors },
@@ -46,7 +48,7 @@ export function AccidentGeneralSection({ form, isNew }: Props) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <Field label="Document No. *" error={errors.documentNo?.message}>
+      <Field label={`${t('form.documentNo')} *`} error={errors.documentNo?.message}>
         <input
           {...register('documentNo')}
           disabled={!isNew}
@@ -55,7 +57,7 @@ export function AccidentGeneralSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Accident Date *" error={errors.accidentDate?.message}>
+      <Field label={`${t('form.date')} *`} error={errors.accidentDate?.message}>
         <input
           type="date"
           {...register('accidentDate')}
@@ -63,7 +65,7 @@ export function AccidentGeneralSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Equipment Code *" error={errors.equipmentCode?.message}>
+      <Field label={`${t('form.equipmentCode')} *`} error={errors.equipmentCode?.message}>
         <input
           {...register('equipmentCode')}
           className={ic()}
@@ -71,7 +73,7 @@ export function AccidentGeneralSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Driver Name">
+      <Field label={t('form.driverName')}>
         <input
           {...register('driverName')}
           className={ic()}
@@ -87,11 +89,11 @@ export function AccidentGeneralSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Accident Type *" error={errors.accidentType?.message}>
+      <Field label={`${t('form.accidentType')} *`} error={errors.accidentType?.message}>
         <select {...register('accidentType')} className={ic()}>
-          {ACCIDENT_TYPES.map((t) => (
-            <option key={t} value={t}>
-              {t}
+          {ACCIDENT_TYPES.map((typ) => (
+            <option key={typ} value={typ}>
+              {typ}
             </option>
           ))}
         </select>

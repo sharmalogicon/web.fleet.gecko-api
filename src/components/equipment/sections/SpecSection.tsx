@@ -2,6 +2,7 @@
 
 import type { UseFormReturn } from 'react-hook-form'
 import type { EquipmentFormValues } from '@/types/equipment'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<EquipmentFormValues>
@@ -21,6 +22,7 @@ function inputClass() {
 }
 
 export function SpecSection({ form }: Props) {
+  const { t } = useT()
   const { register } = form
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

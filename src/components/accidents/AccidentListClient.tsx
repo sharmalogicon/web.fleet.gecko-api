@@ -34,7 +34,7 @@ export function AccidentListClient({ initialData }: AccidentListClientProps) {
   const columns = [
     col.display({
       id: 'docNoDate',
-      header: 'Doc No / Date',
+      header: () => t('common.docDate'),
       cell: (info) => {
         const r = info.row.original
         return (

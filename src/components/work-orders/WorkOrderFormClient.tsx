@@ -63,19 +63,19 @@ export function WorkOrderFormClient({ workOrder, woID, isNew }: Props) {
   }
 
   const docNo = watch('documentNo')
-  const title = isNew ? 'New Work Order' : docNo || 'Work Order'
+  const title = isNew ? `${t('common.new')} ${t('nav.workOrders')}` : docNo || t('nav.workOrders')
 
   // services/parts/labor come from initial data (read-only display)
   const wo = workOrder as WorkOrder
   const tabs = [
     {
       id: 'general',
-      label: 'General',
+      label: t('form.general'),
       content: <WOGeneralSection form={form} isNew={isNew} />,
     },
     {
       id: 'services',
-      label: `Services (${wo.services?.length ?? 0})`,
+      label: `${t('form.services')} (${wo.services?.length ?? 0})`,
       content: <WOServicesSection services={wo.services} />,
     },
     {

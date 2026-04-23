@@ -54,7 +54,7 @@ export function GoodsRequisitionListClient({ initialData }: GoodsRequisitionList
   const columns = [
     col.display({
       id: 'docNoDate',
-      header: 'Doc No / Date',
+      header: () => t('common.docDate'),
       cell: (info) => {
         const r = info.row.original
         return (
@@ -88,7 +88,7 @@ export function GoodsRequisitionListClient({ initialData }: GoodsRequisitionList
     }),
     col.display({
       id: 'requiredBy',
-      header: 'Required By',
+      header: () => t('common.required'),
       cell: (info) => {
         const r = info.row.original
         return (

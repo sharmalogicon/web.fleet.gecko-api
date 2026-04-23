@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import type { DriverFormValues } from '@/types/driver'
 import { isDateExpired, formatDate } from '@/lib/utils/driver'
+import { useT } from '@/i18n/I18nContext'
 
 interface LicenseSectionProps {
   form: UseFormReturn<DriverFormValues>
@@ -26,17 +27,18 @@ function inputClass(hasError?: boolean) {
 }
 
 export function LicenseSection({ form }: LicenseSectionProps) {
+  const { t } = useT()
   const { register, watch } = form
   const expiryValue = watch('licenseExpiryDate')
   const expired = useMemo(() => isDateExpired(expiryValue), [expiryValue])
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <Field label="License No.">
+      <Field label={t('form.licenseNo')}>
         <input {...register('licenseNo')} className={inputClass()} placeholder="License number" />
       </Field>
 
-      <Field label="License Expiry Date">
+      <Field label={t('form.licenseExpiry')}>
         <input type="date" {...register('licenseExpiryDate')} className={inputClass()} />
       </Field>
 

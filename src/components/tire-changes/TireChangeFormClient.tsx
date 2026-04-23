@@ -61,17 +61,17 @@ export function TireChangeFormClient({ tireChange, tireChangeID, isNew }: Props)
   }
 
   const documentNo = watch('documentNo')
-  const title = isNew ? 'New Tire Change' : documentNo || 'Tire Change'
+  const title = isNew ? `${t('common.new')} ${t('nav.tireChanges')}` : documentNo || t('nav.tireChanges')
 
   const tabs = [
     {
       id: 'header',
-      label: 'Change Details',
+      label: t('form.header'),
       content: <ChangeHeaderSection form={form} isNew={isNew} />,
     },
     {
       id: 'lines',
-      label: 'Tire Line Items',
+      label: t('form.lineItems'),
       content: <ChangeLinesSection lines={tireChange.lines} />,
     },
   ]

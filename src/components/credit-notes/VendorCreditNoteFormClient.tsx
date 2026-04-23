@@ -61,17 +61,17 @@ export function VendorCreditNoteFormClient({ vendorCreditNote, vendorCreditNoteI
   }
 
   const creditNoteNo = watch('creditNoteNo')
-  const title = isNew ? 'New Vendor Credit Note' : creditNoteNo || 'Vendor Credit Note'
+  const title = isNew ? `${t('common.new')} ${t('nav.creditNotesVendor')}` : creditNoteNo || t('nav.creditNotesVendor')
 
   const tabs = [
     {
       id: 'header',
-      label: 'Credit Note Header',
+      label: t('form.header'),
       content: <VendorCreditNoteHeaderSection form={form} isNew={isNew} />,
     },
     {
       id: 'lines',
-      label: `Line Items (${vendorCreditNote.lines.length})`,
+      label: `${t('form.lineItems')} (${vendorCreditNote.lines.length})`,
       content: <VendorCreditNoteLinesSection lines={vendorCreditNote.lines} />,
     },
   ]

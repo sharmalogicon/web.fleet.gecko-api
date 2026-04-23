@@ -2,6 +2,7 @@
 
 import type { UseFormReturn } from 'react-hook-form'
 import type { StockFormValues } from '@/types/stock'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<StockFormValues>
@@ -41,6 +42,7 @@ function inputClass(hasError?: boolean, disabled?: boolean) {
 }
 
 export function GeneralInfoSection({ form, isNew }: Props) {
+  const { t } = useT()
   const {
     register,
     watch,
@@ -53,7 +55,7 @@ export function GeneralInfoSection({ form, isNew }: Props) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <Field label="Stock Code *" error={errors.code?.message}>
+      <Field label={`${t('form.stockCode')} *`} error={errors.code?.message}>
         <input
           {...register('code')}
           disabled={!isNew}
@@ -62,7 +64,7 @@ export function GeneralInfoSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Description *" error={errors.description?.message} colSpan={2}>
+      <Field label={`${t('form.description')} *`} error={errors.description?.message} colSpan={2}>
         <input
           {...register('description')}
           className={inputClass(!!errors.description)}
@@ -91,7 +93,7 @@ export function GeneralInfoSection({ form, isNew }: Props) {
         </div>
       </Field>
 
-      <Field label="Category">
+      <Field label={t('form.category')}>
         <select {...register('stockCategory')} className={inputClass()}>
           <option value="">— Select —</option>
           {CATEGORY_OPTIONS.map((c) => (
@@ -110,11 +112,11 @@ export function GeneralInfoSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Brand">
+      <Field label={t('form.brand')}>
         <input {...register('brand')} className={inputClass()} placeholder="e.g. DENSO, SHELL" />
       </Field>
 
-      <Field label="Unit of Measure (UOM)">
+      <Field label={t('form.uom')}>
         <input {...register('uom')} className={inputClass()} placeholder="PCS, BTL, SET…" />
       </Field>
 
@@ -154,7 +156,7 @@ export function GeneralInfoSection({ form, isNew }: Props) {
         </div>
       </Field>
 
-      <Field label="Remarks" colSpan={3}>
+      <Field label={t('common.remarks')} colSpan={3}>
         <textarea
           {...register('remarks')}
           rows={3}

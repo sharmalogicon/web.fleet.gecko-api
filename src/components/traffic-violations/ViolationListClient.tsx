@@ -69,7 +69,7 @@ export function ViolationListClient({ initialData }: ViolationListClientProps) {
     }),
     col.display({
       id: 'type',
-      header: 'Type',
+      header: () => t('common.type'),
       cell: (info) => {
         const r = info.row.original
         return (

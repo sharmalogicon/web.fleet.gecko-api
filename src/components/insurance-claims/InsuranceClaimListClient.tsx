@@ -26,7 +26,7 @@ export function InsuranceClaimListClient({ initialData }: InsuranceClaimListClie
   const columns = [
     col.display({
       id: 'docNoDate',
-      header: 'Doc No / Date',
+      header: () => t('common.docDate'),
       cell: (info) => {
         const r = info.row.original
         return (
@@ -75,7 +75,7 @@ export function InsuranceClaimListClient({ initialData }: InsuranceClaimListClie
     }),
     col.display({
       id: 'amountVendor',
-      header: 'Amount',
+      header: () => t('common.amount'),
       cell: (info) => {
         const r = info.row.original
         return (

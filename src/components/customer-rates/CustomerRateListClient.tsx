@@ -45,7 +45,7 @@ export function CustomerRateListClient({ initialData }: CustomerRateListClientPr
     }),
     col.display({
       id: 'customer',
-      header: 'Customer',
+      header: () => t('common.customer'),
       cell: (info) => {
         const r = info.row.original
         return (

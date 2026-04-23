@@ -61,17 +61,17 @@ export function WOCreditNoteFormClient({ woCreditNote, woCreditNoteID, isNew }: 
   }
 
   const creditNoteNo = watch('creditNoteNo')
-  const title = isNew ? 'New WO Credit Note' : creditNoteNo || 'WO Credit Note'
+  const title = isNew ? `${t('common.new')} ${t('nav.creditNotesWO')}` : creditNoteNo || t('nav.creditNotesWO')
 
   const tabs = [
     {
       id: 'header',
-      label: 'Credit Note Header',
+      label: t('form.header'),
       content: <WOCreditNoteHeaderSection form={form} isNew={isNew} />,
     },
     {
       id: 'lines',
-      label: `Line Items (${woCreditNote.lines.length})`,
+      label: `${t('form.lineItems')} (${woCreditNote.lines.length})`,
       content: <WOCreditNoteLinesSection lines={woCreditNote.lines} />,
     },
   ]

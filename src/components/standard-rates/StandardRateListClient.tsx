@@ -45,7 +45,7 @@ export function StandardRateListClient({ initialData }: StandardRateListClientPr
     }),
     col.display({
       id: 'descriptionEffective',
-      header: 'Description',
+      header: () => t('common.description'),
       cell: (info) => {
         const r = info.row.original
         return (

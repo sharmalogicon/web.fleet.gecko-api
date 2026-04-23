@@ -71,7 +71,7 @@ export function VendorCreditNoteListClient({ initialData }: VendorCreditNoteList
     }),
     col.display({
       id: 'vendor',
-      header: 'Vendor',
+      header: () => t('common.vendor'),
       cell: (info) => {
         const r = info.row.original
         return (
@@ -86,7 +86,7 @@ export function VendorCreditNoteListClient({ initialData }: VendorCreditNoteList
     }),
     col.display({
       id: 'amount',
-      header: 'Amount',
+      header: () => t('common.amount'),
       cell: (info) => {
         const r = info.row.original
         return (

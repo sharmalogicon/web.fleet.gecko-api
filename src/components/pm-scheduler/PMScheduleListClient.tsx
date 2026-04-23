@@ -45,7 +45,7 @@ export function PMScheduleListClient({ initialData }: PMScheduleListClientProps)
     }),
     col.display({
       id: 'serviceType',
-      header: 'Service Type',
+      header: () => t('form.serviceType'),
       cell: (info) => {
         const r = info.row.original
         return (
@@ -62,7 +62,7 @@ export function PMScheduleListClient({ initialData }: PMScheduleListClientProps)
     }),
     col.display({
       id: 'equipment',
-      header: 'Equipment',
+      header: () => t('common.equipment'),
       cell: (info) => {
         const r = info.row.original
         const count = r.equipment?.length ?? 0

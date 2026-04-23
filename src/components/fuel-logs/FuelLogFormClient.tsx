@@ -67,18 +67,18 @@ export function FuelLogFormClient({ fuelLog, fuelLogID, isNew }: Props) {
   const voucherNo = watch('voucherNo')
   const equipmentCode = watch('equipmentCode')
   const title = isNew
-    ? 'New Fuel Log'
-    : voucherNo || equipmentCode || 'Fuel Log'
+    ? `${t('common.new')} ${t('nav.fuelLogs')}`
+    : voucherNo || equipmentCode || t('nav.fuelLogs')
 
   const tabs = [
     {
       id: 'fuel-entry',
-      label: 'Fuel Entry',
+      label: t('form.fuelEntry'),
       content: <FuelEntrySection form={form} />,
     },
     {
       id: 'cost-summary',
-      label: 'Cost Summary',
+      label: t('form.costSummary'),
       content: <CostSummarySection form={form} />,
     },
   ]

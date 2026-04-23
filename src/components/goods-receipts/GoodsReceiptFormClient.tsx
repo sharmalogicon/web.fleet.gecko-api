@@ -61,19 +61,19 @@ export function GoodsReceiptFormClient({ goodsReceipt, goodsReceiptID, isNew }: 
   }
 
   const documentNo = watch('documentNo')
-  const title = isNew ? 'New Goods Receipt' : documentNo || 'Goods Receipt'
+  const title = isNew ? `${t('common.new')} ${t('nav.goodsReceipts')}` : documentNo || t('nav.goodsReceipts')
 
   const statusLabel = goodsReceipt.isCancel ? 'Cancelled' : 'Received'
 
   const tabs = [
     {
       id: 'header',
-      label: 'Header',
+      label: t('form.header'),
       content: <ReceiptHeaderSection form={form} isNew={isNew} />,
     },
     {
       id: 'lines',
-      label: `Line Items (${goodsReceipt.lines.length})`,
+      label: `${t('form.lineItems')} (${goodsReceipt.lines.length})`,
       content: <ReceiptLinesSection lines={goodsReceipt.lines} />,
     },
   ]

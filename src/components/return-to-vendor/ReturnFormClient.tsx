@@ -61,17 +61,17 @@ export function ReturnFormClient({ returnToVendor, returnID, isNew }: Props) {
   }
 
   const documentNo = watch('documentNo')
-  const title = isNew ? 'New Return to Vendor' : documentNo || 'Return to Vendor'
+  const title = isNew ? `${t('common.new')} ${t('nav.returnToVendor')}` : documentNo || t('nav.returnToVendor')
 
   const tabs = [
     {
       id: 'header',
-      label: 'Header',
+      label: t('form.header'),
       content: <ReturnHeaderSection form={form} isNew={isNew} />,
     },
     {
       id: 'lines',
-      label: `Line Items (${returnToVendor.lines.length})`,
+      label: `${t('form.lineItems')} (${returnToVendor.lines.length})`,
       content: <ReturnLinesSection lines={returnToVendor.lines} />,
     },
   ]

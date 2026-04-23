@@ -1,6 +1,7 @@
 'use client'
 import type { UseFormReturn } from 'react-hook-form'
 import type { CustomerRateFormValues } from '@/types/customer-rate'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<CustomerRateFormValues>
@@ -36,6 +37,7 @@ function ic(ro?: boolean) {
 }
 
 export function RateHeaderSection({ form, isNew }: Props) {
+  const { t } = useT()
   const {
     register,
     formState: { errors },
@@ -44,7 +46,7 @@ export function RateHeaderSection({ form, isNew }: Props) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Field label="Quotation No. *" error={errors.quotationNo?.message}>
+        <Field label={`${t('form.quotationNo')} *`} error={errors.quotationNo?.message}>
           <input
             {...register('quotationNo')}
             disabled={!isNew}
@@ -133,7 +135,7 @@ export function RateHeaderSection({ form, isNew }: Props) {
           />
         </Field>
 
-        <Field label="Remarks" fullWidth>
+        <Field label={t('common.remarks')} fullWidth>
           <textarea
             {...register('remarks')}
             rows={2}

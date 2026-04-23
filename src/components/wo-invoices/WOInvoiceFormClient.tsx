@@ -61,17 +61,17 @@ export function WOInvoiceFormClient({ woInvoice, woInvoiceID, isNew }: Props) {
   }
 
   const receiptNo = watch('receiptNo')
-  const title = isNew ? 'New WO Invoice' : receiptNo || 'WO Invoice'
+  const title = isNew ? `${t('common.new')} ${t('nav.woInvoices')}` : receiptNo || t('nav.woInvoices')
 
   const tabs = [
     {
       id: 'header',
-      label: 'Invoice Header',
+      label: t('form.invoiceHeader'),
       content: <WOInvoiceHeaderSection form={form} isNew={isNew} />,
     },
     {
       id: 'lines',
-      label: `WO Line Items (${woInvoice.lines.length})`,
+      label: `${t('form.lineItems')} (${woInvoice.lines.length})`,
       content: <WOInvoiceLinesSection lines={woInvoice.lines} />,
     },
   ]

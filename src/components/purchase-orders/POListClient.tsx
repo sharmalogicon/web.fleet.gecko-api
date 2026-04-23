@@ -77,7 +77,7 @@ export function POListClient({ initialData }: POListClientProps) {
     }),
     col.display({
       id: 'vendor',
-      header: 'Vendor',
+      header: () => t('common.vendor'),
       cell: (info) => {
         const r = info.row.original
         return (
@@ -107,7 +107,7 @@ export function POListClient({ initialData }: POListClientProps) {
     }),
     col.display({
       id: 'amount',
-      header: 'Amount',
+      header: () => t('common.amount'),
       cell: (info) => {
         const r = info.row.original
         const showNett =

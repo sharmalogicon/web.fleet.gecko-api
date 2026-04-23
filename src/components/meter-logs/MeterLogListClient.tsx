@@ -38,7 +38,7 @@ export function MeterLogListClient({ initialData }: MeterLogListClientProps) {
   const columns = [
     col.display({
       id: 'equipment',
-      header: 'Equipment',
+      header: () => t('common.equipment'),
       cell: (info) => {
         const r = info.row.original
         return (
@@ -97,7 +97,7 @@ export function MeterLogListClient({ initialData }: MeterLogListClientProps) {
     }),
     col.display({
       id: 'driver',
-      header: 'Driver',
+      header: () => t('common.driver'),
       cell: (info) => {
         const r = info.row.original
         return (

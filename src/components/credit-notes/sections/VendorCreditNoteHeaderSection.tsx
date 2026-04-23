@@ -1,6 +1,7 @@
 'use client'
 import type { UseFormReturn } from 'react-hook-form'
 import type { VendorCreditNoteFormValues } from '@/types/vendor-credit-note'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<VendorCreditNoteFormValues>
@@ -39,6 +40,7 @@ function formatCurrency(value?: number): string {
 }
 
 export function VendorCreditNoteHeaderSection({ form, isNew }: Props) {
+  const { t } = useT()
   const {
     register,
     watch,
@@ -53,7 +55,7 @@ export function VendorCreditNoteHeaderSection({ form, isNew }: Props) {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Field label="Credit Note No. *" error={errors.creditNoteNo?.message}>
+        <Field label={`${t('form.documentNo')} *`} error={errors.creditNoteNo?.message}>
           <input
             {...register('creditNoteNo')}
             disabled
@@ -62,11 +64,11 @@ export function VendorCreditNoteHeaderSection({ form, isNew }: Props) {
           />
         </Field>
 
-        <Field label="Credit Note Date *" error={errors.creditNoteDate?.message}>
+        <Field label={`${t('form.date')} *`} error={errors.creditNoteDate?.message}>
           <input type="date" {...register('creditNoteDate')} className={ic()} />
         </Field>
 
-        <Field label="Vendor Name">
+        <Field label={t('form.vendor')}>
           <input
             {...register('vendorName')}
             className={ic()}
@@ -126,7 +128,7 @@ export function VendorCreditNoteHeaderSection({ form, isNew }: Props) {
         </Field>
 
         <div className="sm:col-span-2 lg:col-span-3">
-          <Field label="Address">
+          <Field label={t('form.address')}>
             <input
               {...register('address')}
               className={ic()}
@@ -136,7 +138,7 @@ export function VendorCreditNoteHeaderSection({ form, isNew }: Props) {
         </div>
 
         <div className="sm:col-span-2 lg:col-span-3">
-          <Field label="Remarks">
+          <Field label={t('common.remarks')}>
             <textarea
               {...register('remarks')}
               rows={3}

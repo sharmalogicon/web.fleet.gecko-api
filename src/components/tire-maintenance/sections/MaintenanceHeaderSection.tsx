@@ -1,6 +1,7 @@
 'use client'
 import type { UseFormReturn } from 'react-hook-form'
 import type { TireMaintenanceFormValues } from '@/types/tire-maintenance'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<TireMaintenanceFormValues>
@@ -75,6 +76,7 @@ function FinancialSummary({ totalAmount, vat, vatAmount, nettAmount }: Financial
 }
 
 export function MaintenanceHeaderSection({ form, isNew }: Props) {
+  const { t } = useT()
   const {
     register,
     watch,
@@ -88,7 +90,7 @@ export function MaintenanceHeaderSection({ form, isNew }: Props) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <Field label="Document No. *" error={errors.documentNo?.message}>
+      <Field label={`${t('form.documentNo')} *`} error={errors.documentNo?.message}>
         <input
           {...register('documentNo')}
           disabled={!isNew}
@@ -97,7 +99,7 @@ export function MaintenanceHeaderSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Document Date *" error={errors.documentDate?.message}>
+      <Field label={`${t('form.date')} *`} error={errors.documentDate?.message}>
         <input
           type="date"
           {...register('documentDate')}
@@ -105,7 +107,7 @@ export function MaintenanceHeaderSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Equipment Code">
+      <Field label={t('form.equipmentCode')}>
         <input
           {...register('equipmentCode')}
           className={ic()}
@@ -113,7 +115,7 @@ export function MaintenanceHeaderSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Vendor Name *" error={errors.vendorName?.message}>
+      <Field label={`${t('form.vendor')} *`} error={errors.vendorName?.message}>
         <input
           {...register('vendorName')}
           className={ic()}
@@ -129,7 +131,7 @@ export function MaintenanceHeaderSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Driver Name">
+      <Field label={t('form.driverName')}>
         <input
           {...register('driverName')}
           className={ic()}
@@ -137,7 +139,7 @@ export function MaintenanceHeaderSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Meter Read (km)">
+      <Field label={t('form.odometer')}>
         <input
           type="number"
           {...register('meterRead')}
@@ -146,7 +148,7 @@ export function MaintenanceHeaderSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Total Hours">
+      <Field label={t('form.hours')}>
         <input
           type="number"
           step="0.5"
@@ -164,7 +166,7 @@ export function MaintenanceHeaderSection({ form, isNew }: Props) {
         />
       </Field>
 
-      <Field label="Required Date">
+      <Field label={t('form.requiredDate')}>
         <input
           type="date"
           {...register('requiredDate')}
@@ -191,7 +193,7 @@ export function MaintenanceHeaderSection({ form, isNew }: Props) {
       </Field>
 
       <div className="sm:col-span-2 lg:col-span-3">
-        <Field label="Remarks">
+        <Field label={t('common.remarks')}>
           <textarea
             {...register('remarks')}
             rows={3}

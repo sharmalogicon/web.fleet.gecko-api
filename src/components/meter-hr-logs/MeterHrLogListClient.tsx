@@ -32,7 +32,7 @@ export function MeterHrLogListClient({ initialData }: MeterHrLogListClientProps)
   const columns = [
     col.display({
       id: 'equipment',
-      header: 'Equipment',
+      header: () => t('common.equipment'),
       cell: (info) => {
         const r = info.row.original
         return (

@@ -71,7 +71,7 @@ export function VendorInvoiceListClient({ initialData }: VendorInvoiceListClient
     }),
     col.display({
       id: 'customer',
-      header: 'Customer',
+      header: () => t('common.customer'),
       cell: (info) => {
         const r = info.row.original
         return (
@@ -101,7 +101,7 @@ export function VendorInvoiceListClient({ initialData }: VendorInvoiceListClient
     }),
     col.display({
       id: 'amount',
-      header: 'Amount',
+      header: () => t('common.amount'),
       cell: (info) => {
         const r = info.row.original
         return (

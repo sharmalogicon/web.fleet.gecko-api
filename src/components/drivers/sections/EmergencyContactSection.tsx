@@ -2,6 +2,7 @@
 
 import type { UseFormReturn } from 'react-hook-form'
 import type { DriverFormValues } from '@/types/driver'
+import { useT } from '@/i18n/I18nContext'
 
 interface EmergencyContactSectionProps {
   form: UseFormReturn<DriverFormValues>
@@ -21,15 +22,16 @@ function inputClass() {
 }
 
 export function EmergencyContactSection({ form }: EmergencyContactSectionProps) {
+  const { t } = useT()
   const { register } = form
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <Field label="Contact Person">
+      <Field label={t('form.contactPerson')}>
         <input {...register('contactPerson')} className={inputClass()} placeholder="Emergency contact name" />
       </Field>
 
-      <Field label="Mobile Phone">
+      <Field label={t('form.mobile')}>
         <input {...register('mobilePhoneNumber')} className={inputClass()} placeholder="+66 xx xxx xxxx" />
       </Field>
     </div>

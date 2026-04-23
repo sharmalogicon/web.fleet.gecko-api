@@ -87,7 +87,7 @@ export function ViolationFormClient({ violation, violationID, isNew }: Props) {
   }
 
   const ticketNo = watch('ticketNo')
-  const title = isNew ? 'New Traffic Violation' : ticketNo || 'Traffic Violation'
+  const title = isNew ? `${t('common.new')} ${t('nav.trafficViolations')}` : ticketNo || t('nav.trafficViolations')
 
   return (
     <>

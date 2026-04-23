@@ -1,6 +1,7 @@
 'use client'
 import type { UseFormReturn } from 'react-hook-form'
 import type { TireProfileFormValues } from '@/types/tire-profile'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<TireProfileFormValues>
@@ -43,11 +44,12 @@ const TYRE_POSITIONS = [
 ]
 
 export function EquipmentSection({ form }: Props) {
+  const { t } = useT()
   const { register } = form
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <Field label="Equipment Code">
+      <Field label={t('form.equipmentCode')}>
         <input
           {...register('equipmentCode')}
           className={ic()}
@@ -55,7 +57,7 @@ export function EquipmentSection({ form }: Props) {
         />
       </Field>
 
-      <Field label="Registration No. (computed)">
+      <Field label={`${t('form.registrationNo')} (computed)`}>
         <input
           {...register('registrationNo')}
           readOnly

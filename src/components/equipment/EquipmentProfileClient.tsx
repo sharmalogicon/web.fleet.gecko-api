@@ -60,11 +60,11 @@ export function EquipmentProfileClient({ equipment, equipmentID, isNew }: Props)
   }
 
   const code = form.watch('code')
-  const title = isNew ? 'New Equipment' : code || 'Equipment Profile'
+  const title = isNew ? `${t('common.new')} ${t('nav.equipment')}` : code || t('nav.equipment')
 
   const tabs = [
-    { id: 'general', label: 'General', content: <GeneralSection form={form} isNew={isNew} /> },
-    { id: 'spec', label: 'Specifications', content: <SpecSection form={form} /> },
+    { id: 'general', label: t('form.general'), content: <GeneralSection form={form} isNew={isNew} /> },
+    { id: 'spec', label: t('form.specifications'), content: <SpecSection form={form} /> },
   ]
 
   return (

@@ -61,7 +61,7 @@ export function POFormClient({ purchaseOrder, purchaseOrderID, isNew }: Props) {
   }
 
   const documentNo = watch('documentNo')
-  const title = isNew ? 'New Purchase Order' : documentNo || 'Purchase Order'
+  const title = isNew ? `${t('common.new')} ${t('nav.purchaseOrders')}` : documentNo || t('nav.purchaseOrders')
 
   const statusLabel = purchaseOrder.isCancel
     ? 'Cancelled'
@@ -72,12 +72,12 @@ export function POFormClient({ purchaseOrder, purchaseOrderID, isNew }: Props) {
   const tabs = [
     {
       id: 'header',
-      label: 'Header',
+      label: t('form.header'),
       content: <POHeaderSection form={form} isNew={isNew} />,
     },
     {
       id: 'lines',
-      label: `Line Items (${purchaseOrder.lines.length})`,
+      label: `${t('form.lineItems')} (${purchaseOrder.lines.length})`,
       content: <POLinesSection lines={purchaseOrder.lines} />,
     },
   ]

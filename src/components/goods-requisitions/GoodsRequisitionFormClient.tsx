@@ -61,17 +61,17 @@ export function GoodsRequisitionFormClient({ goodsRequisition, goodsRequisitionI
   }
 
   const documentNo = watch('documentNo')
-  const title = isNew ? 'New Goods Requisition' : documentNo || 'Goods Requisition'
+  const title = isNew ? `${t('common.new')} ${t('nav.goodsRequisitions')}` : documentNo || t('nav.goodsRequisitions')
 
   const tabs = [
     {
       id: 'header',
-      label: 'Header',
+      label: t('form.header'),
       content: <RequisitionHeaderSection form={form} isNew={isNew} />,
     },
     {
       id: 'lines',
-      label: `Line Items (${goodsRequisition.lines.length})`,
+      label: `${t('form.lineItems')} (${goodsRequisition.lines.length})`,
       content: <RequisitionLinesSection lines={goodsRequisition.lines} />,
     },
   ]

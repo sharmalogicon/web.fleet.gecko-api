@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import type { FuelLogFormValues } from '@/types/fuel-log'
 import { FUEL_SOURCE_OPTIONS } from '@/types/fuel-log'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<FuelLogFormValues>
@@ -35,6 +36,7 @@ function ic(ro?: boolean) {
 }
 
 export function CostSummarySection({ form }: Props) {
+  const { t } = useT()
   const {
     register,
     watch,
@@ -71,7 +73,7 @@ export function CostSummarySection({ form }: Props) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <Field label="Fuel Source *" error={errors.fuelSource?.message}>
+      <Field label={`${t('form.fuelType')} *`} error={errors.fuelSource?.message}>
         <select {...register('fuelSource')} className={ic()}>
           {FUEL_SOURCE_OPTIONS.map((s) => (
             <option key={s} value={s}>
@@ -82,7 +84,7 @@ export function CostSummarySection({ form }: Props) {
       </Field>
 
       {fuelSource === 'VENDOR' && (
-        <Field label="Vendor Name">
+        <Field label={t('form.vendor')}>
           <input
             {...register('vendorName')}
             className={ic()}
@@ -91,7 +93,7 @@ export function CostSummarySection({ form }: Props) {
         </Field>
       )}
 
-      <Field label="Cost Per Liter (฿)">
+      <Field label={t('form.costPerLiter')}>
         <input
           type="number"
           step="0.01"
@@ -102,7 +104,7 @@ export function CostSummarySection({ form }: Props) {
         />
       </Field>
 
-      <Field label="Total Amount (฿) — auto computed">
+      <Field label={t('form.totalCost')}>
         <input
           type="number"
           step="0.01"
@@ -113,7 +115,7 @@ export function CostSummarySection({ form }: Props) {
         />
       </Field>
 
-      <Field label="Total Distance (km)">
+      <Field label={t('form.distance')}>
         <input
           type="number"
           step="1"
@@ -135,7 +137,7 @@ export function CostSummarySection({ form }: Props) {
         />
       </Field>
 
-      <Field label="Total Hours">
+      <Field label={t('form.hours')}>
         <input
           type="number"
           step="0.1"

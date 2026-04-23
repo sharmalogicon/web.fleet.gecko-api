@@ -88,7 +88,7 @@ export function WorkRequestFormClient({ record, recordID, isNew }: Props) {
   }
 
   const documentNo = form.watch('documentNo')
-  const title = isNew ? 'New Work Request' : documentNo || 'Work Request'
+  const title = isNew ? `${t('common.new')} ${t('nav.workRequests')}` : documentNo || t('nav.workRequests')
 
   const content = (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -194,7 +194,7 @@ export function WorkRequestFormClient({ record, recordID, isNew }: Props) {
       <FormLayout
         title={title}
         subtitle={isNew ? 'Create a new work request' : recordID}
-        tabs={[{ id: 'detail', label: 'Work Request Details', content }]}
+        tabs={[{ id: 'detail', label: t('common.details'), content }]}
         isNew={isNew}
         actions={
           <div className="flex items-center gap-2">

@@ -50,7 +50,7 @@ export function AdjustmentListClient({ initialData }: AdjustmentListClientProps)
   const columns = [
     col.display({
       id: 'docNoDate',
-      header: 'Doc No / Date',
+      header: () => t('common.docDate'),
       cell: (info) => {
         const r = info.row.original
         return (
@@ -69,7 +69,7 @@ export function AdjustmentListClient({ initialData }: AdjustmentListClientProps)
     }),
     col.display({
       id: 'type',
-      header: 'Type',
+      header: () => t('common.type'),
       cell: (info) => {
         const r = info.row.original
         return (
@@ -84,7 +84,7 @@ export function AdjustmentListClient({ initialData }: AdjustmentListClientProps)
     }),
     col.display({
       id: 'remarks',
-      header: 'Remarks',
+      header: () => t('common.remarks'),
       cell: (info) => {
         const r = info.row.original
         const truncated =

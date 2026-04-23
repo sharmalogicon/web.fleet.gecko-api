@@ -61,17 +61,17 @@ export function InsuranceClaimFormClient({ claim, claimID, isNew }: Props) {
   }
 
   const documentNo = watch('documentNo')
-  const title = isNew ? 'New Insurance Claim' : documentNo || 'Insurance Claim'
+  const title = isNew ? `${t('common.new')} ${t('nav.insuranceClaims')}` : documentNo || t('nav.insuranceClaims')
 
   const tabs = [
     {
       id: 'header',
-      label: 'Claim Details',
+      label: t('form.header'),
       content: <ClaimHeaderSection form={form} isNew={isNew} lines={claim.lines} />,
     },
     {
       id: 'lines',
-      label: 'Line Items',
+      label: t('form.lineItems'),
       content: <ClaimLinesSection lines={claim.lines} />,
     },
   ]

@@ -1,6 +1,7 @@
 'use client'
 import type { UseFormReturn } from 'react-hook-form'
 import type { AccidentReportFormValues } from '@/types/accident-report'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<AccidentReportFormValues>
@@ -31,11 +32,12 @@ function ic() {
 }
 
 export function AccidentLocationSection({ form }: Props) {
+  const { t } = useT()
   const { register } = form
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <Field label="Address" fullWidth>
+      <Field label={t('form.address')} fullWidth>
         <textarea
           {...register('address')}
           rows={2}
@@ -44,7 +46,7 @@ export function AccidentLocationSection({ form }: Props) {
         />
       </Field>
 
-      <Field label="City">
+      <Field label={t('form.city')}>
         <input
           {...register('city')}
           className={ic()}
@@ -52,7 +54,7 @@ export function AccidentLocationSection({ form }: Props) {
         />
       </Field>
 
-      <Field label="Country">
+      <Field label={t('form.country')}>
         <input
           {...register('country')}
           className={ic()}

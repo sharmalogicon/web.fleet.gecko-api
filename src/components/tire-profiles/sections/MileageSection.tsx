@@ -2,6 +2,7 @@
 import type { UseFormReturn } from 'react-hook-form'
 import type { TireProfileFormValues } from '@/types/tire-profile'
 import type { TireProfile } from '@/types/tire-profile'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<TireProfileFormValues>
@@ -45,6 +46,7 @@ function formatCurrency(v?: number): string {
 }
 
 export function MileageSection({ form, existing }: Props) {
+  const { t } = useT()
   const { register } = form
 
   return (

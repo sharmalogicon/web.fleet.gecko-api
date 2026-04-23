@@ -52,7 +52,7 @@ export function GoodsRequestListClient({ initialData }: GoodsRequestListClientPr
     }),
     col.display({
       id: 'requiredBy',
-      header: 'Required By',
+      header: () => t('common.required'),
       cell: (info) => {
         const r = info.row.original
         return (

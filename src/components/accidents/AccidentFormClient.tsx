@@ -62,22 +62,22 @@ export function AccidentFormClient({ accident, accidentID, isNew }: Props) {
   }
 
   const documentNo = watch('documentNo')
-  const title = isNew ? 'New Accident Report' : documentNo || 'Accident Report'
+  const title = isNew ? `${t('common.new')} ${t('nav.accidents')}` : documentNo || t('nav.accidents')
 
   const tabs = [
     {
       id: 'general',
-      label: 'General Info',
+      label: t('form.accidentInfo'),
       content: <AccidentGeneralSection form={form} isNew={isNew} />,
     },
     {
       id: 'location',
-      label: 'Location Details',
+      label: t('form.location'),
       content: <AccidentLocationSection form={form} />,
     },
     {
       id: 'photos',
-      label: 'Photos',
+      label: t('form.photos'),
       content: <AccidentImagesSection images={accident.images} />,
     },
   ]

@@ -26,7 +26,7 @@ export function TireChangeListClient({ initialData }: TireChangeListClientProps)
   const columns = [
     col.display({
       id: 'docNoDate',
-      header: 'Doc No / Date',
+      header: () => t('common.docDate'),
       cell: (info) => {
         const r = info.row.original
         return (
@@ -45,7 +45,7 @@ export function TireChangeListClient({ initialData }: TireChangeListClientProps)
     }),
     col.display({
       id: 'equipment',
-      header: 'Equipment',
+      header: () => t('common.equipment'),
       cell: (info) => {
         const r = info.row.original
         return (

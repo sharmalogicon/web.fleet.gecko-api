@@ -1,6 +1,7 @@
 'use client'
 import type { UseFormReturn } from 'react-hook-form'
 import type { StandardRateFormValues } from '@/types/standard-rate'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<StandardRateFormValues>
@@ -36,6 +37,7 @@ function ic(ro?: boolean) {
 }
 
 export function StandardRateHeaderSection({ form, isNew }: Props) {
+  const { t } = useT()
   const {
     register,
     formState: { errors },
@@ -69,7 +71,7 @@ export function StandardRateHeaderSection({ form, isNew }: Props) {
           />
         </Field>
 
-        <Field label="Description" error={errors.description?.message}>
+        <Field label={t('form.description')} error={errors.description?.message}>
           <input
             {...register('description')}
             className={ic()}
@@ -77,7 +79,7 @@ export function StandardRateHeaderSection({ form, isNew }: Props) {
           />
         </Field>
 
-        <Field label="Remarks" fullWidth>
+        <Field label={t('common.remarks')} fullWidth>
           <textarea
             {...register('remarks')}
             rows={2}

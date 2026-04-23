@@ -1,6 +1,7 @@
 'use client'
 import type { UseFormReturn } from 'react-hook-form'
 import type { GoodsReceiptFormValues } from '@/types/goods-receipt'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<GoodsReceiptFormValues>
@@ -34,6 +35,7 @@ function ic(ro?: boolean) {
 }
 
 export function ReceiptHeaderSection({ form, isNew }: Props) {
+  const { t } = useT()
   const {
     register,
     formState: { errors },
@@ -42,7 +44,7 @@ export function ReceiptHeaderSection({ form, isNew }: Props) {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Field label="Document No. *" error={errors.documentNo?.message}>
+        <Field label={`${t('form.documentNo')} *`} error={errors.documentNo?.message}>
           <input
             {...register('documentNo')}
             disabled={!isNew}
@@ -51,11 +53,11 @@ export function ReceiptHeaderSection({ form, isNew }: Props) {
           />
         </Field>
 
-        <Field label="Document Date *" error={errors.documentDate?.message}>
+        <Field label={`${t('form.date')} *`} error={errors.documentDate?.message}>
           <input type="date" {...register('documentDate')} className={ic()} />
         </Field>
 
-        <Field label="Vendor Name *" error={errors.vendorName?.message}>
+        <Field label={`${t('form.vendor')} *`} error={errors.vendorName?.message}>
           <input
             {...register('vendorName')}
             className={ic()}
@@ -63,7 +65,7 @@ export function ReceiptHeaderSection({ form, isNew }: Props) {
           />
         </Field>
 
-        <Field label="PO No.">
+        <Field label={t('form.poNo')}>
           <input
             {...register('poNo')}
             className={ic()}
@@ -80,7 +82,7 @@ export function ReceiptHeaderSection({ form, isNew }: Props) {
         </Field>
 
         <div className="sm:col-span-2 lg:col-span-3">
-          <Field label="Remarks">
+          <Field label={t('common.remarks')}>
             <textarea
               {...register('remarks')}
               rows={3}

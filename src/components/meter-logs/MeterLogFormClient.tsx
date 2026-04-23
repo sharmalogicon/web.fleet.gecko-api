@@ -67,8 +67,8 @@ export function MeterLogFormClient({ meterLog, meterLogID, isNew }: Props) {
   const showHourMeter = meterType === 'HOUR' || meterType === 'BOTH'
 
   const title = isNew
-    ? 'New Meter Log'
-    : equipmentCode || 'Meter Log'
+    ? `${t('common.new')} ${t('nav.meterLogs')}`
+    : equipmentCode || t('nav.meterLogs')
 
   const handleSave = handleSubmit(async (values) => {
     try {
@@ -99,7 +99,7 @@ export function MeterLogFormClient({ meterLog, meterLogID, isNew }: Props) {
   const tabs = [
     {
       id: 'meter-reading',
-      label: 'Meter Reading',
+      label: t('form.meterReading'),
       content: (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <Field label="Equipment Code *" error={errors.equipmentCode?.message}>

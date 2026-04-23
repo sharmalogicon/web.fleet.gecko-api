@@ -1,6 +1,7 @@
 'use client'
 import type { UseFormReturn } from 'react-hook-form'
 import type { GoodsAdjustmentFormValues } from '@/types/goods-adjustment'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   form: UseFormReturn<GoodsAdjustmentFormValues>
@@ -34,6 +35,7 @@ function ic(ro?: boolean) {
 }
 
 export function AdjustmentHeaderSection({ form, isNew }: Props) {
+  const { t } = useT()
   const {
     register,
     formState: { errors },
@@ -42,7 +44,7 @@ export function AdjustmentHeaderSection({ form, isNew }: Props) {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Field label="Document No. *" error={errors.documentNo?.message}>
+        <Field label={`${t('form.documentNo')} *`} error={errors.documentNo?.message}>
           <input
             {...register('documentNo')}
             disabled={!isNew}
@@ -51,11 +53,11 @@ export function AdjustmentHeaderSection({ form, isNew }: Props) {
           />
         </Field>
 
-        <Field label="Adjustment Date *" error={errors.adjustmentDate?.message}>
+        <Field label={`${t('form.adjustmentDate')} *`} error={errors.adjustmentDate?.message}>
           <input type="date" {...register('adjustmentDate')} className={ic()} />
         </Field>
 
-        <Field label="Adjustment Type *" error={errors.adjustmentType?.message}>
+        <Field label={`${t('form.adjustmentType')} *`} error={errors.adjustmentType?.message}>
           <select {...register('adjustmentType')} className={ic()}>
             <option value="INCREASE">Increase</option>
             <option value="DECREASE">Decrease</option>
@@ -64,7 +66,7 @@ export function AdjustmentHeaderSection({ form, isNew }: Props) {
           </select>
         </Field>
 
-        <Field label="Type Description">
+        <Field label={t('form.typeDescription')}>
           <input
             {...register('adjustmentTypeDescription')}
             className={ic()}
@@ -73,7 +75,7 @@ export function AdjustmentHeaderSection({ form, isNew }: Props) {
         </Field>
 
         <div className="sm:col-span-2 lg:col-span-3">
-          <Field label="Remarks">
+          <Field label={t('common.remarks')}>
             <textarea
               {...register('remarks')}
               rows={3}
