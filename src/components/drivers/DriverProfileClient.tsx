@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import type { Driver, DriverFormValues } from '@/types/driver'
 import { driverSchema } from '@/types/driver'
 import { useDriver } from '@/lib/hooks/useDriver'
@@ -93,6 +94,14 @@ export function DriverProfileClient({ driver, driverID, isNew }: DriverProfileCl
         isNew={isNew}
         actions={
           <div className="flex items-center gap-2">
+            {!isNew && (
+              <Link
+                href={`/master/drivers/${driverID}/images`}
+                className="inline-flex items-center gap-1 text-sm text-blue-600 hover:underline px-2 py-2"
+              >
+                📷 View Photos
+              </Link>
+            )}
             {!isNew && (
               <button
                 type="button"

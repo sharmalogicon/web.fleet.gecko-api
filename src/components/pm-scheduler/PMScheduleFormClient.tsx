@@ -4,12 +4,14 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import type { PMSchedule, PMSchedulerFormValues } from '@/types/pm-scheduler'
+import type { PMSchedule, PMSchedulerFormValues, PMEquipment } from '@/types/pm-scheduler'
 import { pmSchedulerSchema } from '@/types/pm-scheduler'
 import { usePMSchedule } from '@/lib/hooks/usePMSchedule'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { FormLayout } from '@/components/shared/FormLayout'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
+import { AddEquipmentModal } from './AddEquipmentModal'
+import type { Equipment } from '@/types/equipment'
 
 interface Props {
   schedule: PMSchedule | PMSchedulerFormValues
@@ -19,6 +21,10 @@ interface Props {
 
 export function PMScheduleFormClient({ schedule, pmID, isNew }: Props) {
   const [showDelete, setShowDelete] = useState(false)
+  const [showAddEquip, setShowAddEquip] = useState(false)
+  const [localEquipment, setLocalEquipment] = useState<PMEquipment[]>(
+    (schedule as PMSchedule).equipment ?? [],
+  )
   const router = useRouter()
   const { isSaving, isDeleting, save, remove } = usePMSchedule(pmID)
   const { success, error } = useToastStore()
@@ -56,6 +62,19 @@ export function PMScheduleFormClient({ schedule, pmID, isNew }: Props) {
     } finally {
       setShowDelete(false)
     }
+  }
+
+  const handleAddEquipment = (eq: Equipment) => {
+    const nextID = Date.now()
+    const newEntry: PMEquipment = {
+      pmEquipmentID: nextID,
+      equipmentCode: eq.code,
+      registrationNo: eq.registrationNo,
+      category: eq.category,
+      brand: eq.brand,
+      customerName: eq.customerName,
+    }
+    setLocalEquipment((prev) => [...prev, newEntry])
   }
 
   const scheduleNo = watch('scheduleNo')
@@ -154,41 +173,53 @@ export function PMScheduleFormClient({ schedule, pmID, isNew }: Props) {
     },
     {
       id: 'equipment',
-      label: `Equipment (${pm.equipment?.length ?? 0})`,
-      content:
-        !pm.equipment || pm.equipment.length === 0 ? (
-          <p className="text-sm text-gray-400 py-4 text-center">No equipment assigned</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  {['Code', 'Reg No', 'Category', 'Brand', 'Customer'].map((h) => (
-                    <th
-                      key={h}
-                      className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase"
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {pm.equipment.map((eq) => (
-                  <tr key={eq.pmEquipmentID} className="border-b border-gray-100">
-                    <td className="px-3 py-2 font-mono text-xs text-blue-600 font-semibold">
-                      {eq.equipmentCode}
-                    </td>
-                    <td className="px-3 py-2 text-gray-700">{eq.registrationNo || '—'}</td>
-                    <td className="px-3 py-2 text-gray-700">{eq.category || '—'}</td>
-                    <td className="px-3 py-2 text-gray-700">{eq.brand || '—'}</td>
-                    <td className="px-3 py-2 text-gray-400">{eq.customerName || '—'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      label: `Equipment (${localEquipment.length})`,
+      content: (
+        <div>
+          <div className="flex justify-end mb-3">
+            <button
+              type="button"
+              onClick={() => setShowAddEquip(true)}
+              className="px-3 py-1.5 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+            >
+              + Add Equipment
+            </button>
           </div>
-        ),
+          {localEquipment.length === 0 ? (
+            <p className="text-sm text-gray-400 py-4 text-center">No equipment assigned</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="border-b border-gray-200 bg-gray-50">
+                    {['Code', 'Reg No', 'Category', 'Brand', 'Customer'].map((h) => (
+                      <th
+                        key={h}
+                        className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase"
+                      >
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {localEquipment.map((eq) => (
+                    <tr key={eq.pmEquipmentID} className="border-b border-gray-100">
+                      <td className="px-3 py-2 font-mono text-xs text-blue-600 font-semibold">
+                        {eq.equipmentCode}
+                      </td>
+                      <td className="px-3 py-2 text-gray-700">{eq.registrationNo || '—'}</td>
+                      <td className="px-3 py-2 text-gray-700">{eq.category || '—'}</td>
+                      <td className="px-3 py-2 text-gray-700">{eq.brand || '—'}</td>
+                      <td className="px-3 py-2 text-gray-400">{eq.customerName || '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      ),
     },
     {
       id: 'services',
@@ -274,6 +305,12 @@ export function PMScheduleFormClient({ schedule, pmID, isNew }: Props) {
         onConfirm={handleDelete}
         onCancel={() => setShowDelete(false)}
         destructive
+      />
+      <AddEquipmentModal
+        open={showAddEquip}
+        onClose={() => setShowAddEquip(false)}
+        onAdd={handleAddEquipment}
+        alreadyAddedCodes={localEquipment.map((e) => e.equipmentCode)}
       />
     </>
   )
