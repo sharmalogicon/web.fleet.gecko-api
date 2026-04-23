@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//d/SHARMA/PROJECT/DMS PROJECT 08102022/dms.web/dms.web/src/**)",
+      "Read(//d/SHARMA/PROJECT/gecko/EDI/app.gecko-api/**)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git config *)",
+      "Bash(git rm *)",
+      "Bash(npm install *)",
+      "Bash(node -e \"const z = require\\('zod'\\); console.log\\('Zod version:', require\\('./node_modules/zod/package.json'\\).version\\)\")",
+      "Bash(npx vitest *)",
+      "Bash(echo \"EXIT_CODE: $?\")",
+      "Bash(node -e \"const { z } = require\\('zod'\\); console.log\\(z.ZodFirstPartyTypeKind ? 'v3 compat' : 'unknown'\\); const s = z.string\\(\\).email\\(\\); console.log\\('email ok'\\); const e = z.enum\\(['A','B']\\); console.log\\('enum ok'\\);\")",
+      "Bash(npx tsc *)",
+      "Bash(npx next *)",
+      "Bash(xargs grep *)",
+      "Bash(mkdir -p \"d:/SHARMA/PROJECT/gecko/web.fleet.gecko-api/src/app/\\(dashboard\\)/fleet/meter-logs/[id]\")",
+      "Bash(mkdir -p \"d:/SHARMA/PROJECT/gecko/web.fleet.gecko-api/src/app/\\(dashboard\\)/fleet/meter-hr-logs/[id]\")",
+      "Bash(mkdir -p \"d:/SHARMA/PROJECT/gecko/web.fleet.gecko-api/src/app/\\(dashboard\\)/fleet/goods-requests/[id]\")",
+      "Bash(mkdir -p \"d:/SHARMA/PROJECT/gecko/web.fleet.gecko-api/src/app/\\(dashboard\\)/fleet/goods-requisitions/[id]\")",
+      "Skill(update-config)",
+      "Skill(update-config:*)"
+    ],
+    "additionalDirectories": [
+      "D:\\SHARMA\\PROJECT\\gecko\\web.fleet.gecko-api\\src\\app\\(dashboard)\\master\\drivers",
+      "D:\\SHARMA\\PROJECT\\gecko\\web.fleet.gecko-api\\src\\app\\(dashboard)\\master\\equipment",
+      "D:\\SHARMA\\PROJECT\\gecko\\web.fleet.gecko-api\\src\\app\\(dashboard)\\master\\equipment-types",
+      "D:\\SHARMA\\PROJECT\\gecko\\web.fleet.gecko-api\\src\\app\\(dashboard)\\master\\stock",
+      "D:\\SHARMA\\PROJECT\\gecko\\web.fleet.gecko-api\\src\\app\\(dashboard)\\master\\transporters",
+      "D:\\SHARMA\\PROJECT\\gecko\\web.fleet.gecko-api\\src\\app\\(dashboard)\\fleet\\service-types",
+      "D:\\SHARMA\\PROJECT\\gecko\\web.fleet.gecko-api\\src\\app\\(dashboard)\\fleet\\work-requests",
+      "D:\\SHARMA\\PROJECT\\gecko\\web.fleet.gecko-api\\src\\app\\(dashboard)\\fleet\\work-orders",
+      "D:\\SHARMA\\PROJECT\\gecko\\web.fleet.gecko-api\\src\\app\\(dashboard)\\fleet\\pm-scheduler",
+      "d:\\SHARMA\\PROJECT\\gecko\\web.fleet.gecko-api\\src\\app\\(dashboard)\\fleet\\fuel-logs",
+      "d:\\SHARMA\\PROJECT\\gecko\\web.fleet.gecko-api\\src\\app\\(dashboard)\\fleet\\purchase-orders"
+    ]
+  }
+}

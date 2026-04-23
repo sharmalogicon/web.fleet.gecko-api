@@ -1,0 +1,144 @@
+'use client'
+import type { UseFormReturn } from 'react-hook-form'
+import type { VendorPaymentFormValues } from '@/types/vendor-payment'
+
+interface Props {
+  form: UseFormReturn<VendorPaymentFormValues>
+  isNew: boolean
+}
+
+function Field({
+  label,
+  error,
+  children,
+}: {
+  label: string
+  error?: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="text-xs font-medium text-gray-600">{label}</label>
+      {children}
+      {error && <p className="text-xs text-red-500">{error}</p>}
+    </div>
+  )
+}
+
+function ic(ro?: boolean) {
+  return `w-full px-3 py-2 text-sm border rounded-lg focus:outline-none ${
+    ro
+      ? 'bg-gray-50 text-gray-500 border-gray-200'
+      : 'bg-white border-gray-300 focus:ring-2 focus:ring-blue-500'
+  }`
+}
+
+function formatCurrency(value?: number): string {
+  if (value === undefined || value === null) return '—'
+  return '฿' + value.toLocaleString('en-US', { minimumFractionDigits: 2 })
+}
+
+export function PaymentHeaderSection({ form, isNew }: Props) {
+  const {
+    register,
+    watch,
+    formState: { errors },
+  } = form
+
+  const baseAmount = watch('baseAmount')
+  const vatAmount = watch('vatAmount')
+  const totalAmount = watch('totalAmount')
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <Field label="Receipt No. *" error={errors.receiptNo?.message}>
+          <input
+            {...register('receiptNo')}
+            disabled
+            className={ic(true)}
+            placeholder="e.g. VP-2024-001"
+          />
+        </Field>
+
+        <Field label="Receipt Date *" error={errors.receiptDate?.message}>
+          <input type="date" {...register('receiptDate')} className={ic()} />
+        </Field>
+
+        <Field label="Vendor Name">
+          <input
+            {...register('vendorName')}
+            className={ic()}
+            placeholder="e.g. Auto Parts Supplier Co."
+          />
+        </Field>
+
+        <Field label="Vendor Code">
+          <input
+            {...register('vendorCode')}
+            className={ic()}
+            placeholder="e.g. VND-001"
+          />
+        </Field>
+
+        <Field label="VAT (%)">
+          <input
+            type="number"
+            step="0.01"
+            {...register('vat')}
+            className={ic()}
+            placeholder="e.g. 7"
+          />
+        </Field>
+
+        <div className="sm:col-span-2 lg:col-span-3">
+          <Field label="Address">
+            <input
+              {...register('address')}
+              className={ic()}
+              placeholder="Vendor address"
+            />
+          </Field>
+        </div>
+
+        <div className="sm:col-span-2 lg:col-span-3">
+          <Field label="Remarks">
+            <textarea
+              {...register('remarks')}
+              rows={3}
+              className={`${ic()} resize-none`}
+              placeholder="Optional notes…"
+            />
+          </Field>
+        </div>
+      </div>
+
+      {/* Financial summary */}
+      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+          Financial Summary
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-xs text-gray-500">Base Amount</span>
+            <span className="text-sm font-medium text-gray-800">
+              {formatCurrency(baseAmount)}
+            </span>
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-xs text-gray-500">VAT Amount</span>
+            <span className="text-sm font-medium text-gray-800">
+              {formatCurrency(vatAmount)}
+            </span>
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-xs text-gray-500">Total Amount</span>
+            <span className="text-base font-bold text-gray-900">
+              {formatCurrency(totalAmount)}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
