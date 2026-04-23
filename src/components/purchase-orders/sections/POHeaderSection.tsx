@@ -1,0 +1,196 @@
+'use client'
+import type { UseFormReturn } from 'react-hook-form'
+import type { PurchaseOrderFormValues } from '@/types/purchase-order'
+
+interface Props {
+  form: UseFormReturn<PurchaseOrderFormValues>
+  isNew: boolean
+}
+
+function Field({
+  label,
+  error,
+  children,
+}: {
+  label: string
+  error?: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="text-xs font-medium text-gray-600">{label}</label>
+      {children}
+      {error && <p className="text-xs text-red-500">{error}</p>}
+    </div>
+  )
+}
+
+function ic(ro?: boolean) {
+  return `w-full px-3 py-2 text-sm border rounded-lg focus:outline-none ${
+    ro
+      ? 'bg-gray-50 text-gray-500 border-gray-200'
+      : 'bg-white border-gray-300 focus:ring-2 focus:ring-blue-500'
+  }`
+}
+
+function formatCurrency(value?: number): string {
+  if (value === undefined || value === null) return '—'
+  return '฿' + value.toLocaleString('en-US', { minimumFractionDigits: 2 })
+}
+
+export function POHeaderSection({ form, isNew }: Props) {
+  const {
+    register,
+    watch,
+    formState: { errors },
+  } = form
+
+  const discountAmount = watch('discountAmount')
+  const totalVAT = watch('totalVAT')
+  const nettAmount = watch('nettAmount')
+  const totalAmount = watch('totalAmount')
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <Field label="Document No. *" error={errors.documentNo?.message}>
+          <input
+            {...register('documentNo')}
+            disabled={!isNew}
+            className={ic(!isNew)}
+            placeholder="e.g. PO-2024-001"
+          />
+        </Field>
+
+        <Field label="Document Date *" error={errors.documentDate?.message}>
+          <input type="date" {...register('documentDate')} className={ic()} />
+        </Field>
+
+        <Field label="Required By *" error={errors.requireDate?.message}>
+          <input type="date" {...register('requireDate')} className={ic()} />
+        </Field>
+
+        <Field label="Vendor Name *" error={errors.vendorName?.message}>
+          <input
+            {...register('vendorName')}
+            className={ic()}
+            placeholder="e.g. Bangkok Auto Parts Co."
+          />
+        </Field>
+
+        <Field label="Vendor Code">
+          <input
+            {...register('vendorCode')}
+            className={ic()}
+            placeholder="e.g. BAP-001"
+          />
+        </Field>
+
+        <Field label="Vendor Quotation No.">
+          <input
+            {...register('vendorQuotationNo')}
+            className={ic()}
+            placeholder="e.g. VQ-2024-001"
+          />
+        </Field>
+
+        <Field label="Order By">
+          <input
+            {...register('orderBy')}
+            className={ic()}
+            placeholder="Name of purchaser"
+          />
+        </Field>
+
+        <Field label="Credit Term">
+          <input
+            {...register('creditTerm')}
+            className={ic()}
+            placeholder="e.g. Net 30"
+          />
+        </Field>
+
+        <Field label="Goods Request No.">
+          <input
+            {...register('goodsRequestNo')}
+            className={ic(true)}
+            readOnly
+            placeholder="Linked from Goods Requisition"
+          />
+        </Field>
+
+        <Field label="VAT (%)">
+          <input
+            type="number"
+            step="0.01"
+            {...register('vat')}
+            className={ic()}
+            placeholder="e.g. 7"
+          />
+        </Field>
+
+        <Field label="Approved By">
+          <input
+            {...register('approvedBy')}
+            className={ic(true)}
+            readOnly
+            placeholder="—"
+          />
+        </Field>
+
+        <Field label="Approved On">
+          <input
+            {...register('approvedOn')}
+            className={ic(true)}
+            readOnly
+            placeholder="—"
+          />
+        </Field>
+
+        <div className="sm:col-span-2 lg:col-span-3">
+          <Field label="Remarks">
+            <textarea
+              {...register('remarks')}
+              rows={3}
+              className={`${ic()} resize-none`}
+              placeholder="Optional notes…"
+            />
+          </Field>
+        </div>
+      </div>
+
+      {/* Financial summary row */}
+      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+          Financial Summary
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-xs text-gray-500">Discount Amount</span>
+            <span className="text-sm font-medium text-gray-800">
+              {formatCurrency(discountAmount)}
+            </span>
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-xs text-gray-500">Total VAT</span>
+            <span className="text-sm font-medium text-gray-800">
+              {formatCurrency(totalVAT)}
+            </span>
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-xs text-gray-500">Nett Amount</span>
+            <span className="text-sm font-medium text-gray-800">
+              {formatCurrency(nettAmount)}
+            </span>
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-xs text-gray-500">Total Amount</span>
+            <span className="text-base font-bold text-gray-900">
+              {formatCurrency(totalAmount)}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
