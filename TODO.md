@@ -162,20 +162,20 @@
 
 ## Phase 10 — Shared Components & i18n
 
-### Shared Lookup Hooks (used across all forms)
-- ⬜ `useEquipmentSearch()` — autocomplete for equipment code
-- ⬜ `useDriverSearch()` — autocomplete for driver name
-- ⬜ `useVendorSearch()` — autocomplete for vendor
-- ⬜ `useStockItemSearch()` — autocomplete for stock items
-- ⬜ `useDocumentStatusLookup()` — select dropdown
-- ⬜ `useFuelTypeLookup()` — select dropdown
-- ⬜ `useEquipmentCategoryLookup()` — select dropdown
-- ⬜ `useTyreBrandLookup()` — select dropdown
-- ⬜ `useTyreSizeLookup()` — select dropdown
-- ⬜ `useUomLookup()` — unit of measure dropdown
-- ⬜ `useServiceTypeCategoryLookup()` — select dropdown
+### Shared Lookup Hooks (`src/lib/hooks/lookups/`)
+- ✅ `useEquipmentLookup()` — equipment code + registration options
+- ✅ `useDriverLookup()` — driver name + code options
+- ✅ `useVendorLookup()` — hard-coded Thai vendor list
+- ✅ `useStockItemLookup()` — stock code + description options
+- ✅ `useServiceTypeLookup()` — service code + name options
+- ✅ `useFuelTypeLookup()` — DIESEL/GASOLINE/LPG/ELECTRIC
+- ✅ `useEquipmentCategoryLookup()` — TRUCK/TRAILER/FORKLIFT/etc.
+- ✅ `useTyreBrandLookup()` — Michelin/Bridgestone/Dunlop/etc.
+- ✅ `useTyreSizeLookup()` — 11R22.5/295/80R22.5/etc.
+- ✅ `useUomLookup()` — EACH/SET/LITER/KG/etc.
+- ✅ `useServiceCategoryLookup()` — from SERVICE_CATEGORIES const
 
-### Shared UI Components (build once, reuse)
+### Shared UI Components
 - ✅ `<DataTable>` — sortable, paginated TanStack Table v8, multi-line cell support
 - ✅ `<FormLayout>` — stacked section cards with gray header bars
 - ✅ `<ListPage>` — standard list wrapper (filter bar, table, pagination)
@@ -183,16 +183,21 @@
 - ✅ `<ConfirmDialog>` — native `<dialog>` with focus restoration, destructive variant
 - ✅ `<StatusBadge>` — CVA-based status badge (Active/Inactive/etc.)
 - ✅ `<Toast>` / `useToastStore` — Zustand toast store, auto-dismiss after 5s
-- ⬜ `<DatePicker>` — single date picker
-- ⬜ `<DateRangePicker>` — date range filter
-- ⬜ `<DateTimePicker>` — date + time picker (24h)
-- ⬜ `<Autocomplete>` — async search dropdown with loading state
-- ⬜ `<ImageGallery>` — photo upload + lightbox
+- ✅ `<DatePicker>` — native date input wrapper with label + error
+- ✅ `<DateRangePicker>` — From/To date inputs with min/max linking
+- ✅ `<DateTimePicker>` — date + time (24h) side-by-side inputs
+- ✅ `<Autocomplete>` — keyboard-navigable search dropdown with loading state
+- ✅ `<ImageGallery>` — responsive photo grid + lightbox + disabled upload button
+
+### Deferred pages now complete
+- ✅ `/master/drivers/[id]/images` — Driver photo gallery using ImageGallery component
+- ✅ PM Scheduler "Add Equipment" modal — search + select from equipment list
 
 ### i18n
-- ⬜ `messages/en.json` — all English strings (all modules)
-- ⬜ `messages/th.json` — all Thai strings (all modules)
-- ⬜ Language toggle component (in header, cookie-based, no URL change)
+- ✅ `src/i18n/en.json` — English translations (common, nav, driver, equipment, workOrder, fuelLog, purchaseOrder, report)
+- ✅ `src/i18n/th.json` — Thai translations (full matching structure)
+- ✅ `I18nProvider` + `useT()` hook — React Context, cookie-based (`gecko_lang`), no URL prefix
+- ✅ Language toggle — EN/TH pill buttons in site header
 
 ---
 
@@ -209,5 +214,5 @@
 | ✅ 7 | Invoice | 11 | 11 |
 | ✅ 8 | Inquiry | 5 | 5 |
 | ✅ 9 | Reports | 2 | 2 |
-| ⬜ 10 | Shared Components + i18n | — | partial |
-| | **Total** | **82** | **75** |
+| ✅ 10 | Shared Components + i18n | — | complete |
+| | **Total** | **83** | **83** | ← **ALL DONE** |
