@@ -75,28 +75,28 @@
 ## Phase 4 — Fleet Operations: Fuel, Meters & Inventory
 
 ### Fuel & Meters
-- ⬜ `/fleet/fuel-logs` — Fuel log list (DataTable: equipment, date, liters, driver, station)
-- ⬜ `/fleet/fuel-logs/[id]` — Fuel log entry form
-- ⬜ `/fleet/fuel-logs/approval` — Fuel log approval queue
-- ⬜ `/fleet/meter-logs` — Meter log list
-- ⬜ `/fleet/meter-logs/[id]` — Meter log entry form
-- ⬜ `/fleet/meter-hr-logs` — Meter hour log
-- ⬜ `/fleet/meter-hr-logs/[id]` — Meter hour log detail
+- ✅ `/fleet/fuel-logs` — Fuel log list (Equipment, Voucher/Date, Driver, Fuel liters/cost, Status)
+- ✅ `/fleet/fuel-logs/[id]` — Fuel log entry form (Fuel Entry + Cost Summary sections)
+- ✅ `/fleet/fuel-logs/approval` — Fuel log approval queue (pending-only view with Approve button)
+- ✅ `/fleet/meter-logs` — Meter log list (Equipment, Date/Type, Readings, Driver, Actions)
+- ✅ `/fleet/meter-logs/[id]` — Meter log form (conditional hourMeter field for KM/HOUR/BOTH)
+- ✅ `/fleet/meter-hr-logs` — Meter hour log list (Equipment, Seq/Date, Driver/Type, Distance/Hours)
+- ✅ `/fleet/meter-hr-logs/[id]` — Meter hour log form (Reading + Meters sections)
 
 ### Inventory Flow
-- ⬜ `/fleet/goods-requests` — Goods request list
-- ⬜ `/fleet/goods-requests/[id]` — Goods request form
-- ⬜ `/fleet/goods-requisitions` — Goods requisition list
-- ⬜ `/fleet/goods-requisitions/[id]` — Goods requisition form + line items + modal
-- ⬜ `/fleet/purchase-orders` — Purchase order list
-- ⬜ `/fleet/purchase-orders/[id]` — PO form + line items detail + add-items modal
-- ⬜ `/fleet/goods-receipts` — Goods receipt list
-- ⬜ `/fleet/goods-receipts/[id]` — Receipt form + line items + select-PO-lines modal
-- ⬜ `/fleet/goods-adjustments` — Stock adjustment list
-- ⬜ `/fleet/goods-adjustments/[id]` — Adjustment form + lines + item modal
-- ⬜ `/fleet/return-to-vendor` — Return to vendor list
-- ⬜ `/fleet/return-to-vendor/[id]` — Return form + lines + item modal
-- ⬜ `/fleet/spare-parts/monitoring` — Spare parts monitoring list
+- ✅ `/fleet/goods-requests` — Goods request list (Req No/Date, Required By/WO, Job Ref, Status)
+- ✅ `/fleet/goods-requests/[id]` — Goods request form (single section, status select)
+- ✅ `/fleet/goods-requisitions` — Goods requisition list (Doc No/Date, WO/Equipment, Required By, Status)
+- ✅ `/fleet/goods-requisitions/[id]` — Goods requisition form + read-only line items
+- ✅ `/fleet/purchase-orders` — Purchase order list (PO No/Date, Vendor, Required By, Amount, Status)
+- ✅ `/fleet/purchase-orders/[id]` — PO form + read-only line items (receivedQty/pendingQty tracking)
+- ✅ `/fleet/goods-receipts` — Goods receipt list (Receipt No/Date, Vendor/PO, Received By, Amount)
+- ✅ `/fleet/goods-receipts/[id]` — Receipt form + read-only line items
+- ✅ `/fleet/goods-adjustments` — Stock adjustment list (Doc No/Date, Type badge, Remarks)
+- ✅ `/fleet/goods-adjustments/[id]` — Adjustment form + read-only line items (INCREASE/DECREASE/TRANSFER/WRITE_OFF)
+- ✅ `/fleet/return-to-vendor` — Return to vendor list (Return No/Date, Vendor, Returned By, Amount)
+- ✅ `/fleet/return-to-vendor/[id]` — Return form + read-only line items (linked PO/stock)
+- ✅ `/fleet/spare-parts/monitoring` — Spare parts monitoring list (read-only, WO/Equipment, Date, Total, Status)
 
 ---
 
@@ -204,11 +204,11 @@
 | ✅ 1 | Shell + Dashboard | 1 | 1 |
 | ✅ 2 | Master Data | 14 | 12 |
 | ✅ 3 | Fleet Operations (Work) | 10 | 9 |
-| ⬜ 4 | Fuel, Meters & Inventory | 20 | 0 |
+| ✅ 4 | Fuel, Meters & Inventory | 20 | 20 |
 | ⬜ 5 | Tire & Incidents | 11 | 0 |
 | ⬜ 6 | Tariff | 5 | 0 |
 | ⬜ 7 | Invoice | 9 | 0 |
 | ⬜ 8 | Inquiry | 5 | 0 |
 | ⬜ 9 | Reports | 3 | 0 |
 | ⬜ 10 | Shared Components + i18n | — | partial |
-| | **Total** | **78** | **22** |
+| | **Total** | **78** | **42** |
