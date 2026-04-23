@@ -28,46 +28,47 @@
 ## Phase 2 — Master Data
 
 ### Driver
-- ✅ `/master/drivers` — Driver list (DataTable: code, name, license, status, expiry)
+- ✅ `/master/drivers` — Driver list (multi-line DataTable: Driver, License, Contact, Status, Actions)
 - ✅ `/master/drivers/[id]` — Driver profile form (tabs: General, License, Emergency Contact)
-- ⬜ `/master/drivers/[id]/images` — Driver photo upload & gallery
+- ⬜ `/master/drivers/[id]/images` — Driver photo upload & gallery (deferred)
 
 ### Equipment
-- ⬜ `/master/equipment` — Equipment list (DataTable: code, type, brand, status, meter)
-- ⬜ `/master/equipment/[id]` — Equipment profile (tabs: General, Spec, Details, History)
-- ⬜ `/master/equipment-types` — Equipment type & size list
-- ⬜ `/master/equipment-types/[id]` — Equipment type detail form
+- ✅ `/master/equipment` — Equipment list (multi-line DataTable: Equipment, Category/Brand, Meter, Status, Actions)
+- ✅ `/master/equipment/[id]` — Equipment profile (tabs: General, Spec, Details)
+- ✅ `/master/equipment-types` — Equipment type & size list (DataTable: Type/Size, ISO/TEU, Gross/Tare, Flags, Actions)
+- ✅ `/master/equipment-types/[id]` — Equipment type detail form
 
 ### Stock
-- ⬜ `/master/stock` — Stock profile list (DataTable: code, name, category, UOM, qty)
-- ⬜ `/master/stock/[id]` — Stock profile (tabs: General, Ledger, Location, Vendor Info)
-- ⬜ `/master/stock-labor-prices` — Stock & labor price list
-- ⬜ `/master/stock-labor-prices/[id]/markup` — Labor markup detail
+- ✅ `/master/stock` — Stock profile list (multi-line DataTable: Item, Category/Brand, Qty/Reorder, Price, Actions)
+- ✅ `/master/stock/[id]` — Stock profile form (tabs: General, Reorder, Pricing)
+- ✅ `/master/stock-labor-prices` — Stock & labor price overview (markup stats + labor rate table)
+- ⬜ `/master/stock-labor-prices/[id]/markup` — Labor markup detail (deferred)
 
 ### Other Master
-- ⬜ `/master/transporters` — Transporter registration list/form
+- ✅ `/master/transporters` — Transporter list (DataTable: Name/RegNo, Contact, Status, Actions)
+- ✅ `/master/transporters/[id]` — Transporter registration form
 
 ---
 
 ## Phase 3 — Fleet Operations: Work Management
 
 ### Work Request
-- ⬜ `/fleet/work-requests` — Work request list (DataTable: WR no, equipment, date, status)
-- ⬜ `/fleet/work-requests/[id]` — Work request form
+- ✅ `/fleet/work-requests` — Work request list (multi-line DataTable: WR/Equip, Requested By, Date/Priority, Status, Actions)
+- ✅ `/fleet/work-requests/[id]` — Work request form (tabs: General, Description)
 
 ### Work Order
-- ⬜ `/fleet/work-orders` — Work order list (DataTable: WO no, equipment, type, status, priority)
-- ⬜ `/fleet/work-orders/[id]` — Work order form (tabs: General, Parts, Labor, Service)
-- ⬜ `/fleet/work-orders/monitoring` — WO monitoring dashboard (status board view)
+- ✅ `/fleet/work-orders` — Work order list (multi-line DataTable: WO/Equip, Type/Service, Scheduled, Status/Priority, Actions)
+- ✅ `/fleet/work-orders/[id]` — Work order form (tabs: General, Services, Parts, Labor)
+- ✅ `/fleet/work-orders/monitoring` — WO monitoring Kanban board (Open/In Progress/Completed/Invoiced columns)
 
 ### PM Scheduler
-- ⬜ `/fleet/pm-scheduler` — PM scheduler list
-- ⬜ `/fleet/pm-scheduler/[id]` — PM scheduler form (tabs: General, Equipment, Parts, Labor, Service)
-- ⬜ Modal: Add equipment to PM popup
+- ✅ `/fleet/pm-scheduler` — PM scheduler list (DataTable: Schedule, Interval, Next Due, Status, Actions)
+- ✅ `/fleet/pm-scheduler/[id]` — PM schedule form (tabs: Schedule Details, Equipment, Services)
+- ⬜ Modal: Add equipment to PM popup (deferred)
 
 ### Service Type
-- ⬜ `/fleet/service-types` — Service type list
-- ⬜ `/fleet/service-types/[id]` — Service type form
+- ✅ `/fleet/service-types` — Service type list (DataTable: Code/Service, Category/Status, Duration/Notify, Actions)
+- ✅ `/fleet/service-types/[id]` — Service type form (General + PM notification settings)
 
 ---
 
@@ -176,16 +177,17 @@
 - ⬜ `useServiceTypeCategoryLookup()` — select dropdown
 
 ### Shared UI Components (build once, reuse)
-- ⬜ `<DataTable>` — sortable, paginated, with column filters and Excel export
-- ⬜ `<FormLayout>` — standard form wrapper (header, tab group, action bar)
-- ⬜ `<ListPage>` — standard list wrapper (filter bar, table, pagination)
-- ⬜ `<SearchInput>` — debounced search input
+- ✅ `<DataTable>` — sortable, paginated TanStack Table v8, multi-line cell support
+- ✅ `<FormLayout>` — stacked section cards with gray header bars
+- ✅ `<ListPage>` — standard list wrapper (filter bar, table, pagination)
+- ✅ `<SearchInput>` — debounced search input with external value sync
+- ✅ `<ConfirmDialog>` — native `<dialog>` with focus restoration, destructive variant
+- ✅ `<StatusBadge>` — CVA-based status badge (Active/Inactive/etc.)
+- ✅ `<Toast>` / `useToastStore` — Zustand toast store, auto-dismiss after 5s
 - ⬜ `<DatePicker>` — single date picker
 - ⬜ `<DateRangePicker>` — date range filter
 - ⬜ `<DateTimePicker>` — date + time picker (24h)
 - ⬜ `<Autocomplete>` — async search dropdown with loading state
-- ⬜ `<ConfirmDialog>` — delete/post confirmation modal
-- ⬜ `<StatusBadge>` — document status badge (Draft/Posted/Cancelled)
 - ⬜ `<ImageGallery>` — photo upload + lightbox
 
 ### i18n
@@ -200,13 +202,13 @@
 | Phase | Module | Total Pages | Done |
 |-------|--------|-------------|------|
 | ✅ 1 | Shell + Dashboard | 1 | 1 |
-| 🔄 2 | Master Data | 13 | 2 |
-| ⬜ 3 | Fleet Operations (Work) | 8 | 0 |
+| ✅ 2 | Master Data | 14 | 12 |
+| ✅ 3 | Fleet Operations (Work) | 10 | 9 |
 | ⬜ 4 | Fuel, Meters & Inventory | 20 | 0 |
 | ⬜ 5 | Tire & Incidents | 11 | 0 |
 | ⬜ 6 | Tariff | 5 | 0 |
 | ⬜ 7 | Invoice | 9 | 0 |
 | ⬜ 8 | Inquiry | 5 | 0 |
 | ⬜ 9 | Reports | 3 | 0 |
-| ⬜ 10 | Shared Components + i18n | — | 0 |
-| | **Total** | **75** | **1** |
+| ⬜ 10 | Shared Components + i18n | — | partial |
+| | **Total** | **78** | **22** |
