@@ -120,25 +120,26 @@
 
 ## Phase 6 — Tariff / Tariff Plan
 
-- ⬜ `/tariff/customer-rates` — Customer rate list (DataTable: customer, effective date, status)
-- ⬜ `/tariff/customer-rates/[id]` — Customer rate header form
-- ⬜ `/tariff/customer-rates/[id]/details` — Rate line items (editable table)
-- ⬜ `/tariff/standard-rates` — Standard rate list/form
-- ⬜ `/tariff/standard-rates/[id]` — Standard rate detail breakdown
+- ✅ `/tariff/customer-rates` — Customer rate list (Quotation No/Date, Customer, Validity, Status) + form with Approve workflow
+- ✅ `/tariff/customer-rates/[id]` — Customer rate form (Rate Header + read-only Charge Details table)
+- ✅ `/tariff/standard-rates` — Standard rate list + form (Rate Header + read-only Rate Lines table)
+- ✅ `/tariff/standard-rates/[id]` — Standard rate detail (with Approve button)
 
 ---
 
 ## Phase 7 — Invoice / Billing (Fleet)
 
-- ⬜ `/invoice/vendor` — Vendor invoice list (DataTable: invoice no, vendor, amount, status)
-- ⬜ `/invoice/vendor/[id]` — Vendor invoice header form
-- ⬜ `/invoice/vendor/[id]/detail` — Invoice line items table
-- ⬜ Modal: Select WO lines popup (link WO to vendor invoice)
-- ⬜ `/invoice/vendor/unbilled` — Unbilled vendor invoices list
-- ⬜ `/invoice/work-order/[id]` — WO invoice view
-- ⬜ `/invoice/credit-notes/wo/[id]` — WO credit note
-- ⬜ `/invoice/credit-notes/vendor/[id]` — Vendor credit note
-- ⬜ `/invoice/vendor-payments/[id]` — Vendor payment detail
+- ✅ `/invoice/vendor` — Vendor invoice list (Invoice No/Date, Customer, Amount, Status) + form
+- ✅ `/invoice/vendor/[id]` — Vendor invoice form (header + read-only line items, withholding tax checkbox)
+- ✅ `/invoice/vendor/unbilled` — Unbilled GR items list with "Create Invoice" action per row
+- ✅ `/invoice/work-order` — WO invoice list + form (receipt header + WO line items)
+- ✅ `/invoice/work-order/[id]` — WO invoice form
+- ✅ `/invoice/credit-notes/wo` — WO credit note list + form (header + WO line items)
+- ✅ `/invoice/credit-notes/wo/[id]` — WO credit note form
+- ✅ `/invoice/credit-notes/vendor` — Vendor credit note list + form
+- ✅ `/invoice/credit-notes/vendor/[id]` — Vendor credit note form
+- ✅ `/invoice/vendor-payments` — Vendor payment list (Pending/Approved) + form with Approve button
+- ✅ `/invoice/vendor-payments/[id]` — Vendor payment form + read-only payment lines
 
 ---
 
@@ -205,9 +206,9 @@
 | ✅ 3 | Fleet Operations (Work) | 10 | 9 |
 | ✅ 4 | Fuel, Meters & Inventory | 20 | 20 |
 | ✅ 5 | Tire & Incidents | 11 | 11 |
-| ⬜ 6 | Tariff | 5 | 0 |
-| ⬜ 7 | Invoice | 9 | 0 |
+| ✅ 6 | Tariff | 4 | 4 |
+| ✅ 7 | Invoice | 11 | 11 |
 | ⬜ 8 | Inquiry | 5 | 0 |
 | ⬜ 9 | Reports | 3 | 0 |
 | ⬜ 10 | Shared Components + i18n | — | partial |
-| | **Total** | **78** | **53** |
+| | **Total** | **82** | **68** |
