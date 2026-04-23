@@ -3,6 +3,7 @@ import { getWOCreditNotes } from '@/lib/data/wo-credit-notes'
 import { WOCreditNoteListClient } from '@/components/credit-notes/WOCreditNoteListClient'
 import { WOCreditNoteFilters } from '@/components/credit-notes/WOCreditNoteFilters'
 import { ListPage } from '@/components/shared/ListPage'
+import { getT } from '@/i18n/server'
 
 export const metadata = { title: 'WO Credit Notes | Fleet' }
 
@@ -18,6 +19,7 @@ interface PageProps {
 
 export default async function WOCreditNotesPage({ searchParams }: PageProps) {
   const params = await searchParams
+  const { t } = await getT()
   const records = await getWOCreditNotes({
     creditNoteNo: params.creditNoteNo,
     customerName: params.customerName,
@@ -28,7 +30,7 @@ export default async function WOCreditNotesPage({ searchParams }: PageProps) {
 
   return (
     <ListPage
-      title="WO Credit Notes"
+      title={t('nav.creditNotes')}
       subtitle={`${records.length} WO credit note${records.length !== 1 ? 's' : ''} found`}
       filters={
         <WOCreditNoteFilters

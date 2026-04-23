@@ -8,6 +8,7 @@ import { DataTable } from '@/components/shared/DataTable'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { removeMockReturn } from '@/lib/mock/return-to-vendor'
+import { useT } from '@/i18n/I18nContext'
 
 const col = createColumnHelper<ReturnToVendor>()
 
@@ -31,6 +32,7 @@ export function ReturnListClient({ initialData }: ReturnListClientProps) {
   const [deleteTarget, setDeleteTarget] = useState<ReturnToVendor | null>(null)
   const router = useRouter()
   const { success, error } = useToastStore()
+  const { t } = useT()
 
   const columns: import('@tanstack/react-table').ColumnDef<ReturnToVendor, any>[] = [
     col.display({
@@ -103,14 +105,14 @@ export function ReturnListClient({ initialData }: ReturnListClientProps) {
                 onClick={() => router.push(`/fleet/return-to-vendor/${r.returnID}`)}
                 className="text-xs text-blue-600 hover:underline"
               >
-                Edit
+                {t('common.edit')}
               </button>
               <button
                 type="button"
                 onClick={() => setDeleteTarget(r)}
                 className="text-xs text-red-500 hover:underline"
               >
-                Delete
+                {t('common.delete')}
               </button>
             </div>
           </div>
@@ -143,7 +145,7 @@ export function ReturnListClient({ initialData }: ReturnListClientProps) {
             ? `Are you sure you want to delete "${deleteTarget.documentNo}"? This action cannot be undone.`
             : ''
         }
-        confirmLabel="Delete"
+        confirmLabel={t('common.delete')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         destructive

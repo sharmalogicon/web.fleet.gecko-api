@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { useT } from '@/i18n/I18nContext'
 
 interface ConfirmDialogProps {
   open: boolean
@@ -13,16 +14,20 @@ interface ConfirmDialogProps {
   destructive?: boolean
 }
 
+
 export function ConfirmDialog({
   open,
   title,
   message,
-  confirmLabel = 'Confirm',
-  cancelLabel = 'Cancel',
+  confirmLabel,
+  cancelLabel,
   onConfirm,
   onCancel,
   destructive = false,
 }: ConfirmDialogProps) {
+  const { t } = useT()
+  const resolvedConfirmLabel = confirmLabel ?? t('common.delete')
+  const resolvedCancelLabel = cancelLabel ?? t('common.cancel')
   const dialogRef = useRef<HTMLDialogElement>(null)
   const prevFocusRef = useRef<HTMLElement | null>(null)
 
@@ -56,7 +61,7 @@ export function ConfirmDialog({
             onClick={onCancel}
             className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
           >
-            {cancelLabel}
+            {resolvedCancelLabel}
           </button>
           <button
             onClick={onConfirm}
@@ -66,7 +71,7 @@ export function ConfirmDialog({
                 : 'bg-blue-600 hover:bg-blue-700'
             }`}
           >
-            {confirmLabel}
+            {resolvedConfirmLabel}
           </button>
         </div>
       </div>

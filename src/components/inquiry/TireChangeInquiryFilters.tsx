@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { SearchInput } from '@/components/shared/SearchInput'
+import { useT } from '@/i18n/I18nContext'
 
 interface TireChangeInquiryFiltersProps {
   documentNo: string
@@ -18,6 +19,7 @@ export function TireChangeInquiryFilters({
   dateTo,
 }: TireChangeInquiryFiltersProps) {
   const router = useRouter()
+  const { t } = useT()
 
   const push = useCallback(
     (overrides: Partial<TireChangeInquiryFiltersProps>) => {
@@ -50,7 +52,7 @@ export function TireChangeInquiryFilters({
         className="w-44"
       />
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">Date From</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.from')}</label>
         <input
           type="date"
           value={dateFrom}
@@ -59,7 +61,7 @@ export function TireChangeInquiryFilters({
         />
       </div>
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">Date To</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.to')}</label>
         <input
           type="date"
           value={dateTo}

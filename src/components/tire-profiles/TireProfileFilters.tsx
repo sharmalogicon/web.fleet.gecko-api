@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { SearchInput } from '@/components/shared/SearchInput'
+import { useT } from '@/i18n/I18nContext'
 
 const STATUS_OPTIONS = ['ALL', 'NEW', 'USED', 'RECAP', 'SCRAP'] as const
 const ACTIVE_OPTIONS = [
@@ -25,6 +26,7 @@ export function TireProfileFilters({
   isActive,
 }: TireProfileFiltersProps) {
   const router = useRouter()
+  const { t } = useT()
 
   const push = useCallback(
     (params: {
@@ -62,7 +64,7 @@ export function TireProfileFilters({
         className="w-44"
       />
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">Status</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.status')}</label>
         <select
           value={tyreStatus || 'ALL'}
           onChange={(e) => push({ tyreStatus: e.target.value })}
@@ -70,7 +72,7 @@ export function TireProfileFilters({
         >
           {STATUS_OPTIONS.map((s) => (
             <option key={s} value={s}>
-              {s === 'ALL' ? 'All Statuses' : s}
+              {s === 'ALL' ? t('common.all') : s}
             </option>
           ))}
         </select>

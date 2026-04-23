@@ -4,6 +4,7 @@ import { getPurchaseOrders } from '@/lib/data/purchase-orders'
 import { POListClient } from '@/components/purchase-orders/POListClient'
 import { POFilters } from '@/components/purchase-orders/POFilters'
 import { ListPage } from '@/components/shared/ListPage'
+import { getT } from '@/i18n/server'
 
 export const metadata = { title: 'Purchase Orders | Fleet' }
 
@@ -19,6 +20,7 @@ interface PageProps {
 
 export default async function PurchaseOrdersPage({ searchParams }: PageProps) {
   const params = await searchParams
+  const { t } = await getT()
   const purchaseOrders = await getPurchaseOrders({
     documentNo: params.documentNo,
     vendorName: params.vendorName,
@@ -29,14 +31,14 @@ export default async function PurchaseOrdersPage({ searchParams }: PageProps) {
 
   return (
     <ListPage
-      title="Purchase Orders"
+      title={t('nav.purchaseOrders')}
       subtitle={`${purchaseOrders.length} purchase order${purchaseOrders.length !== 1 ? 's' : ''} found`}
       actions={
         <Link
           href="/fleet/purchase-orders/new"
           className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700"
         >
-          + New Purchase Order
+          + {t('nav.purchaseOrders')}
         </Link>
       }
       filters={

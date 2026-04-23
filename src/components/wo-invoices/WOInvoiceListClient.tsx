@@ -8,6 +8,7 @@ import { DataTable } from '@/components/shared/DataTable'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { removeMockWOInvoice } from '@/lib/mock/wo-invoices'
+import { useT } from '@/i18n/I18nContext'
 
 const col = createColumnHelper<WOInvoice>()
 
@@ -46,6 +47,7 @@ export function WOInvoiceListClient({ initialData }: WOInvoiceListClientProps) {
   const [deleteTarget, setDeleteTarget] = useState<WOInvoice | null>(null)
   const router = useRouter()
   const { success, error } = useToastStore()
+  const { t } = useT()
 
   const columns: import('@tanstack/react-table').ColumnDef<WOInvoice, any>[] = [
     col.display({
@@ -101,7 +103,7 @@ export function WOInvoiceListClient({ initialData }: WOInvoiceListClientProps) {
     }),
     col.display({
       id: 'statusActions',
-      header: 'Status',
+      header: () => t('common.status'),
       size: 130,
       cell: (info) => {
         const r = info.row.original
@@ -114,14 +116,14 @@ export function WOInvoiceListClient({ initialData }: WOInvoiceListClientProps) {
                 onClick={() => router.push(`/invoice/work-order/${r.woInvoiceID}`)}
                 className="text-xs text-blue-600 hover:underline"
               >
-                Edit
+                {t('common.edit')}
               </button>
               <button
                 type="button"
                 onClick={() => setDeleteTarget(r)}
                 className="text-xs text-red-500 hover:underline"
               >
-                Delete
+                {t('common.delete')}
               </button>
             </div>
           </div>
@@ -154,7 +156,7 @@ export function WOInvoiceListClient({ initialData }: WOInvoiceListClientProps) {
             ? `Are you sure you want to delete "${deleteTarget.receiptNo}"? This action cannot be undone.`
             : ''
         }
-        confirmLabel="Delete"
+        confirmLabel={t('common.delete')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         destructive

@@ -2,6 +2,7 @@ import { getTruckMovementInquiry } from '@/lib/data/inquiry/truck-movements'
 import { TruckMovementFilters } from '@/components/inquiry/TruckMovementFilters'
 import { TruckMovementClient } from '@/components/inquiry/TruckMovementClient'
 import { ListPage } from '@/components/shared/ListPage'
+import { getT } from '@/i18n/server'
 
 export const metadata = { title: 'Truck Movement Inquiry | Fleet' }
 
@@ -16,6 +17,7 @@ interface PageProps {
 
 export default async function TruckMovementInquiryPage({ searchParams }: PageProps) {
   const params = await searchParams
+  const { t } = await getT()
   const data = await getTruckMovementInquiry({
     truckNo: params.truckNo,
     tripType: params.tripType,
@@ -25,7 +27,7 @@ export default async function TruckMovementInquiryPage({ searchParams }: PagePro
 
   return (
     <ListPage
-      title="Truck Movement Inquiry"
+      title={t('nav.inquiryTruckMovements')}
       subtitle={`${data.length} record${data.length !== 1 ? 's' : ''} found`}
       filters={
         <TruckMovementFilters

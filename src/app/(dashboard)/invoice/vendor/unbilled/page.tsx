@@ -3,6 +3,7 @@ import { getUnbilledItems } from '@/lib/data/unbilled-invoices'
 import { UnbilledInvoiceClient } from '@/components/vendor-invoices/UnbilledInvoiceClient'
 import { UnbilledInvoiceFilters } from '@/components/vendor-invoices/UnbilledInvoiceFilters'
 import { ListPage } from '@/components/shared/ListPage'
+import { getT } from '@/i18n/server'
 
 export const metadata = { title: 'Unbilled Vendor Invoices | Fleet' }
 
@@ -18,6 +19,7 @@ interface PageProps {
 
 export default async function UnbilledInvoicesPage({ searchParams }: PageProps) {
   const params = await searchParams
+  const { t } = await getT()
   const items = await getUnbilledItems({
     vendorName: params.vendorName,
     poNo: params.poNo,
@@ -28,7 +30,7 @@ export default async function UnbilledInvoicesPage({ searchParams }: PageProps) 
 
   return (
     <ListPage
-      title="Unbilled Vendor Invoices"
+      title={t('nav.unbilledInvoices')}
       subtitle={`${items.length} unbilled item${items.length !== 1 ? 's' : ''} found`}
       filters={
         <UnbilledInvoiceFilters

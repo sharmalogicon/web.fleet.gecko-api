@@ -11,6 +11,7 @@ import { FormLayout } from '@/components/shared/FormLayout'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { ReceiptHeaderSection } from '@/components/goods-receipts/sections/ReceiptHeaderSection'
 import { ReceiptLinesSection } from '@/components/goods-receipts/sections/ReceiptLinesSection'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   goodsReceipt: GoodsReceipt
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export function GoodsReceiptFormClient({ goodsReceipt, goodsReceiptID, isNew }: Props) {
+  const { t } = useT()
   const [showDelete, setShowDelete] = useState(false)
   const router = useRouter()
   const { isSaving, isDeleting, save, remove } = useGoodsReceipt(goodsReceiptID)
@@ -98,7 +100,7 @@ export function GoodsReceiptFormClient({ goodsReceipt, goodsReceiptID, isNew }: 
                 disabled={isDeleting}
                 className="px-4 py-2 text-sm font-medium rounded-lg border border-red-300 text-red-600 hover:bg-red-50 disabled:opacity-50"
               >
-                {isDeleting ? 'Deleting…' : 'Delete'}
+                {isDeleting ? t('common.loading') : t('common.delete')}
               </button>
             )}
             <button
@@ -106,7 +108,7 @@ export function GoodsReceiptFormClient({ goodsReceipt, goodsReceiptID, isNew }: 
               onClick={() => router.back()}
               className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="button"
@@ -114,7 +116,7 @@ export function GoodsReceiptFormClient({ goodsReceipt, goodsReceiptID, isNew }: 
               disabled={isSaving || !isDirty}
               className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSaving ? 'Saving…' : 'Save'}
+              {isSaving ? t('common.loading') : t('common.save')}
             </button>
           </div>
         }

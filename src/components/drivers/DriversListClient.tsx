@@ -10,6 +10,7 @@ import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { removeMockDriver } from '@/lib/mock/drivers'
 import { formatDate, isDateExpired } from '@/lib/utils/driver'
+import { useT } from '@/i18n/I18nContext'
 
 const col = createColumnHelper<Driver>()
 
@@ -31,6 +32,7 @@ export function DriversListClient({ initialData }: DriversListClientProps) {
   const [deleteTarget, setDeleteTarget] = useState<Driver | null>(null)
   const router = useRouter()
   const { success, error } = useToastStore()
+  const { t } = useT()
 
   const columns = [
     col.display({
@@ -83,7 +85,7 @@ export function DriversListClient({ initialData }: DriversListClientProps) {
       },
     }),
     col.accessor('status', {
-      header: 'Status',
+      header: () => t('common.status'),
       size: 120,
       cell: (info) => <StatusBadge status={info.getValue()} />,
     }),
@@ -98,14 +100,14 @@ export function DriversListClient({ initialData }: DriversListClientProps) {
             onClick={() => router.push(`/master/drivers/${info.row.original.driverID}`)}
             className="text-xs text-blue-600 hover:underline"
           >
-            Edit
+            {t('common.edit')}
           </button>
           <button
             type="button"
             onClick={() => setDeleteTarget(info.row.original)}
             className="text-xs text-red-500 hover:underline"
           >
-            Delete
+            {t('common.delete')}
           </button>
         </div>
       ),
@@ -133,7 +135,7 @@ export function DriversListClient({ initialData }: DriversListClientProps) {
         open={deleteTarget !== null}
         title={STRINGS.deleteTitle}
         message={deleteTarget ? STRINGS.deleteMessage(deleteTarget.driverName) : ''}
-        confirmLabel="Delete"
+        confirmLabel={t('common.delete')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         destructive

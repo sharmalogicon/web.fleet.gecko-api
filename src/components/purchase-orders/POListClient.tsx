@@ -8,6 +8,7 @@ import { DataTable } from '@/components/shared/DataTable'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { removeMockPurchaseOrder } from '@/lib/mock/purchase-orders'
+import { useT } from '@/i18n/I18nContext'
 
 const col = createColumnHelper<PurchaseOrder>()
 
@@ -52,6 +53,7 @@ export function POListClient({ initialData }: POListClientProps) {
   const [deleteTarget, setDeleteTarget] = useState<PurchaseOrder | null>(null)
   const router = useRouter()
   const { success, error } = useToastStore()
+  const { t } = useT()
 
   const columns = [
     col.display({
@@ -128,7 +130,7 @@ export function POListClient({ initialData }: POListClientProps) {
     }),
     col.display({
       id: 'statusActions',
-      header: 'Status',
+      header: () => t('common.status'),
       size: 130,
       cell: (info) => {
         const r = info.row.original
@@ -141,7 +143,7 @@ export function POListClient({ initialData }: POListClientProps) {
                 onClick={() => router.push(`/fleet/purchase-orders/${r.purchaseOrderID}`)}
                 className="text-xs text-blue-600 hover:underline"
               >
-                Edit
+                {t('common.edit')}
               </button>
               {!r.isApproved && !r.isCancel && (
                 <button
@@ -149,7 +151,7 @@ export function POListClient({ initialData }: POListClientProps) {
                   onClick={() => setDeleteTarget(r)}
                   className="text-xs text-red-500 hover:underline"
                 >
-                  Delete
+                  {t('common.delete')}
                 </button>
               )}
             </div>
@@ -183,7 +185,7 @@ export function POListClient({ initialData }: POListClientProps) {
             ? `Are you sure you want to delete "${deleteTarget.documentNo}"? This action cannot be undone.`
             : ''
         }
-        confirmLabel="Delete"
+        confirmLabel={t('common.delete')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         destructive

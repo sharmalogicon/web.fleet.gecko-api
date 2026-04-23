@@ -9,6 +9,7 @@ import { DataTable } from '@/components/shared/DataTable'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { removeMockTireProfile } from '@/lib/mock/tire-profiles'
+import { useT } from '@/i18n/I18nContext'
 
 const col = createColumnHelper<TireProfile>()
 
@@ -39,6 +40,7 @@ export function TireProfileListClient({ initialData }: TireProfileListClientProp
   const [deleteTarget, setDeleteTarget] = useState<TireProfile | null>(null)
   const router = useRouter()
   const { success, error } = useToastStore()
+  const { t } = useT()
 
   const columns = [
     col.display({
@@ -108,7 +110,7 @@ export function TireProfileListClient({ initialData }: TireProfileListClientProp
     }),
     col.display({
       id: 'actions',
-      header: 'Actions',
+      header: '',
       size: 110,
       cell: (info) => {
         const r = info.row.original
@@ -119,14 +121,14 @@ export function TireProfileListClient({ initialData }: TireProfileListClientProp
               onClick={() => router.push(`/fleet/tires/profiles/${r.tireProfileID}`)}
               className="text-xs text-blue-600 hover:underline"
             >
-              Edit
+              {t('common.edit')}
             </button>
             <button
               type="button"
               onClick={() => setDeleteTarget(r)}
               className="text-xs text-red-500 hover:underline"
             >
-              Delete
+              {t('common.delete')}
             </button>
           </div>
         )
@@ -158,7 +160,7 @@ export function TireProfileListClient({ initialData }: TireProfileListClientProp
             ? `Are you sure you want to delete tire "${deleteTarget.serialNo}"? This action cannot be undone.`
             : ''
         }
-        confirmLabel="Delete"
+        confirmLabel={t('common.delete')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         destructive

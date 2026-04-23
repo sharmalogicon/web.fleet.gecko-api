@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { useT } from '@/i18n/I18nContext'
 
 interface SearchInputProps {
   value: string
@@ -13,10 +14,12 @@ interface SearchInputProps {
 export function SearchInput({
   value,
   onChange,
-  placeholder = 'Search…',
+  placeholder,
   debounceMs = 300,
   className,
 }: SearchInputProps) {
+  const { t } = useT()
+  const resolvedPlaceholder = placeholder ?? t('common.search')
   const [local, setLocal] = useState(value)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -42,7 +45,7 @@ export function SearchInput({
         type="search"
         value={local}
         onChange={handleChange}
-        placeholder={placeholder}
+        placeholder={resolvedPlaceholder}
         className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       />
     </div>

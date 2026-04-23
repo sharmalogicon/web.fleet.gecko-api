@@ -8,6 +8,7 @@ import { trafficViolationSchema, VIOLATION_TYPE_MAP } from '@/types/traffic-viol
 import { useTrafficViolation } from '@/lib/hooks/useTrafficViolation'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
+import { useT } from '@/i18n/I18nContext'
 
 const VIOLATION_TYPES: ViolationType[] = ['SPEEDING', 'PARKING', 'RED_LIGHT', 'NO_SEATBELT', 'OTHER']
 
@@ -44,6 +45,7 @@ function ic(ro?: boolean) {
 }
 
 export function ViolationFormClient({ violation, violationID, isNew }: Props) {
+  const { t } = useT()
   const [showDelete, setShowDelete] = useState(false)
   const router = useRouter()
   const { isSaving, isDeleting, save, remove } = useTrafficViolation(violationID)
@@ -105,7 +107,7 @@ export function ViolationFormClient({ violation, violationID, isNew }: Props) {
                 disabled={isDeleting}
                 className="px-4 py-2 text-sm font-medium rounded-lg border border-red-300 text-red-600 hover:bg-red-50 disabled:opacity-50"
               >
-                {isDeleting ? 'Deleting…' : 'Delete'}
+                {isDeleting ? t('common.loading') : t('common.delete')}
               </button>
             )}
             <button
@@ -113,7 +115,7 @@ export function ViolationFormClient({ violation, violationID, isNew }: Props) {
               onClick={() => router.back()}
               className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="button"
@@ -121,7 +123,7 @@ export function ViolationFormClient({ violation, violationID, isNew }: Props) {
               disabled={isSaving || !isDirty}
               className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSaving ? 'Saving…' : 'Save'}
+              {isSaving ? t('common.loading') : t('common.save')}
             </button>
           </div>
         </div>

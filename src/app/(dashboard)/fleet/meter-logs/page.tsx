@@ -4,6 +4,7 @@ import { getMeterLogs } from '@/lib/data/meter-logs'
 import { MeterLogListClient } from '@/components/meter-logs/MeterLogListClient'
 import { MeterLogFilters } from '@/components/meter-logs/MeterLogFilters'
 import { ListPage } from '@/components/shared/ListPage'
+import { getT } from '@/i18n/server'
 
 export const metadata = { title: 'Meter Logs | Fleet' }
 
@@ -18,6 +19,7 @@ interface PageProps {
 
 export default async function MeterLogsPage({ searchParams }: PageProps) {
   const params = await searchParams
+  const { t } = await getT()
   const meterLogs = await getMeterLogs({
     equipmentCode: params.equipment,
     meterType: params.meterType,
@@ -27,14 +29,14 @@ export default async function MeterLogsPage({ searchParams }: PageProps) {
 
   return (
     <ListPage
-      title="Meter Logs"
+      title={t('nav.meterLogs')}
       subtitle={`${meterLogs.length} meter log${meterLogs.length !== 1 ? 's' : ''} found`}
       actions={
         <Link
           href="/fleet/meter-logs/new"
           className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700"
         >
-          + New Meter Log
+          + {t('nav.meterLogs')}
         </Link>
       }
       filters={

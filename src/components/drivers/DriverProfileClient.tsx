@@ -14,6 +14,7 @@ import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { GeneralSection } from '@/components/drivers/sections/GeneralSection'
 import { LicenseSection } from '@/components/drivers/sections/LicenseSection'
 import { EmergencyContactSection } from '@/components/drivers/sections/EmergencyContactSection'
+import { useT } from '@/i18n/I18nContext'
 
 const STRINGS = {
   newTitle: 'New Driver',
@@ -37,6 +38,7 @@ interface DriverProfileClientProps {
 }
 
 export function DriverProfileClient({ driver, driverID, isNew }: DriverProfileClientProps) {
+  const { t } = useT()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const router = useRouter()
   const { isSaving, isDeleting, save, remove } = useDriver(driverID)
@@ -109,7 +111,7 @@ export function DriverProfileClient({ driver, driverID, isNew }: DriverProfileCl
                 disabled={isDeleting}
                 className="px-4 py-2 text-sm font-medium rounded-lg border border-red-300 text-red-600 hover:bg-red-50 disabled:opacity-50"
               >
-                {isDeleting ? 'Deleting…' : 'Delete'}
+                {isDeleting ? t('common.loading') : t('common.delete')}
               </button>
             )}
             <button
@@ -117,7 +119,7 @@ export function DriverProfileClient({ driver, driverID, isNew }: DriverProfileCl
               onClick={() => router.back()}
               className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="button"
@@ -125,7 +127,7 @@ export function DriverProfileClient({ driver, driverID, isNew }: DriverProfileCl
               disabled={isSaving || !isDirty}
               className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSaving ? 'Saving…' : 'Save'}
+              {isSaving ? t('common.loading') : t('common.save')}
             </button>
           </div>
         }

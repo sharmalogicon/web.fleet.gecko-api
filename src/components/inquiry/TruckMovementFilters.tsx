@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { SearchInput } from '@/components/shared/SearchInput'
+import { useT } from '@/i18n/I18nContext'
 
 const TRIP_TYPES = ['ALL', 'IMPORT', 'EXPORT', 'LOCAL'] as const
 
@@ -20,6 +21,7 @@ export function TruckMovementFilters({
   dateTo,
 }: TruckMovementFiltersProps) {
   const router = useRouter()
+  const { t } = useT()
 
   const push = useCallback(
     (overrides: Partial<TruckMovementFiltersProps>) => {
@@ -58,7 +60,7 @@ export function TruckMovementFilters({
         </select>
       </div>
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">Date From</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.from')}</label>
         <input
           type="date"
           value={dateFrom}
@@ -67,7 +69,7 @@ export function TruckMovementFilters({
         />
       </div>
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">Date To</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.to')}</label>
         <input
           type="date"
           value={dateTo}

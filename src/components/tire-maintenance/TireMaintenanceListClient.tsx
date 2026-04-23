@@ -8,6 +8,7 @@ import { DataTable } from '@/components/shared/DataTable'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { removeMockTireMaintenance } from '@/lib/mock/tire-maintenance'
+import { useT } from '@/i18n/I18nContext'
 
 const col = createColumnHelper<TireMaintenance>()
 
@@ -20,6 +21,7 @@ export function TireMaintenanceListClient({ initialData }: TireMaintenanceListCl
   const [deleteTarget, setDeleteTarget] = useState<TireMaintenance | null>(null)
   const router = useRouter()
   const { success, error } = useToastStore()
+  const { t } = useT()
 
   const columns = [
     col.display({
@@ -92,7 +94,7 @@ export function TireMaintenanceListClient({ initialData }: TireMaintenanceListCl
     }),
     col.display({
       id: 'actions',
-      header: 'Actions',
+      header: '',
       size: 110,
       cell: (info) => {
         const r = info.row.original
@@ -103,14 +105,14 @@ export function TireMaintenanceListClient({ initialData }: TireMaintenanceListCl
               onClick={() => router.push(`/fleet/tires/maintenance/${r.maintenanceID}`)}
               className="text-xs text-blue-600 hover:underline"
             >
-              Edit
+              {t('common.edit')}
             </button>
             <button
               type="button"
               onClick={() => setDeleteTarget(r)}
               className="text-xs text-red-500 hover:underline"
             >
-              Delete
+              {t('common.delete')}
             </button>
           </div>
         )
@@ -142,7 +144,7 @@ export function TireMaintenanceListClient({ initialData }: TireMaintenanceListCl
             ? `Are you sure you want to delete "${deleteTarget.documentNo}"? This action cannot be undone.`
             : ''
         }
-        confirmLabel="Delete"
+        confirmLabel={t('common.delete')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         destructive

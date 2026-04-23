@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { SearchInput } from '@/components/shared/SearchInput'
+import { useT } from '@/i18n/I18nContext'
 
 const STATUS_OPTIONS = ['ALL', 'ACTIVE', 'INACTIVE'] as const
 
@@ -18,6 +19,7 @@ export function SparePartsMonitorFilters({
   status,
 }: SparePartsMonitorFiltersProps) {
   const router = useRouter()
+  const { t } = useT()
 
   const push = useCallback(
     (params: {
@@ -52,7 +54,7 @@ export function SparePartsMonitorFilters({
         className="w-48"
       />
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">Status</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.status')}</label>
         <select
           value={status || 'ALL'}
           onChange={(e) => push({ status: e.target.value })}
@@ -60,7 +62,7 @@ export function SparePartsMonitorFilters({
         >
           {STATUS_OPTIONS.map((s) => (
             <option key={s} value={s}>
-              {s === 'ALL' ? 'All Statuses' : s.charAt(0) + s.slice(1).toLowerCase()}
+              {s === 'ALL' ? t('common.all') : s.charAt(0) + s.slice(1).toLowerCase()}
             </option>
           ))}
         </select>

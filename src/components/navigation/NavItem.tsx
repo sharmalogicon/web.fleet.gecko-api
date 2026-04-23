@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
+import { useT } from '@/i18n/I18nContext';
 import type { NavItem as NavItemType } from '@/lib/navigation';
 
 interface NavItemProps {
@@ -13,6 +14,7 @@ interface NavItemProps {
 }
 
 export function NavItem({ item, pathname, collapsed }: NavItemProps) {
+  const { t } = useT();
   const hasSubItems = item.items && item.items.length > 0;
   const isActive =
     pathname === item.href ||
@@ -37,7 +39,7 @@ export function NavItem({ item, pathname, collapsed }: NavItemProps) {
           {!collapsed && (
             <>
               <span className="flex-1 text-left text-sm font-medium">
-                {item.title}
+                {t(item.titleKey)}
               </span>
               <ChevronRight
                 size={16}
@@ -60,7 +62,7 @@ export function NavItem({ item, pathname, collapsed }: NavItemProps) {
                     "bg-primary-50 text-primary-700 font-medium"
                 )}
               >
-                {subItem.title}
+                {t(subItem.titleKey)}
               </Link>
             ))}
           </div>
@@ -80,7 +82,7 @@ export function NavItem({ item, pathname, collapsed }: NavItemProps) {
     >
       <Icon size={20} className="shrink-0" />
       {!collapsed && (
-        <span className="text-sm font-medium">{item.title}</span>
+        <span className="text-sm font-medium">{t(item.titleKey)}</span>
       )}
     </Link>
   );

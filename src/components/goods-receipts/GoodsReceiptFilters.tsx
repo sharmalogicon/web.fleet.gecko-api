@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { SearchInput } from '@/components/shared/SearchInput'
+import { useT } from '@/i18n/I18nContext'
 
 const STATUS_OPTIONS = ['ALL', 'RECEIVED', 'CANCELLED'] as const
 
@@ -22,6 +23,7 @@ export function GoodsReceiptFilters({
   dateTo,
 }: GoodsReceiptFiltersProps) {
   const router = useRouter()
+  const { t } = useT()
 
   const push = useCallback(
     (params: {
@@ -62,7 +64,7 @@ export function GoodsReceiptFilters({
         className="w-52"
       />
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">Status</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.status')}</label>
         <select
           value={status || 'ALL'}
           onChange={(e) => push({ status: e.target.value })}
@@ -70,13 +72,13 @@ export function GoodsReceiptFilters({
         >
           {STATUS_OPTIONS.map((s) => (
             <option key={s} value={s}>
-              {s === 'ALL' ? 'All Statuses' : s === 'RECEIVED' ? 'Received' : 'Cancelled'}
+              {s === 'ALL' ? t('common.all') : s === 'RECEIVED' ? 'Received' : 'Cancelled'}
             </option>
           ))}
         </select>
       </div>
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">Date From</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.from')}</label>
         <input
           type="date"
           value={dateFrom}
@@ -85,7 +87,7 @@ export function GoodsReceiptFilters({
         />
       </div>
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">Date To</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.to')}</label>
         <input
           type="date"
           value={dateTo}

@@ -9,6 +9,7 @@ import { DataTable } from '@/components/shared/DataTable'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { removeMockGoodsRequest } from '@/lib/mock/goods-requests'
+import { useT } from '@/i18n/I18nContext'
 
 const col = createColumnHelper<GoodsRequest>()
 
@@ -27,6 +28,7 @@ export function GoodsRequestListClient({ initialData }: GoodsRequestListClientPr
   const [deleteTarget, setDeleteTarget] = useState<GoodsRequest | null>(null)
   const router = useRouter()
   const { success, error } = useToastStore()
+  const { t } = useT()
 
   const columns = [
     col.display({
@@ -80,7 +82,7 @@ export function GoodsRequestListClient({ initialData }: GoodsRequestListClientPr
     }),
     col.display({
       id: 'status',
-      header: 'Status',
+      header: () => t('common.status'),
       cell: (info) => {
         const { status } = info.row.original
         return (
@@ -105,14 +107,14 @@ export function GoodsRequestListClient({ initialData }: GoodsRequestListClientPr
               onClick={() => router.push(`/fleet/goods-requests/${r.goodsRequestID}`)}
               className="text-xs text-blue-600 hover:underline"
             >
-              Edit
+              {t('common.edit')}
             </button>
             <button
               type="button"
               onClick={() => setDeleteTarget(r)}
               className="text-xs text-red-500 hover:underline"
             >
-              Delete
+              {t('common.delete')}
             </button>
           </div>
         )
@@ -144,7 +146,7 @@ export function GoodsRequestListClient({ initialData }: GoodsRequestListClientPr
             ? `Are you sure you want to delete "${deleteTarget.reqNo}"? This action cannot be undone.`
             : ''
         }
-        confirmLabel="Delete"
+        confirmLabel={t('common.delete')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         destructive

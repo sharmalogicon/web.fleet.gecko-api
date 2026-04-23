@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { SearchInput } from '@/components/shared/SearchInput'
+import { useT } from '@/i18n/I18nContext'
 
 const STATUS_OPTIONS = ['ALL', 'PENDING', 'COMPLETED', 'CANCELLED'] as const
 
@@ -14,6 +15,7 @@ interface PendingRecapFiltersProps {
 
 export function PendingRecapFilters({ serialNo, brand, status }: PendingRecapFiltersProps) {
   const router = useRouter()
+  const { t } = useT()
 
   const push = useCallback(
     (params: { serialNo?: string; brand?: string; status?: string }) => {
@@ -44,7 +46,7 @@ export function PendingRecapFilters({ serialNo, brand, status }: PendingRecapFil
         className="w-44"
       />
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">Status</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.status')}</label>
         <select
           value={status || 'ALL'}
           onChange={(e) => push({ status: e.target.value })}
@@ -52,7 +54,7 @@ export function PendingRecapFilters({ serialNo, brand, status }: PendingRecapFil
         >
           {STATUS_OPTIONS.map((s) => (
             <option key={s} value={s}>
-              {s === 'ALL' ? 'All Statuses' : s}
+              {s === 'ALL' ? t('common.all') : s}
             </option>
           ))}
         </select>

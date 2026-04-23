@@ -7,6 +7,7 @@ import { DataTable } from '@/components/shared/DataTable'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { removeMockEquipmentType } from '@/lib/mock/equipment-types'
+import { useT } from '@/i18n/I18nContext'
 
 const col = createColumnHelper<EquipmentTypeRecord>()
 
@@ -19,6 +20,7 @@ export function EquipmentTypeListClient({ initialData }: Props) {
   const [deleteTarget, setDeleteTarget] = useState<EquipmentTypeRecord | null>(null)
   const router = useRouter()
   const { success, error } = useToastStore()
+  const { t } = useT()
 
   const columns = [
     col.display({
@@ -100,14 +102,14 @@ export function EquipmentTypeListClient({ initialData }: Props) {
             onClick={() => router.push(`/master/equipment-types/${info.row.original.equipmentTypeSizeID}`)}
             className="text-xs text-blue-600 hover:underline"
           >
-            Edit
+            {t('common.edit')}
           </button>
           <button
             type="button"
             onClick={() => setDeleteTarget(info.row.original)}
             className="text-xs text-red-500 hover:underline"
           >
-            Delete
+            {t('common.delete')}
           </button>
         </div>
       ),
@@ -134,7 +136,7 @@ export function EquipmentTypeListClient({ initialData }: Props) {
         open={deleteTarget !== null}
         title="Delete Equipment Type"
         message={deleteTarget ? `Delete "${deleteTarget.equipmentTypeSize}"?` : ''}
-        confirmLabel="Delete"
+        confirmLabel={t('common.delete')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         destructive

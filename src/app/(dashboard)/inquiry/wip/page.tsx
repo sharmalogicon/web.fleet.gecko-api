@@ -2,6 +2,7 @@ import { getWIPInquiry } from '@/lib/data/inquiry/wip'
 import { WIPInquiryFilters } from '@/components/inquiry/WIPInquiryFilters'
 import { WIPInquiryClient } from '@/components/inquiry/WIPInquiryClient'
 import { ListPage } from '@/components/shared/ListPage'
+import { getT } from '@/i18n/server'
 
 export const metadata = { title: 'WIP Inquiry | Fleet' }
 
@@ -17,6 +18,7 @@ interface PageProps {
 
 export default async function WIPInquiryPage({ searchParams }: PageProps) {
   const params = await searchParams
+  const { t } = await getT()
   const data = await getWIPInquiry({
     workOrderNo: params.workOrderNo,
     equipmentCode: params.equipmentCode,
@@ -27,7 +29,7 @@ export default async function WIPInquiryPage({ searchParams }: PageProps) {
 
   return (
     <ListPage
-      title="WIP Inquiry"
+      title={t('nav.inquiryWIP')}
       subtitle={`${data.length} work-in-progress record${data.length !== 1 ? 's' : ''} found`}
       filters={
         <WIPInquiryFilters

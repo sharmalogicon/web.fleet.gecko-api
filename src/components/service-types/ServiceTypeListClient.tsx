@@ -8,6 +8,7 @@ import { DataTable } from '@/components/shared/DataTable'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { removeMockServiceType } from '@/lib/mock/service-types'
+import { useT } from '@/i18n/I18nContext'
 
 const col = createColumnHelper<ServiceType>()
 
@@ -20,6 +21,7 @@ export function ServiceTypeListClient({ initialData }: ServiceTypeListClientProp
   const [deleteTarget, setDeleteTarget] = useState<ServiceType | null>(null)
   const router = useRouter()
   const { success, error } = useToastStore()
+  const { t } = useT()
 
   const columns = [
     col.display({
@@ -93,14 +95,14 @@ export function ServiceTypeListClient({ initialData }: ServiceTypeListClientProp
               onClick={() => router.push(`/fleet/service-types/${s.serviceTypeID}`)}
               className="text-xs text-blue-600 hover:underline"
             >
-              Edit
+              {t('common.edit')}
             </button>
             <button
               type="button"
               onClick={() => setDeleteTarget(s)}
               className="text-xs text-red-500 hover:underline"
             >
-              Delete
+              {t('common.delete')}
             </button>
           </div>
         )
@@ -133,7 +135,7 @@ export function ServiceTypeListClient({ initialData }: ServiceTypeListClientProp
             ? `Are you sure you want to delete "${deleteTarget.code}"? This action cannot be undone.`
             : ''
         }
-        confirmLabel="Delete"
+        confirmLabel={t('common.delete')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         destructive

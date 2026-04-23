@@ -9,6 +9,7 @@ import { DataTable } from '@/components/shared/DataTable'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { removeMockTransporter } from '@/lib/mock/transporters'
+import { useT } from '@/i18n/I18nContext'
 
 const col = createColumnHelper<Transporter>()
 
@@ -21,22 +22,23 @@ export function TransporterListClient({ initialData }: TransporterListClientProp
   const [deleteTarget, setDeleteTarget] = useState<Transporter | null>(null)
   const router = useRouter()
   const { success, error } = useToastStore()
+  const { t } = useT()
 
   const columns = [
     col.display({
       id: 'transporter',
       header: 'Transporter',
       cell: (info) => {
-        const t = info.row.original
+        const tr = info.row.original
         return (
           <div className="flex flex-col gap-0.5">
             <Link
-              href={`/master/transporters/${t.transporterID}`}
+              href={`/master/transporters/${tr.transporterID}`}
               className="text-blue-600 hover:underline text-sm font-medium"
             >
-              {t.transporterName}
+              {tr.transporterName}
             </Link>
-            <span className="text-xs text-gray-400 font-mono">{t.registrationNo}</span>
+            <span className="text-xs text-gray-400 font-mono">{tr.registrationNo}</span>
           </div>
         )
       },
@@ -45,18 +47,18 @@ export function TransporterListClient({ initialData }: TransporterListClientProp
       id: 'contact',
       header: 'Contact',
       cell: (info) => {
-        const t = info.row.original
+        const tr = info.row.original
         return (
           <div className="flex flex-col gap-0.5">
-            <span className="text-sm">{t.mobileNo || '—'}</span>
-            <span className="text-xs text-gray-400">{t.emailID || '—'}</span>
+            <span className="text-sm">{tr.mobileNo || '—'}</span>
+            <span className="text-xs text-gray-400">{tr.emailID || '—'}</span>
           </div>
         )
       },
     }),
     col.display({
       id: 'status',
-      header: 'Status',
+      header: () => t('common.status'),
       size: 100,
       cell: (info) => {
         const { isActive } = info.row.original
@@ -76,22 +78,22 @@ export function TransporterListClient({ initialData }: TransporterListClientProp
       header: '',
       size: 100,
       cell: (info) => {
-        const t = info.row.original
+        const tr = info.row.original
         return (
           <div className="flex items-center gap-2 justify-end">
             <button
               type="button"
-              onClick={() => router.push(`/master/transporters/${t.transporterID}`)}
+              onClick={() => router.push(`/master/transporters/${tr.transporterID}`)}
               className="text-xs text-blue-600 hover:underline"
             >
-              Edit
+              {t('common.edit')}
             </button>
             <button
               type="button"
-              onClick={() => setDeleteTarget(t)}
+              onClick={() => setDeleteTarget(tr)}
               className="text-xs text-red-500 hover:underline"
             >
-              Delete
+              {t('common.delete')}
             </button>
           </div>
         )
@@ -124,7 +126,7 @@ export function TransporterListClient({ initialData }: TransporterListClientProp
             ? `Are you sure you want to delete "${deleteTarget.transporterName}"? This action cannot be undone.`
             : ''
         }
-        confirmLabel="Delete"
+        confirmLabel={t('common.delete')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         destructive

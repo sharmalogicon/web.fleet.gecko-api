@@ -9,6 +9,7 @@ import { DataTable } from '@/components/shared/DataTable'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { removeMockWorkOrder } from '@/lib/mock/work-orders'
+import { useT } from '@/i18n/I18nContext'
 
 const col = createColumnHelper<WorkOrder>()
 
@@ -32,6 +33,7 @@ export function WorkOrderListClient({ initialData }: WorkOrderListClientProps) {
   const [deleteTarget, setDeleteTarget] = useState<WorkOrder | null>(null)
   const router = useRouter()
   const { success, error } = useToastStore()
+  const { t } = useT()
 
   const columns = [
     col.display({
@@ -97,7 +99,7 @@ export function WorkOrderListClient({ initialData }: WorkOrderListClientProps) {
     }),
     col.display({
       id: 'status',
-      header: 'Status',
+      header: () => t('common.status'),
       cell: (info) => {
         const { status } = info.row.original
         const cls = WO_BADGE[status] ?? 'bg-gray-100 text-gray-600'
@@ -123,14 +125,14 @@ export function WorkOrderListClient({ initialData }: WorkOrderListClientProps) {
               onClick={() => router.push(`/fleet/work-orders/${r.woID}`)}
               className="text-xs text-blue-600 hover:underline"
             >
-              Edit
+              {t('common.edit')}
             </button>
             <button
               type="button"
               onClick={() => setDeleteTarget(r)}
               className="text-xs text-red-500 hover:underline"
             >
-              Delete
+              {t('common.delete')}
             </button>
           </div>
         )
@@ -163,7 +165,7 @@ export function WorkOrderListClient({ initialData }: WorkOrderListClientProps) {
             ? `Are you sure you want to delete "${deleteTarget.documentNo || `WO-${deleteTarget.woID}`}"? This action cannot be undone.`
             : ''
         }
-        confirmLabel="Delete"
+        confirmLabel={t('common.delete')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         destructive

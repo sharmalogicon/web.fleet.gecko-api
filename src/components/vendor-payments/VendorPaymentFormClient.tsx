@@ -11,6 +11,7 @@ import { FormLayout } from '@/components/shared/FormLayout'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { PaymentHeaderSection } from '@/components/vendor-payments/sections/PaymentHeaderSection'
 import { PaymentLinesSection } from '@/components/vendor-payments/sections/PaymentLinesSection'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   vendorPayment: VendorPayment
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export function VendorPaymentFormClient({ vendorPayment, vendorPaymentID, isNew }: Props) {
+  const { t } = useT()
   const [showDelete, setShowDelete] = useState(false)
   const [showApprove, setShowApprove] = useState(false)
   const [currentPayment, setCurrentPayment] = useState<VendorPayment>(vendorPayment)
@@ -111,7 +113,7 @@ export function VendorPaymentFormClient({ vendorPayment, vendorPaymentID, isNew 
                 disabled={isDeleting}
                 className="px-4 py-2 text-sm font-medium rounded-lg border border-red-300 text-red-600 hover:bg-red-50 disabled:opacity-50"
               >
-                {isDeleting ? 'Deleting…' : 'Delete'}
+                {isDeleting ? t('common.loading') : t('common.delete')}
               </button>
             )}
             {!isNew && !isApproved && (
@@ -121,7 +123,7 @@ export function VendorPaymentFormClient({ vendorPayment, vendorPaymentID, isNew 
                 disabled={isApproving}
                 className="px-4 py-2 text-sm font-medium rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50"
               >
-                {isApproving ? 'Approving…' : 'Approve'}
+                {isApproving ? t('common.loading') : t('common.approve')}
               </button>
             )}
             <button
@@ -129,7 +131,7 @@ export function VendorPaymentFormClient({ vendorPayment, vendorPaymentID, isNew 
               onClick={() => router.back()}
               className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="button"
@@ -137,7 +139,7 @@ export function VendorPaymentFormClient({ vendorPayment, vendorPaymentID, isNew 
               disabled={isSaving || !isDirty || isApproved}
               className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSaving ? 'Saving…' : 'Save'}
+              {isSaving ? t('common.loading') : t('common.save')}
             </button>
           </div>
         }

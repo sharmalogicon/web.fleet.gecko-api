@@ -11,6 +11,7 @@ import { FormLayout } from '@/components/shared/FormLayout'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { RequisitionHeaderSection } from '@/components/goods-requisitions/sections/RequisitionHeaderSection'
 import { RequisitionLinesSection } from '@/components/goods-requisitions/sections/RequisitionLinesSection'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   goodsRequisition: GoodsRequisition
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export function GoodsRequisitionFormClient({ goodsRequisition, goodsRequisitionID, isNew }: Props) {
+  const { t } = useT()
   const [showDelete, setShowDelete] = useState(false)
   const router = useRouter()
   const { isSaving, isDeleting, save, remove } = useGoodsRequisition(goodsRequisitionID)
@@ -100,7 +102,7 @@ export function GoodsRequisitionFormClient({ goodsRequisition, goodsRequisitionI
                 disabled={isDeleting}
                 className="px-4 py-2 text-sm font-medium rounded-lg border border-red-300 text-red-600 hover:bg-red-50 disabled:opacity-50"
               >
-                {isDeleting ? 'Deleting…' : 'Delete'}
+                {isDeleting ? t('common.loading') : t('common.delete')}
               </button>
             )}
             <button
@@ -108,7 +110,7 @@ export function GoodsRequisitionFormClient({ goodsRequisition, goodsRequisitionI
               onClick={() => router.back()}
               className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="button"
@@ -116,7 +118,7 @@ export function GoodsRequisitionFormClient({ goodsRequisition, goodsRequisitionI
               disabled={isSaving || !isDirty}
               className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSaving ? 'Saving…' : 'Save'}
+              {isSaving ? t('common.loading') : t('common.save')}
             </button>
           </div>
         }

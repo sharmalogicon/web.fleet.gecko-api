@@ -4,6 +4,7 @@ import { SearchInput } from '@/components/shared/SearchInput'
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { SERVICE_CATEGORIES } from '@/types/service-type'
+import { useT } from '@/i18n/I18nContext'
 
 interface ServiceTypeFiltersProps {
   search: string
@@ -12,6 +13,7 @@ interface ServiceTypeFiltersProps {
 
 export function ServiceTypeFilters({ search, category }: ServiceTypeFiltersProps) {
   const router = useRouter()
+  const { t } = useT()
 
   const push = useCallback(
     (params: { search?: string; category?: string }) => {

@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { SearchInput } from '@/components/shared/SearchInput'
+import { useT } from '@/i18n/I18nContext'
 
 const STATUS_OPTIONS = ['ALL', 'DRAFT', 'APPROVED', 'CANCELLED'] as const
 
@@ -13,6 +14,7 @@ interface GoodsRequisitionFiltersProps {
 
 export function GoodsRequisitionFilters({ documentNo, status }: GoodsRequisitionFiltersProps) {
   const router = useRouter()
+  const { t } = useT()
 
   const push = useCallback(
     (params: { documentNo?: string; status?: string }) => {
@@ -35,7 +37,7 @@ export function GoodsRequisitionFilters({ documentNo, status }: GoodsRequisition
         className="w-64"
       />
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">Status</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.status')}</label>
         <select
           value={status || 'ALL'}
           onChange={(e) => push({ status: e.target.value })}
@@ -43,7 +45,7 @@ export function GoodsRequisitionFilters({ documentNo, status }: GoodsRequisition
         >
           {STATUS_OPTIONS.map((s) => (
             <option key={s} value={s}>
-              {s === 'ALL' ? 'All Statuses' : s}
+              {s === 'ALL' ? t('common.all') : s}
             </option>
           ))}
         </select>

@@ -4,6 +4,7 @@ import { ServiceTypeListClient } from '@/components/service-types/ServiceTypeLis
 import { ServiceTypeFilters } from '@/components/service-types/ServiceTypeFilters'
 import { ListPage } from '@/components/shared/ListPage'
 import Link from 'next/link'
+import { getT } from '@/i18n/server'
 
 export const metadata = { title: 'Service Types | Fleet' }
 
@@ -13,20 +14,21 @@ interface PageProps {
 
 export default async function ServiceTypesPage({ searchParams }: PageProps) {
   const params = await searchParams
+  const { t } = await getT()
   const serviceTypes = await getServiceTypes({
     search: params.search,
     category: params.category,
   })
   return (
     <ListPage
-      title="Service Types"
+      title={t('nav.serviceTypes')}
       subtitle={`${serviceTypes.length} service type${serviceTypes.length !== 1 ? 's' : ''} found`}
       actions={
         <Link
           href="/fleet/service-types/new"
           className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700"
         >
-          + New Service Type
+          + {t('nav.serviceTypes')}
         </Link>
       }
       filters={

@@ -8,6 +8,7 @@ import { DataTable } from '@/components/shared/DataTable'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { removeMockAccidentReport } from '@/lib/mock/accident-reports'
+import { useT } from '@/i18n/I18nContext'
 
 const col = createColumnHelper<AccidentReport>()
 
@@ -28,6 +29,7 @@ export function AccidentListClient({ initialData }: AccidentListClientProps) {
   const [deleteTarget, setDeleteTarget] = useState<AccidentReport | null>(null)
   const router = useRouter()
   const { success, error } = useToastStore()
+  const { t } = useT()
 
   const columns = [
     col.display({
@@ -127,14 +129,14 @@ export function AccidentListClient({ initialData }: AccidentListClientProps) {
                 onClick={() => router.push(`/fleet/accidents/${r.accidentID}`)}
                 className="text-xs text-blue-600 hover:underline"
               >
-                Edit
+                {t('common.edit')}
               </button>
               <button
                 type="button"
                 onClick={() => setDeleteTarget(r)}
                 className="text-xs text-red-500 hover:underline"
               >
-                Delete
+                {t('common.delete')}
               </button>
             </div>
           </div>
@@ -167,7 +169,7 @@ export function AccidentListClient({ initialData }: AccidentListClientProps) {
             ? `Are you sure you want to delete "${deleteTarget.documentNo}"? This action cannot be undone.`
             : ''
         }
-        confirmLabel="Delete"
+        confirmLabel={t('common.delete')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         destructive

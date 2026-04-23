@@ -8,6 +8,7 @@ import { DataTable } from '@/components/shared/DataTable'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { removeMockFuelLog } from '@/lib/mock/fuel-logs'
+import { useT } from '@/i18n/I18nContext'
 
 const col = createColumnHelper<FuelLog>()
 
@@ -31,6 +32,7 @@ export function FuelLogListClient({ initialData }: FuelLogListClientProps) {
   const [deleteTarget, setDeleteTarget] = useState<FuelLog | null>(null)
   const router = useRouter()
   const { success, error } = useToastStore()
+  const { t } = useT()
 
   const columns = [
     col.display({
@@ -100,7 +102,7 @@ export function FuelLogListClient({ initialData }: FuelLogListClientProps) {
     }),
     col.display({
       id: 'status',
-      header: 'Status',
+      header: () => t('common.status'),
       cell: (info) => {
         const { isApproved } = info.row.original
         return (
@@ -127,14 +129,14 @@ export function FuelLogListClient({ initialData }: FuelLogListClientProps) {
               onClick={() => router.push(`/fleet/fuel-logs/${r.fuelLogID}`)}
               className="text-xs text-blue-600 hover:underline"
             >
-              Edit
+              {t('common.edit')}
             </button>
             <button
               type="button"
               onClick={() => setDeleteTarget(r)}
               className="text-xs text-red-500 hover:underline"
             >
-              Delete
+              {t('common.delete')}
             </button>
           </div>
         )
@@ -167,7 +169,7 @@ export function FuelLogListClient({ initialData }: FuelLogListClientProps) {
             ? `Are you sure you want to delete "${deleteTarget.voucherNo || `FL-${deleteTarget.fuelLogID}`}"? This action cannot be undone.`
             : ''
         }
-        confirmLabel="Delete"
+        confirmLabel={t('common.delete')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         destructive

@@ -4,6 +4,7 @@ import { getTrafficViolations } from '@/lib/data/traffic-violations'
 import { ViolationListClient } from '@/components/traffic-violations/ViolationListClient'
 import { ViolationFilters } from '@/components/traffic-violations/ViolationFilters'
 import { ListPage } from '@/components/shared/ListPage'
+import { getT } from '@/i18n/server'
 
 export const metadata = { title: 'Traffic Violations | Fleet' }
 
@@ -19,6 +20,7 @@ interface PageProps {
 
 export default async function TrafficViolationsPage({ searchParams }: PageProps) {
   const params = await searchParams
+  const { t } = await getT()
   const violations = await getTrafficViolations({
     ticketNo: params.ticketNo,
     equipmentCode: params.equipmentCode,
@@ -29,14 +31,14 @@ export default async function TrafficViolationsPage({ searchParams }: PageProps)
 
   return (
     <ListPage
-      title="Traffic Violations"
+      title={t('nav.trafficViolations')}
       subtitle={`${violations.length} record${violations.length !== 1 ? 's' : ''} found`}
       actions={
         <Link
           href="/fleet/traffic-violations/new"
           className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700"
         >
-          + New Traffic Violation
+          + {t('nav.trafficViolations')}
         </Link>
       }
       filters={

@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { SearchInput } from '@/components/shared/SearchInput'
+import { useT } from '@/i18n/I18nContext'
 
 const TYPE_OPTIONS = ['ALL', 'INCREASE', 'DECREASE', 'TRANSFER', 'WRITE_OFF'] as const
 
@@ -20,6 +21,7 @@ export function AdjustmentFilters({
   dateTo,
 }: AdjustmentFiltersProps) {
   const router = useRouter()
+  const { t } = useT()
 
   const push = useCallback(
     (params: {
@@ -69,7 +71,7 @@ export function AdjustmentFilters({
         </select>
       </div>
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">Date From</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.from')}</label>
         <input
           type="date"
           value={dateFrom}
@@ -78,7 +80,7 @@ export function AdjustmentFilters({
         />
       </div>
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">Date To</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.to')}</label>
         <input
           type="date"
           value={dateTo}

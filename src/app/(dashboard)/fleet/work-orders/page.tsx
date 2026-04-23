@@ -4,6 +4,7 @@ import { WorkOrderListClient } from '@/components/work-orders/WorkOrderListClien
 import { WorkOrderFilters } from '@/components/work-orders/WorkOrderFilters'
 import { ListPage } from '@/components/shared/ListPage'
 import Link from 'next/link'
+import { getT } from '@/i18n/server'
 
 export const metadata = { title: 'Work Orders | Fleet' }
 
@@ -19,6 +20,7 @@ interface PageProps {
 
 export default async function WorkOrdersPage({ searchParams }: PageProps) {
   const params = await searchParams
+  const { t } = await getT()
   const workOrders = await getWorkOrders({
     documentNo: params.documentNo,
     status: params.status,
@@ -29,14 +31,14 @@ export default async function WorkOrdersPage({ searchParams }: PageProps) {
 
   return (
     <ListPage
-      title="Work Orders"
+      title={t('nav.workOrders')}
       subtitle={`${workOrders.length} work order${workOrders.length !== 1 ? 's' : ''} found`}
       actions={
         <Link
           href="/fleet/work-orders/new"
           className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700"
         >
-          + New Work Order
+          + {t('nav.workOrders')}
         </Link>
       }
       filters={

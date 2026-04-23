@@ -3,6 +3,7 @@
 import { SearchInput } from '@/components/shared/SearchInput'
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
+import { useT } from '@/i18n/I18nContext'
 
 const STATUSES = ['ALL', 'ACTIVE', 'INACTIVE'] as const
 const CATEGORIES = ['ALL', 'PARTS', 'LUBRICANT', 'CONSUMABLE', 'TYRE'] as const
@@ -15,6 +16,7 @@ interface StockFiltersProps {
 
 export function StockFilters({ search, status, category }: StockFiltersProps) {
   const router = useRouter()
+  const { t } = useT()
 
   const push = useCallback(
     (params: { search?: string; status?: string; category?: string }) => {
@@ -39,7 +41,7 @@ export function StockFilters({ search, status, category }: StockFiltersProps) {
         className="w-64"
       />
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">Status</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.status')}</label>
         <select
           value={status || 'ALL'}
           onChange={(e) => push({ status: e.target.value })}
@@ -47,7 +49,7 @@ export function StockFilters({ search, status, category }: StockFiltersProps) {
         >
           {STATUSES.map((s) => (
             <option key={s} value={s}>
-              {s === 'ALL' ? 'All Statuses' : s}
+              {s === 'ALL' ? t('common.all') : s}
             </option>
           ))}
         </select>

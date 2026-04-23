@@ -8,6 +8,7 @@ import { DataTable } from '@/components/shared/DataTable'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { removeMockMeterHrLog } from '@/lib/mock/meter-hr-logs'
+import { useT } from '@/i18n/I18nContext'
 
 const col = createColumnHelper<MeterHrLog>()
 
@@ -26,6 +27,7 @@ export function MeterHrLogListClient({ initialData }: MeterHrLogListClientProps)
   const [deleteTarget, setDeleteTarget] = useState<MeterHrLog | null>(null)
   const router = useRouter()
   const { success, error } = useToastStore()
+  const { t } = useT()
 
   const columns = [
     col.display({
@@ -105,14 +107,14 @@ export function MeterHrLogListClient({ initialData }: MeterHrLogListClientProps)
               onClick={() => router.push(`/fleet/meter-hr-logs/${r.meterHrLogID}`)}
               className="text-xs text-blue-600 hover:underline"
             >
-              Edit
+              {t('common.edit')}
             </button>
             <button
               type="button"
               onClick={() => setDeleteTarget(r)}
               className="text-xs text-red-500 hover:underline"
             >
-              Delete
+              {t('common.delete')}
             </button>
           </div>
         )
@@ -145,7 +147,7 @@ export function MeterHrLogListClient({ initialData }: MeterHrLogListClientProps)
             ? `Are you sure you want to delete "${deleteTarget.sequenceNo || `MH-${deleteTarget.meterHrLogID}`}"? This action cannot be undone.`
             : ''
         }
-        confirmLabel="Delete"
+        confirmLabel={t('common.delete')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         destructive

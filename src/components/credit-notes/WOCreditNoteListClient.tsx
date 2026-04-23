@@ -8,6 +8,7 @@ import { DataTable } from '@/components/shared/DataTable'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { removeMockWOCreditNote } from '@/lib/mock/wo-credit-notes'
+import { useT } from '@/i18n/I18nContext'
 
 const col = createColumnHelper<WOCreditNote>()
 
@@ -46,6 +47,7 @@ export function WOCreditNoteListClient({ initialData }: WOCreditNoteListClientPr
   const [deleteTarget, setDeleteTarget] = useState<WOCreditNote | null>(null)
   const router = useRouter()
   const { success, error } = useToastStore()
+  const { t } = useT()
 
   const columns: import('@tanstack/react-table').ColumnDef<WOCreditNote, any>[] = [
     col.display({
@@ -101,7 +103,7 @@ export function WOCreditNoteListClient({ initialData }: WOCreditNoteListClientPr
     }),
     col.display({
       id: 'statusActions',
-      header: 'Status',
+      header: () => t('common.status'),
       size: 130,
       cell: (info) => {
         const r = info.row.original
@@ -114,14 +116,14 @@ export function WOCreditNoteListClient({ initialData }: WOCreditNoteListClientPr
                 onClick={() => router.push(`/invoice/credit-notes/wo/${r.woCreditNoteID}`)}
                 className="text-xs text-blue-600 hover:underline"
               >
-                Edit
+                {t('common.edit')}
               </button>
               <button
                 type="button"
                 onClick={() => setDeleteTarget(r)}
                 className="text-xs text-red-500 hover:underline"
               >
-                Delete
+                {t('common.delete')}
               </button>
             </div>
           </div>
@@ -154,7 +156,7 @@ export function WOCreditNoteListClient({ initialData }: WOCreditNoteListClientPr
             ? `Are you sure you want to delete "${deleteTarget.creditNoteNo}"? This action cannot be undone.`
             : ''
         }
-        confirmLabel="Delete"
+        confirmLabel={t('common.delete')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         destructive

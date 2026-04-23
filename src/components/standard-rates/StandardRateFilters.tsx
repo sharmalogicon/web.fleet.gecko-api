@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { SearchInput } from '@/components/shared/SearchInput'
+import { useT } from '@/i18n/I18nContext'
 
 interface StandardRateFiltersProps {
   rateCode: string
@@ -16,6 +17,7 @@ export function StandardRateFilters({
   status,
 }: StandardRateFiltersProps) {
   const router = useRouter()
+  const { t } = useT()
 
   const push = useCallback(
     (params: {
@@ -50,13 +52,13 @@ export function StandardRateFilters({
         className="w-48"
       />
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">Status</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.status')}</label>
         <select
           value={status}
           onChange={(e) => push({ status: e.target.value })}
           className="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          <option value="">All</option>
+          <option value="">{t('common.all')}</option>
           <option value="draft">Draft</option>
           <option value="approved">Approved</option>
         </select>

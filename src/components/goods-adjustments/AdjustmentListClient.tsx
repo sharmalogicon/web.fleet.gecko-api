@@ -9,6 +9,7 @@ import { DataTable } from '@/components/shared/DataTable'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { removeMockGoodsAdjustment } from '@/lib/mock/goods-adjustments'
+import { useT } from '@/i18n/I18nContext'
 
 const col = createColumnHelper<GoodsAdjustment>()
 
@@ -44,6 +45,7 @@ export function AdjustmentListClient({ initialData }: AdjustmentListClientProps)
   const [deleteTarget, setDeleteTarget] = useState<GoodsAdjustment | null>(null)
   const router = useRouter()
   const { success, error } = useToastStore()
+  const { t } = useT()
 
   const columns = [
     col.display({
@@ -96,7 +98,7 @@ export function AdjustmentListClient({ initialData }: AdjustmentListClientProps)
     }),
     col.display({
       id: 'actions',
-      header: 'Actions',
+      header: '',
       size: 100,
       cell: (info) => {
         const r = info.row.original
@@ -107,14 +109,14 @@ export function AdjustmentListClient({ initialData }: AdjustmentListClientProps)
               onClick={() => router.push(`/fleet/goods-adjustments/${r.adjustmentID}`)}
               className="text-xs text-blue-600 hover:underline"
             >
-              Edit
+              {t('common.edit')}
             </button>
             <button
               type="button"
               onClick={() => setDeleteTarget(r)}
               className="text-xs text-red-500 hover:underline"
             >
-              Delete
+              {t('common.delete')}
             </button>
           </div>
         )
@@ -146,7 +148,7 @@ export function AdjustmentListClient({ initialData }: AdjustmentListClientProps)
             ? `Are you sure you want to delete "${deleteTarget.documentNo}"? This action cannot be undone.`
             : ''
         }
-        confirmLabel="Delete"
+        confirmLabel={t('common.delete')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         destructive

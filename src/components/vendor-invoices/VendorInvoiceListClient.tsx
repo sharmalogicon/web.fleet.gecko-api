@@ -8,6 +8,7 @@ import { DataTable } from '@/components/shared/DataTable'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { removeMockVendorInvoice } from '@/lib/mock/vendor-invoices'
+import { useT } from '@/i18n/I18nContext'
 
 const col = createColumnHelper<VendorInvoice>()
 
@@ -46,6 +47,7 @@ export function VendorInvoiceListClient({ initialData }: VendorInvoiceListClient
   const [deleteTarget, setDeleteTarget] = useState<VendorInvoice | null>(null)
   const router = useRouter()
   const { success, error } = useToastStore()
+  const { t } = useT()
 
   const columns: import('@tanstack/react-table').ColumnDef<VendorInvoice, any>[] = [
     col.display({
@@ -116,7 +118,7 @@ export function VendorInvoiceListClient({ initialData }: VendorInvoiceListClient
     }),
     col.display({
       id: 'statusActions',
-      header: 'Status',
+      header: () => t('common.status'),
       size: 130,
       cell: (info) => {
         const r = info.row.original
@@ -130,7 +132,7 @@ export function VendorInvoiceListClient({ initialData }: VendorInvoiceListClient
                 onClick={() => router.push(`/invoice/vendor/${r.vendorInvoiceID}`)}
                 className="text-xs text-blue-600 hover:underline"
               >
-                Edit
+                {t('common.edit')}
               </button>
               {canDelete && (
                 <button
@@ -138,7 +140,7 @@ export function VendorInvoiceListClient({ initialData }: VendorInvoiceListClient
                   onClick={() => setDeleteTarget(r)}
                   className="text-xs text-red-500 hover:underline"
                 >
-                  Delete
+                  {t('common.delete')}
                 </button>
               )}
             </div>
@@ -172,7 +174,7 @@ export function VendorInvoiceListClient({ initialData }: VendorInvoiceListClient
             ? `Are you sure you want to delete "${deleteTarget.documentNo}"? This action cannot be undone.`
             : ''
         }
-        confirmLabel="Delete"
+        confirmLabel={t('common.delete')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         destructive

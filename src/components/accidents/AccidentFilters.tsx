@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { SearchInput } from '@/components/shared/SearchInput'
+import { useT } from '@/i18n/I18nContext'
 import type { AccidentType } from '@/types/accident-report'
 
 const ACCIDENT_TYPES: AccidentType[] = ['COLLISION', 'ROLLOVER', 'FIRE', 'THEFT', 'OTHER']
@@ -23,6 +24,7 @@ export function AccidentFilters({
   dateTo,
 }: AccidentFiltersProps) {
   const router = useRouter()
+  const { t } = useT()
 
   const push = useCallback(
     (params: {
@@ -78,7 +80,7 @@ export function AccidentFilters({
         </select>
       </div>
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">From</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.from')}</label>
         <input
           type="date"
           value={dateFrom}
@@ -87,7 +89,7 @@ export function AccidentFilters({
         />
       </div>
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">To</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.to')}</label>
         <input
           type="date"
           value={dateTo}

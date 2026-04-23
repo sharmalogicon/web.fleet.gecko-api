@@ -12,6 +12,7 @@ import {
   type ColumnFiltersState,
 } from '@tanstack/react-table'
 import { useState } from 'react'
+import { useT } from '@/i18n/I18nContext'
 
 interface DataTableProps<TData> {
   data: TData[]
@@ -21,6 +22,7 @@ interface DataTableProps<TData> {
 }
 
 export function DataTable<TData>({ data, columns, pageSize = 15 }: DataTableProps<TData>) {
+  const { t } = useT()
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
@@ -87,7 +89,7 @@ export function DataTable<TData>({ data, columns, pageSize = 15 }: DataTableProp
                   colSpan={columns.length}
                   className="px-4 py-12 text-center text-sm text-gray-400"
                 >
-                  No records found
+                  {t('common.noRecords')}
                 </td>
               </tr>
             ) : (
@@ -111,7 +113,7 @@ export function DataTable<TData>({ data, columns, pageSize = 15 }: DataTableProp
       {/* Pagination */}
       <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 bg-gray-50">
         <p className="text-xs text-gray-500">
-          {totalRows === 0 ? 'No records' : `${from}–${to} of ${totalRows} records`}
+          {totalRows === 0 ? t('common.noRecords') : `${from}–${to} of ${totalRows} records`}
         </p>
         <div className="flex items-center gap-1">
           <button

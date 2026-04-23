@@ -2,15 +2,17 @@ import Link from 'next/link'
 import { getFuelLogs } from '@/lib/data/fuel-logs'
 import { FuelLogApprovalClient } from '@/components/fuel-logs/FuelLogApprovalClient'
 import { ListPage } from '@/components/shared/ListPage'
+import { getT } from '@/i18n/server'
 
 export const metadata = { title: 'Fuel Log Approval | Fleet' }
 
 export default async function FuelLogApprovalPage() {
+  const { t } = await getT()
   const pendingLogs = await getFuelLogs({ status: 'PENDING' })
 
   return (
     <ListPage
-      title="Fuel Log Approval"
+      title={t('nav.fuelApproval')}
       subtitle={`${pendingLogs.length} pending fuel log${pendingLogs.length !== 1 ? 's' : ''} awaiting approval`}
       actions={
         <Link

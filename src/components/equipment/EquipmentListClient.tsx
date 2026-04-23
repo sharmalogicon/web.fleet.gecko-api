@@ -9,6 +9,7 @@ import { StatusBadge } from '@/components/shared/StatusBadge'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { removeMockEquipment } from '@/lib/mock/equipment'
+import { useT } from '@/i18n/I18nContext'
 
 const col = createColumnHelper<Equipment>()
 
@@ -21,6 +22,7 @@ export function EquipmentListClient({ initialData }: EquipmentListClientProps) {
   const [deleteTarget, setDeleteTarget] = useState<Equipment | null>(null)
   const router = useRouter()
   const { success, error } = useToastStore()
+  const { t } = useT()
 
   const columns = [
     col.display({
@@ -73,7 +75,7 @@ export function EquipmentListClient({ initialData }: EquipmentListClientProps) {
       },
     }),
     col.accessor('status', {
-      header: 'Status',
+      header: () => t('common.status'),
       size: 130,
       cell: (info) => <StatusBadge status={info.getValue()} />,
     }),
@@ -88,14 +90,14 @@ export function EquipmentListClient({ initialData }: EquipmentListClientProps) {
             onClick={() => router.push(`/master/equipment/${info.row.original.equipmentID}`)}
             className="text-xs text-blue-600 hover:underline"
           >
-            Edit
+            {t('common.edit')}
           </button>
           <button
             type="button"
             onClick={() => setDeleteTarget(info.row.original)}
             className="text-xs text-red-500 hover:underline"
           >
-            Delete
+            {t('common.delete')}
           </button>
         </div>
       ),
@@ -127,7 +129,7 @@ export function EquipmentListClient({ initialData }: EquipmentListClientProps) {
             ? `Are you sure you want to delete "${deleteTarget.code}"? This action cannot be undone.`
             : ''
         }
-        confirmLabel="Delete"
+        confirmLabel={t('common.delete')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         destructive

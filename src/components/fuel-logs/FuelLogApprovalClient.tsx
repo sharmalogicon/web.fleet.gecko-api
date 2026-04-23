@@ -6,6 +6,7 @@ import type { FuelLog } from '@/types/fuel-log'
 import { DataTable } from '@/components/shared/DataTable'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { upsertMockFuelLog } from '@/lib/mock/fuel-logs'
+import { useT } from '@/i18n/I18nContext'
 
 const col = createColumnHelper<FuelLog>()
 
@@ -25,6 +26,7 @@ interface FuelLogApprovalClientProps {
 }
 
 export function FuelLogApprovalClient({ initialData }: FuelLogApprovalClientProps) {
+  const { t } = useT()
   const [data, setData] = useState<FuelLog[]>(initialData)
   const { success, error } = useToastStore()
 
@@ -124,7 +126,7 @@ export function FuelLogApprovalClient({ initialData }: FuelLogApprovalClientProp
               onClick={() => handleApprove(r)}
               className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors"
             >
-              Approve
+              {t('common.approve')}
             </button>
           </div>
         )

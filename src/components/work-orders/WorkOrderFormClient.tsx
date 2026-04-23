@@ -13,6 +13,7 @@ import { WOGeneralSection } from '@/components/work-orders/sections/WOGeneralSec
 import { WOServicesSection } from '@/components/work-orders/sections/WOServicesSection'
 import { WOPartsSection } from '@/components/work-orders/sections/WOPartsSection'
 import { WOLaborSection } from '@/components/work-orders/sections/WOLaborSection'
+import { useT } from '@/i18n/I18nContext'
 
 interface Props {
   workOrder: WorkOrder | WorkOrderFormValues
@@ -21,6 +22,7 @@ interface Props {
 }
 
 export function WorkOrderFormClient({ workOrder, woID, isNew }: Props) {
+  const { t } = useT()
   const [showDelete, setShowDelete] = useState(false)
   const router = useRouter()
   const { isSaving, isDeleting, save, remove } = useWorkOrder(woID)
@@ -104,7 +106,7 @@ export function WorkOrderFormClient({ workOrder, woID, isNew }: Props) {
                 disabled={isDeleting}
                 className="px-4 py-2 text-sm font-medium rounded-lg border border-red-300 text-red-600 hover:bg-red-50 disabled:opacity-50"
               >
-                {isDeleting ? 'Deleting…' : 'Delete'}
+                {isDeleting ? t('common.loading') : t('common.delete')}
               </button>
             )}
             <button
@@ -112,7 +114,7 @@ export function WorkOrderFormClient({ workOrder, woID, isNew }: Props) {
               onClick={() => router.back()}
               className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="button"
@@ -120,7 +122,7 @@ export function WorkOrderFormClient({ workOrder, woID, isNew }: Props) {
               disabled={isSaving || !isDirty}
               className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSaving ? 'Saving…' : 'Save'}
+              {isSaving ? t('common.loading') : t('common.save')}
             </button>
           </div>
         }

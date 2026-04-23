@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { SearchInput } from '@/components/shared/SearchInput'
+import { useT } from '@/i18n/I18nContext'
 
 const WO_TYPES = ['ALL', 'REPAIR', 'SERVICE', 'INSPECTION'] as const
 const WO_STATUSES = ['ALL', 'OPEN', 'IN_PROGRESS', 'COMPLETED', 'INVOICED', 'CANCELLED'] as const
@@ -25,6 +26,7 @@ export function WOInquiryFilters({
   dateTo,
 }: WOInquiryFiltersProps) {
   const router = useRouter()
+  const { t } = useT()
 
   const push = useCallback(
     (overrides: Partial<WOInquiryFiltersProps>) => {
@@ -73,19 +75,19 @@ export function WOInquiryFilters({
         </select>
       </div>
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">Status</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.status')}</label>
         <select
           value={status || 'ALL'}
           onChange={(e) => push({ status: e.target.value })}
           className="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           {WO_STATUSES.map((s) => (
-            <option key={s} value={s}>{s === 'ALL' ? 'All Statuses' : s.replace('_', ' ')}</option>
+            <option key={s} value={s}>{s === 'ALL' ? t('common.all') : s.replace('_', ' ')}</option>
           ))}
         </select>
       </div>
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">Date From</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.from')}</label>
         <input
           type="date"
           value={dateFrom}
@@ -94,7 +96,7 @@ export function WOInquiryFilters({
         />
       </div>
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-500">Date To</label>
+        <label className="text-xs font-medium text-gray-500">{t('common.to')}</label>
         <input
           type="date"
           value={dateTo}
