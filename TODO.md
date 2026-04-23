@@ -103,19 +103,18 @@
 ## Phase 5 — Tire & Incident Management
 
 ### Tire
-- ⬜ `/fleet/tires/profiles` — Tire profile list/form
-- ⬜ `/fleet/tires/changes/[id]` — Tire change record
-- ⬜ `/fleet/tires/maintenance/[id]` — Tire maintenance record
-- ⬜ `/fleet/tires/pending-recap` — Pending tire recap list
+- ✅ `/fleet/tires/profiles` — Tire profile list (Serial/Brand, Size/Model, Status/Condition, Equipment, Actions) + 4-tab form (General, Mileage & Recap, Purchase Info, Equipment Installation)
+- ✅ `/fleet/tires/changes` — Tire change list + form (header + read-only swap lines)
+- ✅ `/fleet/tires/maintenance` — Tire maintenance list + form (header + read-only maintenance lines with INSPECTION/REPAIR/RETREAD types)
+- ✅ `/fleet/tires/pending-recap` — Pending tire recap read-only monitoring list
 
 ### Incidents
-- ⬜ `/fleet/accidents` — Accident report list
-- ⬜ `/fleet/accidents/[id]` — Accident report form
-- ⬜ `/fleet/accidents/[id]/images` — Accident photo gallery
-- ⬜ `/fleet/accidents/[id]/location` — Accident location (map/address)
-- ⬜ `/fleet/insurance-claims` — Insurance claim list
-- ⬜ `/fleet/insurance-claims/[id]` — Insurance claim form + detail lines
-- ⬜ `/fleet/traffic-violations/[id]` — Traffic violation record
+- ✅ `/fleet/accidents` — Accident report list (Doc No/Date, Equipment/Driver, Type/Location, Insurance, Claimable badge)
+- ✅ `/fleet/accidents/[id]` — Accident report form (3 sections: General Info, Location Details, Photos)
+- ✅ `/fleet/accidents/[id]` images tab — Placeholder photo grid (upload disabled in mock mode)
+- ✅ `/fleet/accidents/[id]` location tab — Address, city, country fields
+- ✅ `/fleet/insurance-claims` — Insurance claim list + form + read-only line items (Activity/Parts)
+- ✅ `/fleet/traffic-violations` — Traffic violation list + form (SPEEDING/PARKING/RED_LIGHT/NO_SEATBELT/OTHER)
 
 ---
 
@@ -205,10 +204,10 @@
 | ✅ 2 | Master Data | 14 | 12 |
 | ✅ 3 | Fleet Operations (Work) | 10 | 9 |
 | ✅ 4 | Fuel, Meters & Inventory | 20 | 20 |
-| ⬜ 5 | Tire & Incidents | 11 | 0 |
+| ✅ 5 | Tire & Incidents | 11 | 11 |
 | ⬜ 6 | Tariff | 5 | 0 |
 | ⬜ 7 | Invoice | 9 | 0 |
 | ⬜ 8 | Inquiry | 5 | 0 |
 | ⬜ 9 | Reports | 3 | 0 |
 | ⬜ 10 | Shared Components + i18n | — | partial |
-| | **Total** | **78** | **42** |
+| | **Total** | **78** | **53** |
