@@ -97,6 +97,9 @@ export const NAVIGATION: NavItem[] = [
     icon: Circle,
     items: [
       { title: 'Tire Profiles', titleKey: 'nav.tireProfiles', href: '/fleet/tires/profiles' },
+      { title: 'Tire Axle Map', titleKey: 'nav.tireAxleMap', href: '/fleet/tires/axle-map' },
+      { title: 'Tire Axle Map 3D', titleKey: 'nav.tireAxleMap3d', href: '/fleet/tires/axle-map-3d' },
+      { title: 'Tire Bay', titleKey: 'nav.tireBay', href: '/fleet/tires/bay' },
       { title: 'Tire Changes', titleKey: 'nav.tireChanges', href: '/fleet/tires/changes' },
       { title: 'Tire Maintenance', titleKey: 'nav.tireMaintenance', href: '/fleet/tires/maintenance' },
       { title: 'Pending Recap', titleKey: 'nav.pendingRecap', href: '/fleet/tires/pending-recap' },

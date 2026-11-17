@@ -252,7 +252,10 @@
     "inquiryTruckMovements": "Truck Movements",
     "reports": "Reports",
     "managementReports": "Management Reports",
-    "operationsReports": "Operations Reports"
+    "operationsReports": "Operations Reports",
+    "tireAxleMap": "Tire Axle Map",
+    "tireBay": "Tire Bay",
+    "tireAxleMap3d": "Tire Axle Map 3D"
   },
   "driver": {
     "title": "Drivers",
@@ -317,5 +320,144 @@
     "exportPDF": "Export PDF",
     "exportExcel": "Export Excel",
     "noSelection": "Select a report and click Generate to preview"
+  },
+  "tireMap": {
+    "title": "Tire Axle Map",
+    "subtitle": "Drag tires from stock onto the chassis to fit, between positions to rotate, or back to stock to remove.",
+    "diagramLabel": "Vehicle tire positions, top-down view",
+    "front": "FRONT",
+    "left": "L",
+    "right": "R",
+    "vehicle": "Vehicle",
+    "position": "Position",
+    "spare": "Spare",
+    "spares": "Spares",
+    "empty": "Empty",
+    "axle": {
+      "steer": "STEER",
+      "drive": "DRIVE",
+      "trailer": "TRAILER",
+      "lift": "LIFT"
+    },
+    "configs": {
+      "rigid4x2": "4×2 rigid truck",
+      "tractor6x4": "6×4 tractor head",
+      "rigid8x4": "8×4 rigid truck",
+      "trailer3": "Tri-axle chassis / trailer"
+    },
+    "inventory": "Tire stock",
+    "inventoryHint": "Drag onto a position, or click to pick then click a position.",
+    "searchPlaceholder": "Serial, brand, size…",
+    "fitsOnly": "Fits vehicle",
+    "noStock": "No tires match.",
+    "dropToRemove": "Drop here to remove the tire",
+    "filter": {
+      "all": "All",
+      "new": "New",
+      "recap": "Recap"
+    },
+    "selectPosition": "Select a position",
+    "selectPositionHint": "Click a tire on the chassis to see its history, measurements and actions.",
+    "emptyHint": "No tire fitted. Drag one from stock onto this position.",
+    "installArmed": "Install {serial} here",
+    "armedHint": "{serial} picked — click an empty position to install it.",
+    "health": {
+      "good": "Good",
+      "warning": "Monitor",
+      "critical": "Replace"
+    },
+    "legend": {
+      "good": "≥ 7 mm",
+      "warning": "4–7 mm",
+      "critical": "< 4 mm",
+      "pressure": "Pressure ±10%"
+    },
+    "treadDepth": "Tread depth",
+    "wornPct": "{pct}% worn",
+    "pressure": "Pressure",
+    "type": "Type",
+    "kmRun": "Distance run",
+    "cpk": "Cost / km",
+    "installedOn": "Installed",
+    "cost": "Cost",
+    "pressureWarn": "Pressure is more than 10% off target. Check for leaks and re-inflate.",
+    "rotateTo": "Move / swap to position",
+    "choosePosition": "Choose position…",
+    "inspect": "Inspect",
+    "remove": "Remove",
+    "undo": "Undo",
+    "post": "Post changes",
+    "undone": "Last change undone",
+    "posted": "Changes posted",
+    "postedMsg": "{n} tire transaction(s) saved.",
+    "kpi": {
+      "fitted": "Tires fitted",
+      "avgTread": "Avg tread",
+      "attention": "Tread · pressure alerts",
+      "cpk": "Avg cost / km"
+    },
+    "log": "Pending transactions",
+    "logHint": "Posted together as one tire-change document",
+    "logEmpty": "No changes yet.",
+    "removedTitle": "Removed this session",
+    "removedEmpty": "Tires sent to recap, repair or scrap appear here.",
+    "col": {
+      "action": "Action",
+      "position": "Position",
+      "tires": "Tires",
+      "details": "Details"
+    },
+    "tx": {
+      "install": "Install",
+      "replace": "Replace",
+      "remove": "Remove",
+      "rotate": "Rotate",
+      "inspect": "Inspect"
+    },
+    "reason": {
+      "wornOut": "Worn to limit",
+      "puncture": "Puncture",
+      "sidewall": "Sidewall damage",
+      "irregularWear": "Irregular wear",
+      "separation": "Tread separation",
+      "rotation": "Rotation",
+      "recap": "Send for recap",
+      "other": "Other"
+    },
+    "dest": {
+      "stock": "Back to stock",
+      "recap": "Recap / retread",
+      "repair": "Repair",
+      "scrap": "Scrap"
+    },
+    "warn": {
+      "size": "Size {size} differs from the axle spec {expected}.",
+      "recapSteer": "Recap tires are not recommended on steer axles.",
+      "lowTread": "This tire is below the 4 mm replacement limit.",
+      "dualMatch": "Dual partner tread differs by more than 3 mm — uneven load sharing."
+    },
+    "dlg": {
+      "installTitle": "Install tire",
+      "replaceTitle": "Replace tire",
+      "removeTitle": "Remove tire",
+      "swapTitle": "Swap positions",
+      "moveTitle": "Move tire",
+      "inspectTitle": "Record inspection",
+      "date": "Date",
+      "odometer": "Odometer (km)",
+      "treadMM": "Tread depth (mm)",
+      "pressure": "Pressure (psi)",
+      "removedTire": "Removed tire",
+      "reason": "Reason",
+      "removedTread": "Tread at removal (mm)",
+      "destination": "Send to",
+      "out": "out",
+      "confirm": "Confirm"
+    },
+    "bayTitle": "Tire Bay",
+    "topView": "Top view",
+    "resetView": "Reset view",
+    "orbitHint": "Drag empty space to rotate, scroll to zoom",
+    "title3d": "Tire Axle Map 3D"
   }
 }
