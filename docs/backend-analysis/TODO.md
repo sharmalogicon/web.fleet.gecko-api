@@ -594,6 +594,9 @@ Order (small / self-contained first; each: code + test + prompt section, TODO af
   the pieces are tested separately. Existing Trucking rule: deductions alone never make a statement.
 
 ## Log
+- 2026-11-21: Test-data cleanup (owner OK): Trucking — deleted route ZTBCC51C A3-MTP (crashed run 18 Nov), SOFT-deleted 'UI-R1 LCB-A3>MAPTAPHUT'
+  (route_id EB0929DA-C2D9-F111-9B2D-00919E4766D5, SCT-TEST, from a UI live test 6 Nov; restore = set deleted_at NULL) → Trucking all green except skip.
+  TOS — audit archive cleanup helper fixed (RLS hid rows: system context), closed 1 empty SCT-TEST shift left by an interrupted run → TOS 341/341.
 - 2026-11-21: P14 DONE — SCT tax invoice per PAID subcon statement (runs 061–062, prompt 23).
 - 2026-11-21: OWNER: Azure runs (001–060) LATER, after all UI issues are fixed and tested locally. Go-live date: ignore for now.
   Subcon (case A) deductions NEED an SCT tax invoice → new backend item (not built yet, see Open questions).
