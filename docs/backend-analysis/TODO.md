@@ -554,7 +554,17 @@ Order (small / self-contained first; each: code + test + prompt section, TODO af
       dates document + events + fitments; future → 400; before a later event of a touched tyre → 400 "has a later event"). #6 AxleMapDto
       driverId/Code/Name = linked truck's PRIMARY Trucking driver today (new IFleetAssetDirectory.PrimaryDriversAsync). #7 TyreDto
       lastEventAt/Type/DocumentNo/PartyCode. #8 TyreEventDto documentNo/assetCode. Also REPAIR of AWAITING_REPAIR → back to a store.
-      (Code was written by the dropped session, verified + tested 2026-11-21.) Fleet 72/72, Architecture 25/25. NEXT: #9 WoPartDto.issuedBaseQty.
+      (Code was written by the dropped session, verified + tested 2026-11-21.) Fleet 72/72, Architecture 25/25.
+- [x] #9 WoPartDto.issuedBaseQty (6174940). #11 supplierName / workOrderNo / assetCode filters (447fdd7). #10 GRN taxRate optional: keyed wins,
+      else PO rate (498ea30). #12 transfer targets: run 059 inv.warehouse_transfer_target + 060 RLS (applied locally, idempotent), re-scaffolded,
+      GET/PUT /warehouses/{id}/transfer-targets, transfer off-list → 400; NO list = any active store (open, as before) (e5d12a3).
+      #13 FleetInvoiceLineDto assetCode/sourceLineType/rateCardRef/rechargeNo + #14 fleet invoice list search/status/from/to (+07:00) (a8b00ae).
+      #15 repair card withdraw from DRAFT/PENDING/APPROVED, "withdrawn"; #16 standard card refuses effectiveTo; #20 Gecko.SharedKernel.English,
+      35 "A {status}" messages in Fleet + repair tariff → "An approved…" (TOS / Trucking / haulage tariff wording NOT touched) (750cab6).
+      #17 ACCEPTED recharges catch up on GET /recharges[/{id}] and in FleetTruckingPollJob (still off until go-live) (6223af9).
+      Fleet 73/73, Architecture 25/25, Revenue 239/239. OpenAPI re-exported (fleet 208/285, platform 423/560), prompt 22, README row 22.
+      Untested: #17 DEDUCTION path (same as P5 note), WO-part reservation consume path (12b).
+## P13 COMPLETE 2026-11-21 — BACKEND_TODO #1–#20 all shipped. Next: UI session works prompt 22 (reply 22_REPLY.md); owner items.
 - OWNER 2026-11-21: #18 confirmed — the invoice rounds VAT to whole baht; recharge (e.g. 971.56) vs invoice (972) may differ by
   that rounding (no code change; tell the UI). #19 — amounts on stock documents shown to people: 2 decimals (DTOs round to 2;
   the stock ledger / balances keep 4 internally so valuation does not drift).
@@ -562,7 +572,7 @@ Order (small / self-contained first; each: code + test + prompt section, TODO af
   #7 TyreDto last event, #8 TyreEventDto documentNo / assetCode, #9 WoPartDto.issuedBaseQty, #12 transfer targets, #13
   FleetInvoiceLineDto assetCode / sourceLineType / rateCardRef / rechargeNo, #15 DRAFT withdraw + "withdrawed". To check while
   building: #11 list params, #14 invoice list search/from/to, #16, #20 wording (47 `$"A {…}"` messages).
-- [ ] NEXT backend phase: `ui-prompts/replies/BACKEND_TODO.md` (20 items from UI replies 11–13 + live tests) is not tracked here and is
+- [x] (done, see P13 COMPLETE above) backend phase: `ui-prompts/replies/BACKEND_TODO.md` (20 items from UI replies 11–13 + live tests) is not tracked here and is
       largely NOT built. Spot check 2026-11-21: missing #1 tyre condition still AllowedValues GOOD/FAIR/POOR, #3 X-Branch-Id, #4 no-store
       400, #6 AxleMapDto driver, #7 TyreDto last event, #12 transfer targets, #15 DRAFT withdraw + "withdrawed". Audit the rest, then build.
 - [x] 12g part 2 DONE: OpenAPI 207 paths / 284 schemas; prompt `20_GAP_CLOSING_P12_PART2.md` (12c; 12e/12f notes); README. Fleet 70/71
@@ -571,6 +581,7 @@ Order (small / self-contained first; each: code + test + prompt section, TODO af
       Part 2 (12c, 12e, 12f) → prompt 20. APIs restarted on 5100 / 5300 (2026-11-20).
 
 ## Log
+- 2026-11-21: P13 COMPLETE — #9–#20 built, runs 059–060 local, prompt 22, OpenAPI re-exported. Fleet 73/73, Revenue 239/239.
 - 2026-11-21: P13 #5–#8 verified, tested (Fleet 72/72) and pushed (e49f7b5). Next: #9.
 - 2026-11-21: stale ZZ tariffs deleted locally (owner OK) → Revenue 238/238, Trucking 95/107 (other local data). Next: BACKEND_TODO.md backlog.
 - 2026-11-21: 12e credit notes (runs 055–056, Revenue-wide, additive), live-test tariff cards deleted locally (owner OK). Owner: Azure runs by owner; SAP held; nightly/poll jobs stay off until go-live.

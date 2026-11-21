@@ -2830,6 +2830,92 @@
         }
       }
     },
+    "/api/fleet/warehouses/{warehouseId}/transfer-targets": {
+      "get": {
+        "tags": [
+          "Fleet — inventory"
+        ],
+        "summary": "Stores this store may send stock to: its configured list, or every other active store when it has none (backend #12)",
+        "parameters": [
+          {
+            "name": "warehouseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WarehouseDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Fleet — inventory"
+        ],
+        "summary": "Replace this store's transfer-target list (empty = any active store)",
+        "parameters": [
+          {
+            "name": "warehouseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveTransferTargetsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WarehouseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/fleet/items/catalogue": {
       "get": {
         "tags": [
@@ -5208,7 +5294,7 @@
         "tags": [
           "Fleet — recharge"
         ],
-        "summary": "Recharges (?status, mode, workOrderId, billToPartyCode, page, pageSize)",
+        "summary": "Recharges (?status, mode, workOrderId, billToPartyCode, page, pageSize); ACCEPTED rows catch up with Revenue / Trucking first",
         "parameters": [
           {
             "name": "status",
@@ -5962,7 +6048,7 @@
         "tags": [
           "Fleet — stock"
         ],
-        "summary": "Stock issues (?status, workOrderId, warehouseId, from, to, page, pageSize)",
+        "summary": "Stock issues (?status, workOrderId, workOrderNo, assetCode, warehouseId, from, to, page, pageSize)",
         "parameters": [
           {
             "name": "status",
@@ -6025,6 +6111,20 @@
                 "string"
               ],
               "format": "int32"
+            }
+          },
+          {
+            "name": "workOrderNo",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "assetCode",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -7584,7 +7684,7 @@
         "tags": [
           "Fleet — purchasing"
         ],
-        "summary": "Purchase orders (?search, supplierPartyCode, status, from, to, page, pageSize)",
+        "summary": "Purchase orders (?search, supplierPartyCode, supplierName, status, from, to, page, pageSize)",
         "parameters": [
           {
             "name": "search",
@@ -7645,6 +7745,13 @@
                 "string"
               ],
               "format": "int32"
+            }
+          },
+          {
+            "name": "supplierName",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -8086,7 +8193,7 @@
         "tags": [
           "Fleet — purchasing"
         ],
-        "summary": "Goods receipts (?search, supplierPartyCode, status, from, to, page, pageSize)",
+        "summary": "Goods receipts (?search, supplierPartyCode, supplierName, status, from, to, page, pageSize)",
         "parameters": [
           {
             "name": "search",
@@ -8147,6 +8254,13 @@
                 "string"
               ],
               "format": "int32"
+            }
+          },
+          {
+            "name": "supplierName",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -8387,7 +8501,7 @@
         "tags": [
           "Fleet — purchasing"
         ],
-        "summary": "Returns to suppliers (?search, supplierPartyCode, status, from, to, page, pageSize)",
+        "summary": "Returns to suppliers (?search, supplierPartyCode, supplierName, status, from, to, page, pageSize)",
         "parameters": [
           {
             "name": "search",
@@ -8448,6 +8562,13 @@
                 "string"
               ],
               "format": "int32"
+            }
+          },
+          {
+            "name": "supplierName",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -14708,6 +14829,25 @@
               {
                 "$ref": "#/components/schemas/Geometry3D"
               }
+            ]
+          },
+          "driverId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "driverCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "driverName": {
+            "type": [
+              "null",
+              "string"
             ]
           }
         }
@@ -25394,11 +25534,11 @@
             "minimum": 0,
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
             "type": [
+              "null",
               "number",
               "string"
             ],
-            "format": "double",
-            "default": 0
+            "format": "double"
           },
           "discountAmount": {
             "maximum": 999999999,
@@ -26626,6 +26766,21 @@
           }
         }
       },
+      "SaveTransferTargetsRequest": {
+        "required": [
+          "targetWarehouseIds"
+        ],
+        "type": "object",
+        "properties": {
+          "targetWarehouseIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
       "SaveTyreRequest": {
         "required": [
           "serialNo",
@@ -26737,6 +26892,8 @@
             "format": "double"
           },
           "condition": {
+            "maxLength": 40,
+            "minLength": 0,
             "type": [
               "null",
               "string"
@@ -30198,6 +30355,13 @@
               "null",
               "string"
             ]
+          },
+          "documentDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
           }
         }
       },
@@ -30689,6 +30853,31 @@
           },
           "rowVersion": {
             "type": "string"
+          },
+          "lastEventAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "lastEventType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "lastDocumentNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "lastPartyCode": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -30836,6 +31025,18 @@
               "null",
               "string"
             ]
+          },
+          "documentNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "assetCode": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -30919,6 +31120,13 @@
               "null",
               "string"
             ]
+          },
+          "documentDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
           }
         }
       },
@@ -33720,6 +33928,15 @@
           },
           "charge": {
             "$ref": "#/components/schemas/ChargeDto"
+          },
+          "issuedBaseQty": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double",
+            "default": 0
           }
         }
       },

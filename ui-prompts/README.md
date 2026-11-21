@@ -40,6 +40,7 @@ When the back end lacks a field a screen shows, the BACK END is extended; the fi
 | 19 | `19_GAP_CLOSING_P12.md` — vendor payment approval (Approve / Reject), stock reservations (Reserve / Release, real reserved / available qty), Depreciation column in Service Cost Summary — **P12 part 1** | ready |
 | 20 | `20_GAP_CLOSING_P12_PART2.md` — stock cost corrections from invoice price variance (read-only grids on vendor invoice + stock form), "Price variance" column — **P12 part 2** | ready |
 | 21 | `21_WO_CREDIT_NOTES_P12.md` — WO credit notes from mock to the Revenue API (list, issue from a WO invoice with a credit amount per line, cancel) — **P12e** | ready |
+| 22 | `22_BACKEND_TODO_P13.md` — the 20 backend to-do items shipped (tyre condition list, documentDate, axle-map driver, tyre last event, issued qty, list filters, transfer targets, invoice line fields + filters, withdraw DRAFT card, recharge catch-up): remove the fallbacks — **P13** | ready |
 
 ## Fleet API status (what is real, what is still mock)
 Updated by the backend session as phases land. Anything not listed is still mock: keep the mock behind the adapter
@@ -101,10 +102,11 @@ for that entity (01 explains) until it appears here.
 | P11 | opening balances `GET /opening-balances/{kind}/template`, `POST /opening-balances/{kind}?commit=`; `POST /sync/trucking` (+ nightly job, off until enabled) | live locally |
 | — | all backend phases P0–P11 built; go-live steps: `docs/backend-analysis/P11_GO_LIVE_RUNBOOK.md` | — |
 | P12 | payment approval `POST /vendor-payments/{id}/approval`, `GET /vendor-payments?status=`; reservations `GET/POST /stock-reservations`, `POST …/{id}/release`; DEPRECIATION in the cost ledger | live locally |
+| P13 | backend to-do #1–#20: `GET/PUT /warehouses/{id}/transfer-targets`; new fields / filters listed in prompt 22; Platform fleet invoice filters + line fields, DRAFT card withdraw | live locally |
 
 ## OpenAPI documents
 `openapi/fleet-api.json` and `openapi/platform-api.json` — exported from the running APIs by the backend session.
-**Last export: 2026-11-20** — Fleet re-exported in P12 part 1 (206 paths, 283 schemas; response types included — regenerate types for every prompt); Platform re-exported at the end of P5 (419 paths: repair tariff + fleet invoices) incl.
+**Last export: 2026-11-21 (P13, prompt 22)** — Fleet 208 paths / 285 schemas; Platform 423 paths / 560 schemas (response types included — regenerate types for every prompt) incl.
 `/auth/login`, `/auth/refresh`, `/auth/me`, `/auth/logout` (unchanged).
 Regenerate the TypeScript types from them (`npm run api:types`, see 01). When an endpoint changes, the backend
 session re-exports these files and says so here.

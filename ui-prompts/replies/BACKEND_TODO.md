@@ -1,5 +1,7 @@
 # Backend to-do for Fleet (consolidated, 2026-11-20)
 
+> **2026-11-21: ALL items #1–#20 shipped by the backend (P13). See prompt `22_BACKEND_TODO_P13.md` for names, rules and the UI actions.**
+
 One list for the API owner, from the owner's answers in `11_REPLY.md`, `12_REPLY.md`, `13_REPLY.md` and the live tests
 (`LIVE_TEST_FINDINGS.md`). **The UI is already built for every item** (it sends / reads the names below and falls
 back while they are missing), so no UI work is waiting on this list. Use the exact names. When an item ships,
