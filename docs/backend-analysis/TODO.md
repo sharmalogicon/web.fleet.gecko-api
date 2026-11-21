@@ -550,6 +550,11 @@ Order (small / self-contained first; each: code + test + prompt section, TODO af
       RequireReadPermission, a header branch requires the grant AT that branch (tenant-wide grants ignore it); a non-GUID header → 403.
       Only narrows, never grants; no header = unchanged (only the Fleet UI sends it — TOS / Trucking / M&R / Freight web and the
       driver app do not → no change for live TOS). Tenant-wide RequirePermission endpoints ignore it. TariffApiTests +1.
+- [x] #5 #6 #7 #8 (platform e49f7b5, pushed feat/fleet-p0): #5 documentDate on TyreChangeRequest / TyreMaintenanceRequest (empty = today;
+      dates document + events + fitments; future → 400; before a later event of a touched tyre → 400 "has a later event"). #6 AxleMapDto
+      driverId/Code/Name = linked truck's PRIMARY Trucking driver today (new IFleetAssetDirectory.PrimaryDriversAsync). #7 TyreDto
+      lastEventAt/Type/DocumentNo/PartyCode. #8 TyreEventDto documentNo/assetCode. Also REPAIR of AWAITING_REPAIR → back to a store.
+      (Code was written by the dropped session, verified + tested 2026-11-21.) Fleet 72/72, Architecture 25/25. NEXT: #9 WoPartDto.issuedBaseQty.
 - OWNER 2026-11-21: #18 confirmed — the invoice rounds VAT to whole baht; recharge (e.g. 971.56) vs invoice (972) may differ by
   that rounding (no code change; tell the UI). #19 — amounts on stock documents shown to people: 2 decimals (DTOs round to 2;
   the stock ledger / balances keep 4 internally so valuation does not drift).
@@ -566,6 +571,7 @@ Order (small / self-contained first; each: code + test + prompt section, TODO af
       Part 2 (12c, 12e, 12f) → prompt 20. APIs restarted on 5100 / 5300 (2026-11-20).
 
 ## Log
+- 2026-11-21: P13 #5–#8 verified, tested (Fleet 72/72) and pushed (e49f7b5). Next: #9.
 - 2026-11-21: stale ZZ tariffs deleted locally (owner OK) → Revenue 238/238, Trucking 95/107 (other local data). Next: BACKEND_TODO.md backlog.
 - 2026-11-21: 12e credit notes (runs 055–056, Revenue-wide, additive), live-test tariff cards deleted locally (owner OK). Owner: Azure runs by owner; SAP held; nightly/poll jobs stay off until go-live.
 - 2026-11-20: P12 part 2: 12c price-variance revaluation (runs 053–054, inv.cost_adjustment), 12f Trucking poll job, prompt 20. 12e waits on owner.
