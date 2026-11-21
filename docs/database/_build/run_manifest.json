@@ -62,6 +62,8 @@
     { "no": 53, "phase": "P12", "db": "gecko_fleet",  "src": "08_gecko_fleet/21_inv_cost_adjustment.sql" },
     { "no": 54, "phase": "P12", "db": "gecko_fleet",  "src": "08_gecko_fleet/91_rls_policy.sql" },
     { "no": 55, "phase": "P12", "db": "gecko_revenue",  "src": "02_gecko_revenue/61_credit_note.sql" },
-    { "no": 56, "phase": "P12", "db": "gecko_revenue",  "src": "../../../database/gecko_revenue/08_rls_policy.sql" }
+    { "no": 56, "phase": "P12", "db": "gecko_revenue",  "src": "../../../database/gecko_revenue/08_rls_policy.sql" },
+    { "no": 57, "phase": "P13", "db": "gecko_master",  "src": "01_gecko_master/55_fleet_tyre_condition_code_list.sql" },
+    { "no": 58, "phase": "P13", "db": "gecko_fleet",   "src": "08_gecko_fleet/22_tyre_condition_code.sql" }
   ]
 }

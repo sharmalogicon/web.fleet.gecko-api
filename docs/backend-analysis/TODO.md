@@ -531,6 +531,21 @@ Order (small / self-contained first; each: code + test + prompt section, TODO af
       → Trucking 95/107 (+1 skip): TripEvent / Subcon now pass; 11 left = local data, NOT tariffs: 10 × duplicate
       config.trucking_setting BRANCH_HOME_LOCATION at SCT-LCB01 (uq_trucking_setting__branch), 1 × route variants 3 ≠ 1. Owner OK needed.
       TOS: stale OPEN cashier shift (SCT-TEST owner, LCB01, 18 Nov) still blocks the window tests — owner OK needed.
+
+### P13 — BACKEND_TODO.md backlog (owner 2026-11-21: ALL backend + API work before any UI; commit + push each item to feature
+### branches — platform `feat/fleet-p0`, docs `backend/fleet-docs` — never main without an explicit OK)
+- [x] #1 tyre condition from the code list: runs 057 (gecko_master 55: FLEET_TYRE_CONDITION open list, 14 codes from the UI's
+      13_tyre_condition_seed.sql) + 058 (gecko_fleet 22: tyre.tyre / tyre_event.condition_code VARCHAR(40) + format CHECK; the old
+      `condition` VARCHAR(10) CHECK GOOD/FAIR/POOR is NOT changed — still written for those 3 codes, NULL otherwise; back-filled).
+      Re-scaffolded. SaveTyreRequest / TyreAction.condition validated against the list (global + tenant) → 400 naming the field
+      (`condition`, or `lines` "Line n: condition X is not in the FLEET_TYRE_CONDITION list"). DTOs show condition_code ?? condition.
+- [x] #4 IN_STOCK needs a store: REMOVE / REPLACE to STOCK and RECEIVE_RECAP take the sent warehouseId (must be an active store of the
+      tyre's branch) else the branch's default store; neither → 400 "Line n: no default store at this branch — choose a store."
+      TyreTests extended (no-store 400, own store, NEW ok, SHINY 400, SIDEWALL_DAMAGE stored). Fleet 71/71 (one earlier full run had
+      IncidentFuelTests accident test fail once; alone + re-run pass — intermittent, watch), Architecture 25/25.
+- [ ] #2 customer card → standard card fallback (Revenue repair-tariff pricing)
+- [ ] #3 X-Branch-Id branch-scoped permissions (Platform API)
+- [ ] #5–#20 (audit each against the code, then build)
 - [ ] NEXT backend phase: `ui-prompts/replies/BACKEND_TODO.md` (20 items from UI replies 11–13 + live tests) is not tracked here and is
       largely NOT built. Spot check 2026-11-21: missing #1 tyre condition still AllowedValues GOOD/FAIR/POOR, #3 X-Branch-Id, #4 no-store
       400, #6 AxleMapDto driver, #7 TyreDto last event, #12 transfer targets, #15 DRAFT withdraw + "withdrawed". Audit the rest, then build.
