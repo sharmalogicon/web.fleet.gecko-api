@@ -543,9 +543,20 @@ Order (small / self-contained first; each: code + test + prompt section, TODO af
       tyre's branch) else the branch's default store; neither → 400 "Line n: no default store at this branch — choose a store."
       TyreTests extended (no-store 400, own store, NEW ok, SHINY 400, SIDEWALL_DAMAGE stored). Fleet 71/71 (one earlier full run had
       IncidentFuelTests accident test fail once; alone + re-run pass — intermittent, watch), Architecture 25/25.
-- [ ] #2 customer card → standard card fallback (Revenue repair-tariff pricing)
-- [ ] #3 X-Branch-Id branch-scoped permissions (Platform API)
-- [ ] #5–#20 (audit each against the code, then build)
+- [x] #2 customer card → standard card fallback: RepairRating looks every rule (LABOR / FLAT / PART_PRICE / MARKUP / SUBLET /
+      SHOP_SUPPLIES / CALL_OUT / MIN_CHARGE) up on the payer's card first, then the standard card; rateCardRef names the card that
+      priced each line; result.Card = first card of the chain. RechargeTests +1 (2099-dated cards, price-check) 3/3.
+- [x] #3 X-Branch-Id (Gecko.Data DataServiceCollectionExtensions.BranchDoor): on RequireBranchPermission / RequireAnyBranchPermission /
+      RequireReadPermission, a header branch requires the grant AT that branch (tenant-wide grants ignore it); a non-GUID header → 403.
+      Only narrows, never grants; no header = unchanged (only the Fleet UI sends it — TOS / Trucking / M&R / Freight web and the
+      driver app do not → no change for live TOS). Tenant-wide RequirePermission endpoints ignore it. TariffApiTests +1.
+- OWNER 2026-11-21: #18 confirmed — the invoice rounds VAT to whole baht; recharge (e.g. 971.56) vs invoice (972) may differ by
+  that rounding (no code change; tell the UI). #19 — amounts on stock documents shown to people: 2 decimals (DTOs round to 2;
+  the stock ledger / balances keep 4 internally so valuation does not drift).
+- Audit 2026-11-21 of #5–#20 (code read): MISSING #5 documentDate (TyreChangeRequest / TyreMaintenanceRequest), #6 AxleMapDto driver,
+  #7 TyreDto last event, #8 TyreEventDto documentNo / assetCode, #9 WoPartDto.issuedBaseQty, #12 transfer targets, #13
+  FleetInvoiceLineDto assetCode / sourceLineType / rateCardRef / rechargeNo, #15 DRAFT withdraw + "withdrawed". To check while
+  building: #11 list params, #14 invoice list search/from/to, #16, #20 wording (47 `$"A {…}"` messages).
 - [ ] NEXT backend phase: `ui-prompts/replies/BACKEND_TODO.md` (20 items from UI replies 11–13 + live tests) is not tracked here and is
       largely NOT built. Spot check 2026-11-21: missing #1 tyre condition still AllowedValues GOOD/FAIR/POOR, #3 X-Branch-Id, #4 no-store
       400, #6 AxleMapDto driver, #7 TyreDto last event, #12 transfer targets, #15 DRAFT withdraw + "withdrawed". Audit the rest, then build.
