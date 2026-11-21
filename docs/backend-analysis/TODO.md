@@ -581,6 +581,12 @@ Order (small / self-contained first; each: code + test + prompt section, TODO af
       Part 2 (12c, 12e, 12f) → prompt 20. APIs restarted on 5100 / 5300 (2026-11-20).
 
 ## Log
+- 2026-11-21: OWNER: Azure runs (001–060) LATER, after all UI issues are fixed and tested locally. Go-live date: ignore for now.
+  Subcon (case A) deductions NEED an SCT tax invoice → new backend item (not built yet, see Open questions).
+  Cleanups (owner OK): deleted the 1 stale test row config.trucking_setting BRANCH_HOME_LOCATION (SCT-TEST LCB01, prefix ZTBCC51C, 18 Nov)
+  → Trucking 105/107 (+1 skip; left: NetworkApiTests route variants 3 ≠ 1, local data). Closed the stale OPEN cashier shift 01A1EEBD (SCT-TEST,
+  18 Nov) → TOS 340/341 (left: Audit_integrity digest on SCT-TEST TOS booking history 2026-11, local data). 9 other OPEN shifts (other tenants, Oct) untouched.
+  NOTE: TOS tests refuse to run while a Gecko.Api drains the local outbox → stop :5100 first.
 - 2026-11-21: P13 COMPLETE — #9–#20 built, runs 059–060 local, prompt 22, OpenAPI re-exported. Fleet 73/73, Revenue 239/239.
 - 2026-11-21: P13 #5–#8 verified, tested (Fleet 72/72) and pushed (e49f7b5). Next: #9.
 - 2026-11-21: stale ZZ tariffs deleted locally (owner OK) → Revenue 238/238, Trucking 95/107 (other local data). Next: BACKEND_TODO.md backlog.
@@ -613,4 +619,5 @@ Order (small / self-contained first; each: code + test + prompt section, TODO af
 - 2026-11-19: TODO created. Read conventions + doc 02/03. Wrote and parse-checked scripts 00, 01, 02, 37, 38, 91 + README.
 
 ## Open questions (do not block P0)
+- ANSWERED 2026-11-21: subcon deductions need an SCT tax invoice (design + build pending owner OK).
 - Where SCT's non-truck equipment is held today; number of workshops/stores (affects 38 §0 branches); SCT tax invoice for subcon deductions; go-live date; FLEET plan prices.
