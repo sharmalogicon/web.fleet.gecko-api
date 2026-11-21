@@ -580,7 +580,21 @@ Order (small / self-contained first; each: code + test + prompt section, TODO af
 - [x] 12g part 1 DONE: OpenAPI 206 paths / 283 schemas (+3); prompt `19_GAP_CLOSING_P12.md` (12a, 12b, 12d); README. Fleet 68/69.
       Part 2 (12c, 12e, 12f) → prompt 20. APIs restarted on 5100 / 5300 (2026-11-20).
 
+## P14 — SCT tax invoice for subcontractor deductions: DONE 2026-11-21 (owner OK; owner asked for the standard SaaS practice)
+- Practice chosen: ONE tax invoice / receipt per subcontractor per PAID statement, dated the paid day (Revenue Code s.78/1: service tax
+  point = payment; netting against the payout = payment), one line per deducted recharge line (names the WO), total = what was netted
+  (satang, no whole-baht rounding). Owner may still confirm with SCT's accountant (per-deduction instead = small change in the handler).
+- Runs 061 (gecko_revenue 62_subcon_deduction_invoice: billing.subcon_deduction_invoice + _line, additive, append-only) + 062 (revenue RLS re-run),
+  applied locally, idempotent. Platform a64bf70: Trucking PayAsync queues trucking.subcon_settlement.paid in the pay transaction
+  (SubconSettlementEvents); SubconSettlementTax.Apply: DEDUCTION lines keep SCT's VAT (recharge), no WHT (was: the subcontractor's VAT + 1 % WHT
+  — wrong); Revenue SubconDeductionInvoiceHandler (INVOICE series, CREDIT, BillTo SUBCONTRACTOR, settled by offset), idempotent (inbox +
+  uq per statement); GET /api/revenue/subcon-deduction-invoices[/{id}]. Tests: SubconDeductionInvoiceTests 1/1, SubconDeductionTaxTests 2/2;
+  Revenue 240/240, Trucking 107/109, Fleet 73/73, Architecture 25/25. OpenAPI platform 425/563; prompt 23; README row 23.
+- Not covered: an end-to-end test (Fleet release → statement → pay → outbox → invoice): a statement needs haulage lines in the period;
+  the pieces are tested separately. Existing Trucking rule: deductions alone never make a statement.
+
 ## Log
+- 2026-11-21: P14 DONE — SCT tax invoice per PAID subcon statement (runs 061–062, prompt 23).
 - 2026-11-21: OWNER: Azure runs (001–060) LATER, after all UI issues are fixed and tested locally. Go-live date: ignore for now.
   Subcon (case A) deductions NEED an SCT tax invoice → new backend item (not built yet, see Open questions).
   Cleanups (owner OK): deleted the 1 stale test row config.trucking_setting BRANCH_HOME_LOCATION (SCT-TEST LCB01, prefix ZTBCC51C, 18 Nov)
@@ -619,5 +633,5 @@ Order (small / self-contained first; each: code + test + prompt section, TODO af
 - 2026-11-19: TODO created. Read conventions + doc 02/03. Wrote and parse-checked scripts 00, 01, 02, 37, 38, 91 + README.
 
 ## Open questions (do not block P0)
-- ANSWERED 2026-11-21: subcon deductions need an SCT tax invoice (design + build pending owner OK).
+- ANSWERED 2026-11-21: subcon deductions need an SCT tax invoice → built in P14 (one per PAID statement).
 - Where SCT's non-truck equipment is held today; number of workshops/stores (affects 38 §0 branches); SCT tax invoice for subcon deductions; go-live date; FLEET plan prices.

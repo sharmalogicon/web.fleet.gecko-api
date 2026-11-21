@@ -15313,6 +15313,141 @@
         }
       }
     },
+    "/api/revenue/subcon-deduction-invoices": {
+      "get": {
+        "tags": [
+          "Revenue — subcontractor deduction invoices"
+        ],
+        "summary": "SCT tax invoices for subcontractor deductions, newest first (?branchId, subconPartyCode, settlementNo, rechargeNo, workOrderNo, search, from, to, page, pageSize)",
+        "parameters": [
+          {
+            "name": "branchId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "subconPartyCode",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "settlementNo",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "rechargeNo",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workOrderNo",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfSubconDeductionInvoiceDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/revenue/subcon-deduction-invoices/{invoiceId}": {
+      "get": {
+        "tags": [
+          "Revenue — subcontractor deduction invoices"
+        ],
+        "parameters": [
+          {
+            "name": "invoiceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubconDeductionInvoiceDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/revenue/credit-notes": {
       "get": {
         "tags": [
@@ -46090,6 +46225,64 @@
           }
         }
       },
+      "PagedResultOfSubconDeductionInvoiceDto": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubconDeductionInvoiceDto"
+            }
+          },
+          "page": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalPages": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "nextCursor": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "PagedResultOfSupplierResponse": {
         "required": [
           "items",
@@ -56144,6 +56337,211 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "SubconDeductionInvoiceDto": {
+        "required": [
+          "invoiceId",
+          "branchId",
+          "invoiceNo",
+          "status",
+          "subconPartyCode",
+          "subconName",
+          "subconSettlementId",
+          "settlementNo",
+          "settledAt",
+          "currencyCode",
+          "subtotalAmount",
+          "taxAmount",
+          "totalAmount",
+          "remarks",
+          "issuedAt",
+          "lines"
+        ],
+        "type": "object",
+        "properties": {
+          "invoiceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "branchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "invoiceNo": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "subconPartyCode": {
+            "type": "string"
+          },
+          "subconName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "subconSettlementId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "settlementNo": {
+            "type": "string"
+          },
+          "settledAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "currencyCode": {
+            "type": "string"
+          },
+          "subtotalAmount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "taxAmount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "totalAmount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "remarks": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubconDeductionInvoiceLineDto"
+            }
+          }
+        }
+      },
+      "SubconDeductionInvoiceLineDto": {
+        "required": [
+          "invoiceLineId",
+          "lineNo",
+          "workOrderNo",
+          "vehicleCode",
+          "rechargeNo",
+          "rechargeId",
+          "sourceLineType",
+          "chargeCode",
+          "chargeName",
+          "quantity",
+          "unitRate",
+          "amount",
+          "taxCode",
+          "taxRate",
+          "taxAmount"
+        ],
+        "type": "object",
+        "properties": {
+          "invoiceLineId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "lineNo": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int16"
+          },
+          "workOrderNo": {
+            "type": "string"
+          },
+          "vehicleCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "rechargeNo": {
+            "type": "string"
+          },
+          "rechargeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceLineType": {
+            "type": "string"
+          },
+          "chargeCode": {
+            "type": "string"
+          },
+          "chargeName": {
+            "type": "string"
+          },
+          "quantity": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "unitRate": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "amount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "taxCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "taxRate": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "taxAmount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
           }
         }
       },
@@ -66531,6 +66929,9 @@
     },
     {
       "name": "Revenue — fleet recharge invoices"
+    },
+    {
+      "name": "Revenue — subcontractor deduction invoices"
     },
     {
       "name": "Revenue — credit notes"
