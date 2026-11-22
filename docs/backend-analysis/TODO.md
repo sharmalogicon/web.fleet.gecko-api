@@ -1,6 +1,27 @@
 # Gecko Fleet — working TODO (recovery file)
 
 **Read this first if a session restarts.** Update it after every finished step.
+
+## >>> HANDOVER 2026-11-22 — BACKEND COMPLETE, NOW UI WORK <<<
+- ALL backend phases DONE: P0–P11 (plan), P12 gap closing, P13 (BACKEND_TODO #1–#20), P14 (SCT tax invoice per PAID subcon statement).
+  No backend phase is pending. Owner decided: stop backend, work on the UI next.
+- Code: platform repo `D:\SHARMA\PROJECT\gecko\platform`, branch `feat/fleet-p0` (last a1d0d0b), pushed. Docs: this repo, pushed to
+  `backend/fleet-docs` (local branch `clean-push` tracks origin/main — never push docs there; use `git push origin HEAD:backend/fleet-docs`).
+- UI session to do: `ui-prompts/22_BACKEND_TODO_P13.md` and `ui-prompts/23_SUBCON_DEDUCTION_TAX_INVOICE_P14.md` (README rows 22–23,
+  OpenAPI re-exported: fleet 208 paths / 285 schemas, platform 425 / 563). Replies go to `ui-prompts/replies/22_REPLY.md`, `23_REPLY.md`;
+  a backend session then fixes any backend issue they raise.
+- Local APIs are STOPPED (killed on low memory). Start before UI testing (MUST be Development, else user-secrets are not read):
+    cd D:/SHARMA/PROJECT/gecko/platform
+    ASPNETCORE_ENVIRONMENT=Development dotnet run --project Gecko.Api --no-launch-profile --urls http://localhost:5100
+    ASPNETCORE_ENVIRONMENT=Development dotnet run --project Gecko.Fleet.Api --no-launch-profile --urls http://localhost:5300
+  TOS tests refuse to run while a Gecko.Api on 5100 drains the outbox: stop 5100 first.
+- Tests (2026-11-21): Fleet 73/73, Revenue 240/240, Trucking 108/109 (+1 skip), TOS 341/341, Architecture 25/25.
+- DB: FLEET_RUN 001–062 applied LOCALLY only. Owner runs 001–062 on Azure LATER, after all UI issues are fixed and tested locally.
+- Owner items still open: confirm with SCT's accountant one tax invoice per PAID statement (built) vs per deduction; SAP B1 connection
+  data (SAP code built, on hold, fake:// simulator); nightly + Trucking poll jobs stay OFF until go-live; go-live date ignored for now;
+  FLEET plan prices, non-truck equipment location, number of workshops / stores.
+- Optional UI ideas (NOT built, UI only proposes): transfer-target setup grid per store (#12 API exists); a list page for subcon deduction
+  tax invoices. Soft-deleted Trucking test route 'UI-R1 LCB-A3>MAPTAPHUT' (EB0929DA-…) — restore by deleted_at = NULL if the Trucking UI needs it.
 Plan source: `docs/backend-analysis/03_Gecko_Fleet_Execution_Plan.docx` (build/03_execution_plan.js), DB design in doc 02 (build/02_database_design.js).
 Conventions: `D:\SHARMA\PROJECT\gecko\web.trucking.gecko-api\docs\database\CONVENTIONS.md` (no FKs, UUID PKs, tenant_id + RLS, 7-col audit, annotations, idempotent).
 Scripts are written only, never run by Claude. The product owner reviews them and runs them on Azure.
