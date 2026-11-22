@@ -1,7 +1,7 @@
 'use client'
 import { useRouter } from 'next/navigation'
 import { FormLayout } from '@/components/shared/FormLayout'
-import { AssetCodeInput, DriverCodeInput, MeterReadingActions, MeterStatusBadge } from '@/components/meters/MeterBits'
+import { AssetCodeInput, DriverCodeInput, MeterReadingActions, MeterSourceBadge, MeterStatusBadge } from '@/components/meters/MeterBits'
 import { useMeterEntry } from '@/components/meters/useMeterEntry'
 import { useAssetMeters, type MeterReadingView } from '@/lib/api/fleet/meters'
 import { useFleetAccess } from '@/lib/api/fleet/access'
@@ -71,6 +71,7 @@ export function MeterHrLogFormClient({ reading }: Props) {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <div className="sm:col-span-2 lg:col-span-3 flex items-center gap-2 text-xs text-gray-500">
         <MeterStatusBadge status={reading.status} reason={reading.suspectReason} />
+        <MeterSourceBadge source={reading.source} />
         <span>{reading.suspectReason ?? t('meter.readOnlyHint')}</span>
       </div>
       <Field label="Equipment Code *"><input readOnly value={`${reading.equipmentCode}${reading.registrationNo ? ` · ${reading.registrationNo}` : ''}`} className={ic(true)} /></Field>

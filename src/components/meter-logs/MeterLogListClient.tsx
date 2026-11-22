@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { createColumnHelper } from '@tanstack/react-table'
 import { DataTable } from '@/components/shared/DataTable'
-import { MeterReadingActions, MeterStatusBadge } from '@/components/meters/MeterBits'
+import { MeterReadingActions, MeterSourceBadge, MeterStatusBadge } from '@/components/meters/MeterBits'
 import type { MeterReadingView } from '@/lib/api/fleet/meters'
 import { useT } from '@/i18n/I18nContext'
 
@@ -74,6 +74,7 @@ export function MeterLogListClient({ data }: MeterLogListClientProps) {
             </span>
             <span className="text-xs text-gray-400">{r.sinceLast != null ? `+${r.sinceLast.toLocaleString()}` : '—'}</span>
             <MeterStatusBadge status={r.status} reason={r.suspectReason} />
+            <MeterSourceBadge source={r.source} />
           </div>
         )
       },

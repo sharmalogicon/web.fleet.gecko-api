@@ -250,6 +250,15 @@
 - ✅ 4. EN + TH (74 keys); tsc clean, Vitest 238 pass, lint clean, build passes; `replies/17_REPLY.md`; commit + push
 - ⬜ 5. LIVE end-to-end against fake://demo (APIs were down)
 
+## Go-live tools — ui-prompts/18_GO_LIVE_P11.md (started 2026-11-22)
+> Recovery: read the prompt (A Opening balances tab with 4 cards, B Sync everything from Trucking, C meter source badges).
+
+- ✅ 1. (2 tests) Adapter `src/lib/api/fleet/openingBalances.ts` (template, check / import, sync) + rules (import only after clean check of the same file) + Vitest
+- ✅ 2. (`fleet-setup/OpeningBalancesTab.tsx`) A + B: Fleet Setup tab "Opening balances" (Meters, PM baselines, Stock, Tyres cards; Sync everything from Trucking)
+- ✅ 3. (`MeterSourceBadge`, lists + forms) C: OPENING / TRUCKING meter source badge colours
+- ✅ 4. EN + TH (37 keys); tsc clean, Vitest 240 pass, lint clean, build passes; `replies/18_REPLY.md`; commit + push
+- ⬜ 5. LIVE checks (needs APIs)
+
 ## Conventions for the next prompts (from 03–13)
 > Write the step list here first (like the blocks above), then build. Reuse what 03–10 built:
 > - adapters `src/lib/api/fleet/<entity>.ts`: `toViewModel`/`toFormValues`, `toRequest` (send fields with no input as read),

@@ -30,6 +30,25 @@ export function MeterStatusBadge({ status, reason }: { status: string; reason?: 
   )
 }
 
+const SOURCE_TONE: Record<string, string> = {
+  OPENING: 'bg-purple-50 text-purple-700 border-purple-200',
+  TRUCKING: 'bg-blue-50 text-blue-700 border-blue-200',
+  FUEL: 'bg-amber-50 text-amber-700 border-amber-200',
+  WORK_ORDER: 'bg-teal-50 text-teal-700 border-teal-200',
+}
+
+/** Where a reading came from (prompt 18 §C): OPENING = go-live import, TRUCKING = job-order odometers. MANUAL shows nothing. */
+export function MeterSourceBadge({ source }: { source: string | null | undefined }) {
+  const { t } = useT()
+  if (!source || source === 'MANUAL') return null
+  const label = t(`meter.source.${source}`)
+  return (
+    <span className={`inline-flex w-fit px-1.5 py-0 rounded border text-[10px] font-medium ${SOURCE_TONE[source] ?? 'bg-gray-50 text-gray-600 border-gray-200'}`}>
+      {label.startsWith('meter.') ? source : label}
+    </span>
+  )
+}
+
 type Action = 'ACCEPTED' | 'REJECTED' | 'REVERSE'
 
 /**

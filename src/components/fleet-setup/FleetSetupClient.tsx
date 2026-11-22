@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, type ReactNode } from 'react'
-import { Hash, Link2, PlugZap, ShieldCheck, SlidersHorizontal, Wrench } from 'lucide-react'
+import { FileSpreadsheet, Hash, Link2, PlugZap, ShieldCheck, SlidersHorizontal, Wrench } from 'lucide-react'
 import { useT } from '@/i18n/I18nContext'
 import { useFleetAccess } from '@/lib/api/fleet/access'
 import { NumberSeriesTab } from './NumberSeriesTab'
@@ -9,9 +9,10 @@ import { SettingsTab } from './SettingsTab'
 import { ApprovalsTab } from './ApprovalsTab'
 import { LaborRatesTab } from './LaborRatesTab'
 import { ErpConnectionTab, ErpMappingsTab } from './ErpTabs'
+import { OpeningBalancesTab, useOpeningBalancesVisible } from './OpeningBalancesTab'
 import { Loading } from './ui'
 
-type Tab = 'series' | 'settings' | 'approvals' | 'labor' | 'erp' | 'erpMaps'
+type Tab = 'series' | 'settings' | 'approvals' | 'labor' | 'erp' | 'erpMaps' | 'opening'
 
 /**
  * Fleet Setup (prompt 02). Writes need fleet.setup.manage TENANT-WIDE (the API refuses a
@@ -22,8 +23,10 @@ export function FleetSetupClient() {
   const { canTenantWide, isLoading } = useFleetAccess()
   const canManage = canTenantWide('fleet.setup.manage')
   const [picked, setPicked] = useState<Tab>('series')
+  const showOpening = useOpeningBalancesVisible()
 
-  const tabs: { id: Tab; label: string; icon: ReactNode }[] = canManage
+  const opening = { id: 'opening' as Tab, label: t('opening.tab'), icon: <FileSpreadsheet size={15} /> }
+  const baseTabs: { id: Tab; label: string; icon: ReactNode }[] = canManage
     ? [
         { id: 'series', label: t('fleetSetup.numberSeries'), icon: <Hash size={15} /> },
         { id: 'settings', label: t('fleetSetup.settings'), icon: <SlidersHorizontal size={15} /> },
@@ -33,6 +36,8 @@ export function FleetSetupClient() {
         { id: 'erpMaps', label: t('erp.mappings'), icon: <Link2 size={15} /> },
       ]
     : [{ id: 'settings', label: t('fleetSetup.settings'), icon: <SlidersHorizontal size={15} /> }]
+  // Opening balances (prompt 18): its cards have their own permissions, so it can show without setup rights.
+  const tabs = showOpening ? [...baseTabs, opening] : baseTabs
   const tab = tabs.some((x) => x.id === picked) ? picked : tabs[0].id
 
   return (
@@ -69,6 +74,7 @@ export function FleetSetupClient() {
             {tab === 'labor' && <LaborRatesTab />}
             {tab === 'erp' && <ErpConnectionTab />}
             {tab === 'erpMaps' && <ErpMappingsTab />}
+            {tab === 'opening' && <OpeningBalancesTab />}
           </div>
         </>
       )}

@@ -952,6 +952,12 @@
       "km": "Enter the km reading.",
       "hours": "Enter the hour-meter reading.",
       "date": "Enter the date and time."
+    },
+    "source": {
+      "OPENING": "Opening",
+      "TRUCKING": "Trucking",
+      "FUEL": "Fuel",
+      "WORK_ORDER": "Work order"
     }
   },
   "pm": {
@@ -1869,5 +1875,42 @@
       "PAID_DIFFERS": "Paid differs",
       "MISSING_IN_SAP": "Missing in SAP"
     }
+  },
+  "opening": {
+    "tab": "Opening balances",
+    "intro": "Go-live: load the starting figures from Excel in this order. Download the template, fill it, check it, then import.",
+    "kind": {
+      "METERS": "Meters",
+      "PM_BASELINES": "PM baselines",
+      "STOCK": "Stock",
+      "TYRES": "Tyres"
+    },
+    "template": "Download template",
+    "templateFailed": "Template download failed",
+    "columns": "Columns",
+    "stockNote": "base unit, base currency, once per item + store",
+    "check": "Upload & check",
+    "import": "Import",
+    "importHint": "Check this file first; import is allowed when the check has no errors.",
+    "imported": "Imported",
+    "rows": "Rows",
+    "valid": "Valid",
+    "committed": "Imported",
+    "readyToImport": "No errors: ready to import",
+    "excelRow": "Excel row",
+    "message": "Problem",
+    "fixAndReupload": "These rows were not imported: fix them and upload a file with only those rows.",
+    "syncTitle": "Sync everything from Trucking",
+    "syncAll": "Sync now",
+    "syncHint": "Vehicles, chassis, drivers and job-order odometers from Trucking. The server also runs it nightly once IT enables it.",
+    "synced": "Sync finished",
+    "assets": "Assets",
+    "drivers": "Drivers",
+    "odometers": "Odometer readings",
+    "recalculated": "assets recalculated",
+    "created": "created",
+    "updated": "updated",
+    "unchanged": "unchanged",
+    "deactivated": "deactivated"
   }
 }
