@@ -1676,7 +1676,9 @@
       "title": "Export to accounting",
       "tab": {
         "pending": "Ready to export",
-        "history": "Earlier exports"
+        "history": "Earlier exports",
+        "payments": "SAP payments",
+        "recon": "Reconcile"
       },
       "hint": "Tick documents (none = all), then export.",
       "none": "No approved documents waiting.",
@@ -1689,6 +1691,10 @@
       "docType": {
         "INVOICE": "Invoice",
         "CREDIT_NOTE": "Credit note"
+      },
+      "target": {
+        "CSV": "CSV file",
+        "SAP_B1": "SAP Business One"
       }
     },
     "rule": {
@@ -1763,7 +1769,8 @@
       "amount": "Enter an amount more than 0",
       "reversal": "A reversal is a negative amount",
       "tooMuch": "More than is still owed on the invoice"
-    }
+    },
+    "fromSapHint": "Recorded from SAP: cannot be reversed in Fleet"
   },
   "dashboard": {
     "stat": {
@@ -1780,6 +1787,87 @@
       "UNDER_MAINTENANCE": "Under Maintenance",
       "IDLE": "Idle",
       "OUT_OF_SERVICE": "Out of Service"
+    }
+  },
+  "erp": {
+    "connection": "ERP connection",
+    "mappings": "ERP mappings",
+    "none": "No SAP Business One connection yet. Fill in the form and save.",
+    "baseUrl": "Service Layer URL",
+    "baseUrlHint": "https://<sap-host>:50000/b1s/v1, or fake://demo for the built-in simulator",
+    "companyDb": "Company database",
+    "userName": "SAP user",
+    "passwordRef": "Password secret name",
+    "passwordRefHint": "The NAME of the server secret (Erp:Secrets:<name>) set by IT; the password is never typed here.",
+    "passwordSet": "Password configured on the server",
+    "defaultSeries": "Default SAP series",
+    "active": "Active",
+    "activeOn": "Documents can be posted to SAP",
+    "activeOff": "Posting to SAP is off",
+    "simulator": "Simulator (fake://): no password needed",
+    "lastTest": "Last test",
+    "lastPaymentSync": "Last payment pull",
+    "test": "Test connection",
+    "saved": "Saved",
+    "deleted": "Deleted",
+    "map": {
+      "GL": "G/L accounts",
+      "TAX": "Tax codes",
+      "WHT": "Withholding tax codes",
+      "BP": "Business partners"
+    },
+    "mapHint": {
+      "GL": "line kind → SAP G/L account",
+      "TAX": "VAT rate (e.g. 7) → SAP purchase tax code",
+      "WHT": "WHT rate (e.g. 3) → SAP WTCode",
+      "BP": "supplier code → SAP CardCode (only when they differ)"
+    },
+    "gl": {
+      "GRN_STOCK": "Stock receipts",
+      "GRN_SERVICE": "Service receipts",
+      "WO_SUBLET": "WO sublets",
+      "TYRE_EVENT": "Tyre services",
+      "MANUAL": "Other charges",
+      "CREDIT": "Credit notes"
+    },
+    "addMap": "Add map",
+    "deleteMap": "Delete map",
+    "noMaps": "No maps yet",
+    "geckoCode": "Gecko code",
+    "erpCode": "SAP code",
+    "rule": {
+      "baseUrl": "The Service Layer URL is required",
+      "baseUrlFormat": "Use https://… or fake://…",
+      "companyDb": "The company database is required",
+      "userName": "The SAP user is required",
+      "series": "The series is a number",
+      "geckoCode": "The Gecko code is required",
+      "glKey": "Pick a line kind from the list",
+      "rateKey": "TAX / WHT maps are keyed by the rate (a number 0–100)",
+      "erpCode": "The SAP code is required"
+    },
+    "target": "Export to",
+    "noActiveConnection": "No active SAP Business One connection (Fleet Setup → ERP connection)",
+    "notPosted": "Not posted",
+    "retryFailed": "Retry failed",
+    "retried": "Retried",
+    "backToPending": "Back to ready documents",
+    "pullHint": "Read the vendor payments made in SAP back into Fleet (they show as SAP rows on Vendor Payments).",
+    "since": "Since",
+    "pull": "Pull SAP payments",
+    "pulled": "Payments pulled",
+    "paymentsRead": "Payments read",
+    "rowsRecorded": "Recorded",
+    "invoicesPaid": "Invoices now paid",
+    "syncedAt": "Synced at",
+    "unmatched": "Not matched to a Fleet invoice",
+    "reconcile": "Reconcile with SAP",
+    "reconHint": "Pick a date range and reconcile (tolerance 1.00).",
+    "recon": {
+      "OK": "OK",
+      "TOTAL_DIFFERS": "Total differs",
+      "PAID_DIFFERS": "Paid differs",
+      "MISSING_IN_SAP": "Missing in SAP"
     }
   }
 }

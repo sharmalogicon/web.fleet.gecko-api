@@ -241,6 +241,15 @@
 - ✅ 7. `ui-prompts/replies/16_REPLY.md` (5 questions); commit + push to clean-push
 - ⬜ 8. LIVE checks (needs APIs)
 
+## SAP Business One — ui-prompts/17_SAP_B1_P10.md (started 2026-11-22)
+> Recovery: read the prompt (A two Setup tabs, B export target, C retry / payment pull / reconciliation). Simulator: baseUrl `fake://demo`.
+
+- ✅ 1. (4 tests) ERP adapter `src/lib/api/fleet/erp.ts` (connection, test, mappings, pull payments, reconciliation, retry) + mapping rules + Vitest
+- ✅ 2. (`fleet-setup/ErpTabs.tsx`) A: Fleet Setup tabs "ERP connection" (+ Test) and "ERP mappings" (grouped by type, GL select, BP supplier picker)
+- ✅ 3. (dialog moved to `vendor-invoices/ExportDialog.tsx`, tabs Ready / Earlier / SAP payments / Reconcile; ERP payments not reversible) B: Export dialog target CSV / SAP + per-document result; C: batch view retry, Pull SAP payments, Reconcile tab; SAP badge on payments
+- ✅ 4. EN + TH (74 keys); tsc clean, Vitest 238 pass, lint clean, build passes; `replies/17_REPLY.md`; commit + push
+- ⬜ 5. LIVE end-to-end against fake://demo (APIs were down)
+
 ## Conventions for the next prompts (from 03–13)
 > Write the step list here first (like the blocks above), then build. Reuse what 03–10 built:
 > - adapters `src/lib/api/fleet/<entity>.ts`: `toViewModel`/`toFormValues`, `toRequest` (send fields with no input as read),

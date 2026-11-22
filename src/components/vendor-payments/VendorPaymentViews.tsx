@@ -107,6 +107,7 @@ function VendorPaymentList({ data }: { data: PaymentRow[] }) {
           <div className="flex flex-col gap-0.5">
             <span className={`text-sm font-medium ${r.totalAmount < 0 ? 'text-red-600' : 'text-gray-900'}`}>{money(r.totalAmount)}</span>
             {r.isReversal && <span className="text-xs text-gray-400">{t('vpay.reversal')}</span>}
+            {r.source === 'ERP' && <span title={t('vpay.fromSapHint')} className="inline-flex w-fit px-1.5 rounded text-[10px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">SAP</span>}
           </div>
         )
       },
@@ -223,7 +224,7 @@ function RecordPayment() {
       <Field label={t('vpay.reverses')}>
         <select value={reverses} onChange={(e) => setReverses(e.target.value)} className={ic()} disabled={!invoiceId}>
           <option value="">{t('vpay.notReversal')}</option>
-          {(earlier.data ?? []).filter((p) => Number(p.amount) > 0 && (p.status ?? 'APPROVED') === 'APPROVED').map((p) => (
+          {(earlier.data ?? []).filter((p) => Number(p.amount) > 0 && (p.status ?? 'APPROVED') === 'APPROVED' && p.source !== 'ERP').map((p) => (
             <option key={p.paymentId} value={p.paymentId}>{fmtDate(p.paidAt)} · {p.paymentRef ?? '—'} · {money(p.amount)}</option>
           ))}
         </select>

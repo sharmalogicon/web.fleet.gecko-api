@@ -1,16 +1,17 @@
 'use client'
 
 import { useState, type ReactNode } from 'react'
-import { Hash, ShieldCheck, SlidersHorizontal, Wrench } from 'lucide-react'
+import { Hash, Link2, PlugZap, ShieldCheck, SlidersHorizontal, Wrench } from 'lucide-react'
 import { useT } from '@/i18n/I18nContext'
 import { useFleetAccess } from '@/lib/api/fleet/access'
 import { NumberSeriesTab } from './NumberSeriesTab'
 import { SettingsTab } from './SettingsTab'
 import { ApprovalsTab } from './ApprovalsTab'
 import { LaborRatesTab } from './LaborRatesTab'
+import { ErpConnectionTab, ErpMappingsTab } from './ErpTabs'
 import { Loading } from './ui'
 
-type Tab = 'series' | 'settings' | 'approvals' | 'labor'
+type Tab = 'series' | 'settings' | 'approvals' | 'labor' | 'erp' | 'erpMaps'
 
 /**
  * Fleet Setup (prompt 02). Writes need fleet.setup.manage TENANT-WIDE (the API refuses a
@@ -28,6 +29,8 @@ export function FleetSetupClient() {
         { id: 'settings', label: t('fleetSetup.settings'), icon: <SlidersHorizontal size={15} /> },
         { id: 'approvals', label: t('fleetSetup.approvals'), icon: <ShieldCheck size={15} /> },
         { id: 'labor', label: t('fleetSetup.labor'), icon: <Wrench size={15} /> },
+        { id: 'erp', label: t('erp.connection'), icon: <PlugZap size={15} /> },
+        { id: 'erpMaps', label: t('erp.mappings'), icon: <Link2 size={15} /> },
       ]
     : [{ id: 'settings', label: t('fleetSetup.settings'), icon: <SlidersHorizontal size={15} /> }]
   const tab = tabs.some((x) => x.id === picked) ? picked : tabs[0].id
@@ -64,6 +67,8 @@ export function FleetSetupClient() {
             {tab === 'settings' && <SettingsTab canManage={canManage} />}
             {tab === 'approvals' && <ApprovalsTab />}
             {tab === 'labor' && <LaborRatesTab />}
+            {tab === 'erp' && <ErpConnectionTab />}
+            {tab === 'erpMaps' && <ErpMappingsTab />}
           </div>
         </>
       )}
