@@ -131,11 +131,10 @@ How: Vitest scripts under a git-excluded `live/` folder. **Every request body wa
 
 ### Findings
 
-**F1 — UI, PROPOSED (owner review required).** Four reports use the column format **`#,0.0000`** (fuel-consumption-summary,
+**F1 — UI, APPLIED 2026-11-22 (owner: "apply F1").** Four reports use the column format **`#,0.0000`** (fuel-consumption-summary,
 tire-life-summary, fuel-log-report, stock-movement-report: cost per km / per litre). The preview's `formatCell`
 (`src/lib/api/fleet/reports.ts`) knows only `#,0`, `#,0.00`, `#,0.##`, so those cells show the raw number (e.g. `6.53125`, no
-grouping). Proposed: read any `#,0[.0…][#…]` pattern (zeros = fixed decimals, `#` = optional ones). The tested patch is below,
-**not applied** (live-test rule). PDF / Excel are formatted by the API and are fine.
+grouping). Proposed: read any `#,0[.0…][#…]` pattern (zeros = fixed decimals, `#` = optional ones). The patch below is now applied (unit test added). PDF / Excel are formatted by the API and are fine.
 
 ```diff
 diff --git a/src/lib/api/fleet/reports.test.ts b/src/lib/api/fleet/reports.test.ts

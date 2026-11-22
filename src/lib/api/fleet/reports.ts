@@ -92,10 +92,15 @@ export function formatCell(v: unknown, format: string | null | undefined): strin
       const p = (t: string) => parts.find((x) => x.type === t)?.value ?? '';
       return format === 'dd/MM/yyyy' ? `${p('day')}/${p('month')}/${p('year')}` : `${p('day')}/${p('month')}/${p('year')} ${p('hour')}:${p('minute')}`;
     }
-    case '#,0.00': return Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    case '#,0.##': return Number(v).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-    case '#,0': return Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 });
-    default: return typeof v === 'boolean' ? (v ? 'Yes' : 'No') : String(v);
+    default: {
+      // Any number pattern `#,0[.0…][#…]` (e.g. #,0 · #,0.00 · #,0.## · #,0.0000): zeros = fixed decimals, # = optional ones.
+      const m = format ? /^#,0(?:\.(0*)(#*))?$/.exec(format) : null;
+      if (m && !Number.isNaN(Number(v))) {
+        const min = (m[1] ?? '').length;
+        return Number(v).toLocaleString('en-US', { minimumFractionDigits: min, maximumFractionDigits: min + (m[2] ?? '').length });
+      }
+      return typeof v === 'boolean' ? (v ? 'Yes' : 'No') : String(v);
+    }
   }
 }
 

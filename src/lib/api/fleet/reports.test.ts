@@ -12,6 +12,11 @@ describe('report cell formatter (prompt 16 §B)', () => {
     expect(formatCell('1234.567', '#,0.##')).toBe('1,234.57')
     expect(formatCell(1200, '#,0.##')).toBe('1,200')
     expect(formatCell(1234.6, '#,0')).toBe('1,235')
+    // Seen live (prompt 16 re-test): cost per km / per litre columns.
+    expect(formatCell('6.53125', '#,0.0000')).toBe('6.5313')
+    expect(formatCell(2, '#,0.0000')).toBe('2.0000')
+    expect(formatCell(1.5, '#,0.0#')).toBe('1.5')
+    expect(formatCell(1.25, '#,0.0#')).toBe('1.25')
     expect(formatCell(null, '#,0')).toBe('')
     expect(formatCell('TRK-01', null)).toBe('TRK-01')
     expect(formatCell(true, '')).toBe('Yes')
