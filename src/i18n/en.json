@@ -1942,5 +1942,32 @@
     "expensed": "Expensed",
     "reversal": "Reversal",
     "reversed": "Reversed"
+  },
+  "woCn": {
+    "invoice": "WO invoice",
+    "reason": "Reason",
+    "reasonHint": "Why the customer is credited (required by law, 3–500 characters)",
+    "numberedOnIssue": "Numbered on issue",
+    "remaining": "Still open",
+    "of": "of",
+    "creditAmount": "Credit amount",
+    "creditNet": "Credit (net)",
+    "vatOnIssue": "VAT / total",
+    "calculatedOnIssue": "calculated on issue",
+    "pickInvoice": "Pick the customer and one of their WO invoices on the header first.",
+    "newHint": "Credit one issued WO invoice; the note cannot be edited afterwards (cancel a wrong one).",
+    "issue": "Issue credit note",
+    "issued": "Credit note issued",
+    "cancel": "Cancel credit note",
+    "cancelHint": "The number is kept and the amounts become open again on the invoice.",
+    "cancelled": "Credit note cancelled",
+    "rule": {
+      "amount": "Enter 0 or more",
+      "overRemaining": "More than is still open on this line",
+      "reason": "The reason is 3–500 characters",
+      "customer": "Pick the customer",
+      "invoice": "Pick the WO invoice",
+      "nothing": "Nothing to credit: every line is 0"
+    }
   }
 }

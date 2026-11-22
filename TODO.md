@@ -277,6 +277,15 @@
 - ✅ 3. EN + TH (9 keys); tsc clean, Vitest 245 pass, lint 0 errors, build passes; `replies/20_REPLY.md`; commit + push
 - ⬜ 4. LIVE checks (needs APIs)
 
+## WO credit notes — ui-prompts/21_WO_CREDIT_NOTES_P12.md (started 2026-11-22)
+> Recovery: Platform API `/api/revenue/credit-notes` (source=FLEET). Screens: `components/credit-notes/WOCreditNote*`.
+
+- ✅ 1. (3 tests) Adapter `src/lib/api/platform/creditNotes.ts` (list, one, creditable, issue, cancel; status map; credit ≤ remaining) + Vitest
+- ✅ 2. (customer filter = PartyCodeInput CUSTOMER) A: list on the API (filters mapped, ISSUED = Active)
+- ✅ 3. (`WOCreditNoteViews.tsx`; route guard → revenue.*) B: form — new (customer → WO invoice → creditable lines + Credit amount, reason) / existing read-only + Cancel
+- ✅ 4. EN + TH (23 keys); mocks removed; tsc clean, Vitest 248 pass, lint 0 errors, build passes; `replies/21_REPLY.md`; commit + push
+- ⬜ 5. LIVE checks (needs APIs)
+
 ## Conventions for the next prompts (from 03–13)
 > Write the step list here first (like the blocks above), then build. Reuse what 03–10 built:
 > - adapters `src/lib/api/fleet/<entity>.ts`: `toViewModel`/`toFormValues`, `toRequest` (send fields with no input as read),

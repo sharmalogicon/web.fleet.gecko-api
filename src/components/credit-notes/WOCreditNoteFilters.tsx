@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { SearchInput } from '@/components/shared/SearchInput'
+import { PartyCodeInput } from '@/components/shared/PartyInputs'
 import { useT } from '@/i18n/I18nContext'
 
 const STATUS_OPTIONS = ['ALL', 'ACTIVE', 'CANCELLED'] as const
@@ -57,12 +58,11 @@ export function WOCreditNoteFilters({
         placeholder="Search by credit note no…"
         className="w-52"
       />
-      <SearchInput
-        value={customerName}
-        onChange={(v) => push({ customerName: v })}
-        placeholder="Search by customer…"
-        className="w-52"
-      />
+      {/* The customer lookup (payer party code, prompt 21 §A). */}
+      <div className="w-52">
+        <PartyCodeInput id="wocn-customers" role="CUSTOMER" value={customerName} onChange={(v) => push({ customerName: v })}
+          className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Customer code…" />
+      </div>
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-gray-500">{t('common.status')}</label>
         <select

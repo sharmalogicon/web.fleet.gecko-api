@@ -68,6 +68,7 @@ export const ROUTE_PERMISSIONS: Record<string, readonly string[]> = {
   '/invoice/vendor': ['fleet.vendorinvoice.view'],
   '/invoice/vendor-payments': ['fleet.vendorinvoice.view'],
   '/invoice/credit-notes': ['fleet.vendorinvoice.view'],
+  '/invoice/credit-notes/wo': ['revenue.charge.view', 'revenue.invoice.issue'],
   '/invoice/work-order': ['revenue.charge.view', 'revenue.invoice.issue'],
 
   // Inquiry
