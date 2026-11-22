@@ -269,6 +269,14 @@
 - ✅ 5. EN + TH (15 keys); tsc clean, Vitest 244 pass, lint 0 errors, build passes; `replies/19_REPLY.md`; commit + push
 - ⬜ 6. LIVE checks (needs APIs)
 
+## Gap closing 2 — ui-prompts/20_GAP_CLOSING_P12_PART2.md (started 2026-11-22)
+> Recovery: read-only "Stock cost corrections" grid (GET /cost-adjustments) on the vendor invoice form (APPROVED+) and the Stock form.
+
+- ✅ 1. (1 test) Adapter `costAdjustments.ts` (rows, reversal flag) + Vitest; shared `docs/CostCorrections.tsx`
+- ✅ 2. On the invoice form (header tab, APPROVED / EXPORTED / PAID / CANCELLED) and the Stock form (under Reserved)
+- ✅ 3. EN + TH (9 keys); tsc clean, Vitest 245 pass, lint 0 errors, build passes; `replies/20_REPLY.md`; commit + push
+- ⬜ 4. LIVE checks (needs APIs)
+
 ## Conventions for the next prompts (from 03–13)
 > Write the step list here first (like the blocks above), then build. Reuse what 03–10 built:
 > - adapters `src/lib/api/fleet/<entity>.ts`: `toViewModel`/`toFormValues`, `toRequest` (send fields with no input as read),

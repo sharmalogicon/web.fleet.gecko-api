@@ -8,6 +8,7 @@ import { ToolbarButton } from '@/components/shared/ReasonDialog'
 import { Alert, useDocActions } from '@/components/docs/DocBits'
 import { InvoiceHeaderSection } from '@/components/vendor-invoices/sections/InvoiceHeaderSection'
 import { InvoiceLinesSection } from '@/components/vendor-invoices/sections/InvoiceLinesSection'
+import { CostCorrections } from '@/components/docs/CostCorrections'
 import {
   INVOICE_API_TO_FORM, INVOICE_STATUS_TONE, invoiceActions, invoiceFormSchema, useSaveVendorInvoice, useVendorInvoiceAction,
   type InvoiceFormValues, type VendorInvoiceDto,
@@ -87,6 +88,10 @@ export function VendorInvoiceFormClient({ record, current, isNew }: Props) {
             </div>
           )}
           <InvoiceHeaderSection form={form} isNew={isNew} editable={allowed.save} current={current} />
+          {/* Stock cost corrections from price variance (prompt 20), once approved. */}
+          {current && ['APPROVED', 'EXPORTED', 'PAID', 'CANCELLED'].includes(current.status) && (
+            <div className="mt-6"><CostCorrections vendorInvoiceId={current.vendorInvoiceId} hideEmpty /></div>
+          )}
         </>
       ),
     },

@@ -1931,5 +1931,16 @@
     "for": "For",
     "reservedQty": "Reserved Qty",
     "availableQty": "Available Qty"
+  },
+  "costAdj": {
+    "title": "Stock cost corrections",
+    "none": "No cost corrections.",
+    "invoice": "Invoice",
+    "delta": "Δ value",
+    "avg": "Avg cost before → after",
+    "revalued": "Revalued",
+    "expensed": "Expensed",
+    "reversal": "Reversal",
+    "reversed": "Reversed"
   }
 }

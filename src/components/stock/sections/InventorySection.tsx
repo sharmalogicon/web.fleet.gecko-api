@@ -5,6 +5,7 @@ import type { StockFormValues } from '@/types/stock'
 import { useT } from '@/i18n/I18nContext'
 import type { WarehouseDto } from '@/lib/api/fleet/warehouses'
 import { ItemReservations } from '@/components/docs/ReserveStockDialog'
+import { CostCorrections } from '@/components/docs/CostCorrections'
 import { useFleetAccess } from '@/lib/api/fleet/access'
 
 interface Props {
@@ -129,6 +130,7 @@ export function InventorySection({ form, warehouse, itemId }: Props) {
       </div>
 
       {itemId && <ItemReservations itemId={itemId} canRelease={canAnywhere('fleet.stock.issue')} />}
+      {itemId && canAnywhere('fleet.inventory.view') && <CostCorrections itemId={itemId} />}
 
       {/* Editable inventory settings */}
       <div>
