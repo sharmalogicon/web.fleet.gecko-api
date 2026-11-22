@@ -213,7 +213,7 @@
 - ✅ 6. E: violations adapter + 3 tests; list (status, lookups, no Delete, Payroll deductions dialog + CSV) / form (Payment + deduction block, Pay / Deduct / Take back / Refresh / Dispute / Reopen / Cancel); ReasonDialog got reasonLabel + hideReason; mocks removed; tsc clean
 - ✅ 7. EN + TH (163 keys, scratchpad merge script); old mocks removed; tsc clean, Vitest 219 pass, lint 0 errors on new files, `next build --webpack` passes
 - ✅ 8. `ui-prompts/replies/14_REPLY.md` (6 questions)
-- ⬜ 9. LIVE checks (needs APIs; run Setup → Set up defaults for FLT_FUEL / FLT_TVN)
+- 🔄 9. LIVE (2026-11-22): API flows PASS — see LIVE_TEST_FINDINGS §F; browser walk-through open (PC out of commit memory, F4)
 
 ## Vendor billing (AP-lite) — ui-prompts/15_VENDOR_BILLING_P8.md (started 2026-11-22)
 > Recovery: read the prompt (A unbilled, B invoices, C credit notes, D payments, E export). WO invoices / WO credit notes NOT here.
@@ -227,7 +227,7 @@
 - ✅ 6. E (in `VendorInvoiceViews.tsx`, tabs Pending / History): Export dialog on the invoice list (pending → tick → POST → batch + Download CSV) + history
 - ✅ 7. EN + TH (104 keys); old mocks removed; tsc clean, Vitest 230 pass, lint 0 errors, build passes
 - ✅ 8. `ui-prompts/replies/15_REPLY.md` (5 questions)
-- ⬜ 9. LIVE checks (needs APIs)
+- 🔄 9. LIVE (2026-11-22): API flows PASS — see LIVE_TEST_FINDINGS §F; browser walk-through open (PC out of commit memory, F4)
 
 ## Dashboard + reports + inquiries — ui-prompts/16_REPORTS_DASHBOARD_P9.md (started 2026-11-22)
 > Recovery: read the prompt (A dashboard, B 19 reports, C 5 inquiries, D cost = report only, E fuel summary / driver incidents optional).
@@ -239,7 +239,7 @@
 - ✅ 5. E: no room on the driver form → asked in the reply (not built): driver incidents on the driver form only if room (else ask)
 - ✅ 6. EN + TH (18 keys); old mocks removed; tsc clean, Vitest 234 pass, lint clean, build passes
 - ✅ 7. `ui-prompts/replies/16_REPLY.md` (5 questions); commit + push to clean-push
-- ⬜ 8. LIVE checks (needs APIs)
+- 🔄 8. LIVE (2026-11-22): API flows PASS — see LIVE_TEST_FINDINGS §F; browser walk-through open (PC out of commit memory, F4)
 
 ## SAP Business One — ui-prompts/17_SAP_B1_P10.md (started 2026-11-22)
 > Recovery: read the prompt (A two Setup tabs, B export target, C retry / payment pull / reconciliation). Simulator: baseUrl `fake://demo`.
@@ -248,7 +248,7 @@
 - ✅ 2. (`fleet-setup/ErpTabs.tsx`) A: Fleet Setup tabs "ERP connection" (+ Test) and "ERP mappings" (grouped by type, GL select, BP supplier picker)
 - ✅ 3. (dialog moved to `vendor-invoices/ExportDialog.tsx`, tabs Ready / Earlier / SAP payments / Reconcile; ERP payments not reversible) B: Export dialog target CSV / SAP + per-document result; C: batch view retry, Pull SAP payments, Reconcile tab; SAP badge on payments
 - ✅ 4. EN + TH (74 keys); tsc clean, Vitest 238 pass, lint clean, build passes; `replies/17_REPLY.md`; commit + push
-- ⬜ 5. LIVE end-to-end against fake://demo (APIs were down)
+- 🔄 5. LIVE (2026-11-22): API flows PASS — see LIVE_TEST_FINDINGS §F; browser walk-through open (PC out of commit memory, F4)
 
 ## Go-live tools — ui-prompts/18_GO_LIVE_P11.md (started 2026-11-22)
 > Recovery: read the prompt (A Opening balances tab with 4 cards, B Sync everything from Trucking, C meter source badges).
@@ -257,7 +257,7 @@
 - ✅ 2. (`fleet-setup/OpeningBalancesTab.tsx`) A + B: Fleet Setup tab "Opening balances" (Meters, PM baselines, Stock, Tyres cards; Sync everything from Trucking)
 - ✅ 3. (`MeterSourceBadge`, lists + forms) C: OPENING / TRUCKING meter source badge colours
 - ✅ 4. EN + TH (37 keys); tsc clean, Vitest 240 pass, lint clean, build passes; `replies/18_REPLY.md`; commit + push
-- ⬜ 5. LIVE checks (needs APIs)
+- 🔄 5. LIVE (2026-11-22): API flows PASS — see LIVE_TEST_FINDINGS §F; browser walk-through open (PC out of commit memory, F4)
 
 ## Gap closing 1 — ui-prompts/19_GAP_CLOSING_P12.md (started 2026-11-22)
 > Recovery: A payment approval was DONE in prompt 15 (VendorPaymentViews.tsx); B stock reservations; C depreciation = catalogue column (check only).
@@ -267,7 +267,7 @@
 - ✅ 3. (shared `docs/ReserveStockDialog.tsx` + `ItemReservations`) B: Reserve on WO part lines + goods-request lines (store chosen); Stock form: real reserved / available qty + "Reserved" list with Release
 - ✅ 4. (no code; live check) C: check the Service Cost Summary preview shows the catalogue's Depreciation column (no code)
 - ✅ 5. EN + TH (15 keys); tsc clean, Vitest 244 pass, lint 0 errors, build passes; `replies/19_REPLY.md`; commit + push
-- ⬜ 6. LIVE checks (needs APIs)
+- 🔄 6. LIVE (2026-11-22): API flows PASS — see LIVE_TEST_FINDINGS §F; browser walk-through open (PC out of commit memory, F4)
 
 ## Gap closing 2 — ui-prompts/20_GAP_CLOSING_P12_PART2.md (started 2026-11-22)
 > Recovery: read-only "Stock cost corrections" grid (GET /cost-adjustments) on the vendor invoice form (APPROVED+) and the Stock form.
@@ -275,7 +275,7 @@
 - ✅ 1. (1 test) Adapter `costAdjustments.ts` (rows, reversal flag) + Vitest; shared `docs/CostCorrections.tsx`
 - ✅ 2. On the invoice form (header tab, APPROVED / EXPORTED / PAID / CANCELLED) and the Stock form (under Reserved)
 - ✅ 3. EN + TH (9 keys); tsc clean, Vitest 245 pass, lint 0 errors, build passes; `replies/20_REPLY.md`; commit + push
-- ⬜ 4. LIVE checks (needs APIs)
+- 🔄 4. LIVE (2026-11-22): API flows PASS — see LIVE_TEST_FINDINGS §F; browser walk-through open (PC out of commit memory, F4)
 
 ## WO credit notes — ui-prompts/21_WO_CREDIT_NOTES_P12.md (started 2026-11-22)
 > Recovery: Platform API `/api/revenue/credit-notes` (source=FLEET). Screens: `components/credit-notes/WOCreditNote*`.
@@ -284,7 +284,7 @@
 - ✅ 2. (customer filter = PartyCodeInput CUSTOMER) A: list on the API (filters mapped, ISSUED = Active)
 - ✅ 3. (`WOCreditNoteViews.tsx`; route guard → revenue.*) B: form — new (customer → WO invoice → creditable lines + Credit amount, reason) / existing read-only + Cancel
 - ✅ 4. EN + TH (23 keys); mocks removed; tsc clean, Vitest 248 pass, lint 0 errors, build passes; `replies/21_REPLY.md`; commit + push
-- ⬜ 5. LIVE checks (needs APIs)
+- 🔄 5. LIVE (2026-11-22): API flows PASS — see LIVE_TEST_FINDINGS §F; browser walk-through open (PC out of commit memory, F4)
 
 ## Backend to-do shipped — ui-prompts/22_BACKEND_TODO_P13.md (started 2026-11-22)
 > Recovery: remove the UI fallbacks for backend items #1–#20 (no redesign). Findings in replies/22_REPLY.md.
@@ -293,12 +293,12 @@
 - ✅ 2. Fleet items (#1, #4–#12, #17) fallbacks removed / bound
 - ✅ 3. Platform items (#13–#15) fallbacks removed / bound
 - ✅ 4. tsc clean, Vitest 247 pass, lint clean, build passes; `replies/22_REPLY.md`; commit + push
-- ⬜ 5. LIVE re-tests per item (needs APIs)
+- 🔄 5. LIVE (2026-11-22): API flows PASS — see LIVE_TEST_FINDINGS §F; browser walk-through open (PC out of commit memory, F4)
 
 ## Subcon deduction tax invoice — ui-prompts/23_SUBCON_DEDUCTION_TAX_INVOICE_P14.md (started 2026-11-22)
 - ✅ 1. (1 test) Adapter (platform `subconDeductionInvoices.ts`) + show the tax invoice no on DEDUCTED recharges (detail drawer); WO invoice list: propose only
 - ✅ 2. EN + TH; checks pass; `replies/23_REPLY.md`; commit + push
-- ⬜ 3. LIVE check (needs APIs)
+- 🔄 3. LIVE (2026-11-22): API flows PASS — see LIVE_TEST_FINDINGS §F; browser walk-through open (PC out of commit memory, F4)
 
 ## Conventions for the next prompts (from 03–13)
 > Write the step list here first (like the blocks above), then build. Reuse what 03–10 built:
