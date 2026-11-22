@@ -81,15 +81,15 @@ money paid on a cancelled invoice.
 payments; waiting ones (`PendingQuery(db)`, line ~595) are not checked. The payment approval endpoint does not check the
 invoice status either.
 
-**Fix (pick A; B is the alternative — owner to confirm).**
-- **A — refuse (recommended, same style as the paid check):** in `CancelAsync`, after the `PaidAmount` check:
+**Fix — owner decision 2026-11-22: option A (refuse the cancel). Do not build B.**
+- **A — refuse (CHOSEN):** in `CancelAsync`, after the `PaidAmount` check:
   `if (await PendingQuery(db).AnyAsync(p => p.VendorInvoiceId == doc.VendorInvoiceId, ct)) return Conflict("A payment on this invoice waits for approval: approve or reject it first.");`
-- **B — reject with the cancel:** inside the cancel transaction, add a `PaymentApproval { Decision = "REJECTED", Reason = "Invoice cancelled: <reason>" }`
+- ~~**B — reject with the cancel:**~~ (not chosen) inside the cancel transaction, add a `PaymentApproval { Decision = "REJECTED", Reason = "Invoice cancelled: <reason>" }`
   for each waiting payment.
 - **Either way, also guard the approval:** `POST /vendor-payments/{id}/approval` with `decision: APPROVED` on a payment whose invoice
   is CANCELLED → 409 "The invoice is cancelled." (REJECTED stays allowed, so the existing waiting payment can be cleaned up.)
 
-**Test** (`Gecko.Fleet.Tests/Api/PaymentApprovalTests.cs`): approval on → pay → cancel → 409 (A), or → payment REJECTED (B);
+**Test** (`Gecko.Fleet.Tests/Api/PaymentApprovalTests.cs`): approval on → pay → cancel → 409; reject the payment → cancel → 200;
 approving a payment of a cancelled invoice → 409.
 
 **Data.** Clean up the test row left by the live run: reject the waiting 100.00 payment on `VIN-SCT-LCB01-2611-00185` (SCT-TEST).
