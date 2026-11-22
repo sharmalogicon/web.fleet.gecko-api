@@ -1,6 +1,7 @@
 # Backend to-do for Fleet (consolidated, 2026-11-20)
 
 > **2026-11-21: ALL items #1–#20 shipped by the backend (P13). See prompt `22_BACKEND_TODO_P13.md` for names, rules and the UI actions.**
+> **2026-11-22: two new items from the live run of prompts 14–23 — #21 (F2) and #22 (F3), section P4 below. No UI change is needed for either.**
 
 One list for the API owner, from the owner's answers in `11_REPLY.md`, `12_REPLY.md`, `13_REPLY.md` and the live tests
 (`LIVE_TEST_FINDINGS.md`). **The UI is already built for every item** (it sends / reads the names below and falls
@@ -41,6 +42,60 @@ Code paths are in `platform/` (Gecko.Fleet = Fleet API :5300; Gecko.MasterData /
 | 18 | Confirm: recharge total (e.g. 971.56) and invoice total (972, VAT whole baht) may differ by the rounding | live C4 |
 | 19 | Amounts with 4 decimals on stock documents (e.g. −103.5556) — round to 2 on documents shown to people? | live B4 |
 | 20 | Wording: "A approved / A invoiced / A draft …" → "An approved …" in 409 messages | live B, C |
+
+## P4 — from the live run of prompts 14–23 (2026-11-22, `LIVE_TEST_FINDINGS.md` §F)
+
+### #21 (F2) — Opening-balance import: a file that is not a spreadsheet → 500 instead of 400 on `file`
+**Evidence.** `POST /api/fleet/opening-balances/STOCK?commit=false`, multipart `file` = the bytes `not a spreadsheet` named
+`x.xlsx`, owner of SCT-TEST → **500** "Something failed on our side…" (reference `b15f245127ae3edb45208231f50fb625`).
+Prompt 18 promises **400 on `file`** for a wrong file, missing columns or an empty sheet; the UI's card shows the 400 message
+under the file picker and only a generic text for a 500.
+
+**Where.** `Gecko.Fleet/Endpoints/Setup/GoLiveEndpoints.cs`, `ImportAsync`, line ~135:
+`catch (Exception e) when (e is FormatException or InvalidDataException or ArgumentException) { return Invalid("file", e.Message); }`.
+`new XLWorkbook(stream)` (in `Read`, line ~98) on bytes that are not an .xlsx (not a zip, a zip that is not OOXML, an .xls, a
+.csv renamed) throws a packaging / OOXML exception (e.g. `System.IO.FileFormatException`, `DocumentFormat.OpenXml.Packaging.OpenXmlPackageException`,
+or a `NotSupportedException`) — none of the three filtered types. Reproduce first and name the exact type in the commit.
+
+**Fix.**
+1. Catch the reader's failures around `new XLWorkbook(...)` only, and return
+   `400 { errors: { file: ["This is not an Excel workbook (.xlsx). Download the template, fill it and upload it again."] } }`.
+   Do not let the raw exception text out for this case (it is meaningless to a user).
+2. Keep the existing 400s (missing columns, no rows, > 5,000 rows) as they are.
+3. Optional: check the first bytes (`PK`) before opening, for a clear message without an exception.
+
+**Test** (`Gecko.Fleet.Tests/Api/…GoLive…`): for each kind, upload (a) plain text, (b) an empty zip, (c) a zip without
+`[Content_Types].xml` → 400 with an error on `file`; a real template still → 200.
+
+**Done when.** No input file can make the import answer 500; the four kinds answer 400 on `file` for a non-workbook.
+
+### #22 (F3) — A vendor invoice can be cancelled while a payment waits for approval
+**Evidence.** SCT-TEST, `VENDOR_PAYMENT_APPROVAL = true`: invoice `VIN-SCT-LCB01-2611-00185` APPROVED → `POST …/payments`
+`{ amount: 100 }` → the payment waits (`paidAmount` 0, `pendingPaymentAmount` 100, payment status PENDING_APPROVAL) →
+`POST …/cancel { reason }` → **200 CANCELLED**. The payment is still PENDING_APPROVAL on the cancelled invoice and
+`POST /api/fleet/vendor-payments/{id}/approval { decision: APPROVED }` by another approver is still possible, which would record
+money paid on a cancelled invoice.
+
+**Where.** `Gecko.Fleet/Endpoints/Billing/VendorInvoiceEndpoints.cs`, `CancelAsync` (line ~543): it refuses
+`doc.PaidAmount != 0` ("Payments are recorded on this invoice: reverse them first.") but `PaidAmount` only counts approved
+payments; waiting ones (`PendingQuery(db)`, line ~595) are not checked. The payment approval endpoint does not check the
+invoice status either.
+
+**Fix (pick A; B is the alternative — owner to confirm).**
+- **A — refuse (recommended, same style as the paid check):** in `CancelAsync`, after the `PaidAmount` check:
+  `if (await PendingQuery(db).AnyAsync(p => p.VendorInvoiceId == doc.VendorInvoiceId, ct)) return Conflict("A payment on this invoice waits for approval: approve or reject it first.");`
+- **B — reject with the cancel:** inside the cancel transaction, add a `PaymentApproval { Decision = "REJECTED", Reason = "Invoice cancelled: <reason>" }`
+  for each waiting payment.
+- **Either way, also guard the approval:** `POST /vendor-payments/{id}/approval` with `decision: APPROVED` on a payment whose invoice
+  is CANCELLED → 409 "The invoice is cancelled." (REJECTED stays allowed, so the existing waiting payment can be cleaned up.)
+
+**Test** (`Gecko.Fleet.Tests/Api/PaymentApprovalTests.cs`): approval on → pay → cancel → 409 (A), or → payment REJECTED (B);
+approving a payment of a cancelled invoice → 409.
+
+**Data.** Clean up the test row left by the live run: reject the waiting 100.00 payment on `VIN-SCT-LCB01-2611-00185` (SCT-TEST).
+
+**Done when.** No payment can be PENDING_APPROVAL or approved on a CANCELLED invoice. The UI needs no change: the 409 shows as the
+cancel dialog's error, and the Approve / Reject buttons already follow the payment status.
 
 ## Already verified live (no action)
 Prompts 01–13 read endpoints; setup initialize; asset / technician / driver / supplier / service type / item edits;

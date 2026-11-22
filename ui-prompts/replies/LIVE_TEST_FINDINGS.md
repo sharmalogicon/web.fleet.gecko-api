@@ -179,10 +179,10 @@ index 135aa5af..7883b83f 100644
  
 ```
 
-**F2 — Backend.** `POST /opening-balances/{kind}` with a file that is not a spreadsheet → **500** (reference
+**F2 — Backend → `BACKEND_TODO.md` #21.** `POST /opening-balances/{kind}` with a file that is not a spreadsheet → **500** (reference
 `b15f245127ae3edb45208231f50fb625`); prompt 18 says 400 on `file`. The UI shows the generic error text.
 
-**F3 — Backend.** Cancelling a vendor invoice that has a payment **PENDING_APPROVAL** (VENDOR_PAYMENT_APPROVAL on) is allowed
+**F3 — Backend → `BACKEND_TODO.md` #22.** Cancelling a vendor invoice that has a payment **PENDING_APPROVAL** (VENDOR_PAYMENT_APPROVAL on) is allowed
 and leaves the pending payment on the CANCELLED invoice (`VIN-SCT-LCB01-2611-00185`, payment 100 PENDING_APPROVAL). It could still be
 approved. Proposed: refuse the cancel while a payment waits, or reject the waiting payments with the cancel.
 
