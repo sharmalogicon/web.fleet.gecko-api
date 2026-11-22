@@ -190,3 +190,7 @@ approved. Proposed: refuse the cancel while a payment waits, or reject the waiti
 failed with `VirtualAlloc failed` — the PC's **commit limit is used up** (65 MB commit free). Holding it: another dev server
 (`my.gecko-api.com`, `next dev -p 3199`, since 21-11), ~10 old `mssql-mcp-server` processes (20–22 Nov), browsers, Visual Studio.
 The screen walk-through (prompt 01 step 15 + every screen of 14–23) is still open.
+**Update 2026-11-22 (later):** the owner had the 6 old `mssql-mcp-server` processes stopped (commit free 65 MB → ~5 GB). The dev
+server then started (Ready in 1.7 s). Through `https://localhost:5001`: login via the proxy OK, and `/api/fleet`, `/api/revenue` and `/api/branches`
+→ 200; **all 34 pages changed in 14–23 compile and answer 200**, no errors in the dev log. Still open: clicking through the
+screens in a browser (the pages render in the browser behind login, which these checks cannot see).
