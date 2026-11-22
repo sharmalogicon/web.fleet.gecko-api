@@ -8,7 +8,7 @@
   - It is not a link: there is no invoice view page for these.
 - EN + TH: 2 keys. Checks: tsc clean; Vitest pass (new: visibility rule + first invoice); lint clean; build passes.
 
-## Proposal (not built — UI policy)
+## Proposal — BUILT 2026-11-22 (owner approved)
 - **WO invoice list** (`/invoice/work-order`): the screen has no "type" / "source" filter today. Proposed: a small "Source" select (WO invoices / Subcontractor deductions). The second option lists `GET /subcon-deduction-invoices` in the same columns (invoice no / paid date, subcontractor, total, status), plus a read-only view with the lines (WO no, vehicle, recharge no, charge, amount, VAT). Owner to approve.
 
 ## Live checks (needs the APIs)

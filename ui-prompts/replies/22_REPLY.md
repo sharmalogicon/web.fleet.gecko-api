@@ -11,7 +11,7 @@ Types regenerated (fleet 208 paths, platform 423), then each fallback removed. *
 | 9 | Issue-from-stock uses `WoPartDto.issuedBaseQty` only. The extra `GET /stock-issues?workOrderId=` that added up posted issues is gone. |
 | 10 | No change (the receipt keeps sending `taxRate`; both work). |
 | 11 | Client-side supplier filtering removed on Purchase Orders, Goods Receipts and Return to Vendor (`supplierName` goes to the API). WO no / equipment filtering removed on Spare Parts Monitoring (`workOrderNo` / `assetCode`). The screen-status filter stays where one screen status covers several API statuses. |
-| 12 | `useTransferTargets` no longer catches 404: the API answers the configured list, or every other active store. **Proposal (not built):** a "Transfer targets" multi-select on the Stores form (`/master/stores/[id]`), saved with `PUT /warehouses/{id}/transfer-targets`, shown only with `fleet.inventory.manage` — owner to approve. |
+| 12 | `useTransferTargets` no longer catches 404: the API answers the configured list, or every other active store. **BUILT 2026-11-22 (owner approved):** a "Transfer targets" tab on the Stores form (Any active store / only the ticked stores) (`/master/stores/[id]`), saved with `PUT /warehouses/{id}/transfer-targets`, shown only with `fleet.inventory.manage` — owner to approve. |
 | 17 | Refresh kept (optional). |
 | 19, 20 | Nothing to change. |
 

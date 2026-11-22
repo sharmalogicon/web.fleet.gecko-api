@@ -304,6 +304,11 @@
 - ✅ 1. (2026-11-22, both VERIFIED — LIVE_TEST_FINDINGS re-test section) Re-test on the rebuilt APIs: `npx vitest run --config live/vitest.config.mts live/p_fix2122.live.ts --pool=threads` (APIs were down at 2026-11-22 after the backend change)
 - ✅ 2. (it did exist: CANCELLED with 100.00 waiting → rejected by ops.lcb) Check: the backend says `VIN-SCT-LCB01-2611-00185` no longer exists locally — the live run created it on this PC's DB (the re-test prints whether it is there)
 
+## Owner-approved proposals (2026-11-22): transfer targets + WO invoice source filter
+- ✅ 1. (`stores/TransferTargetsTab.tsx`; live: LIST saved, transfer elsewhere → 400, reset ANY) Stores form: "Transfer targets" (any active store / only the ticked stores) → PUT /warehouses/{id}/transfer-targets; fleet.inventory.manage at the store's branch
+- ✅ 2. (`wo-invoices/SubconDeductionViews.tsx`; live: list answers, none yet) WO invoice list: "Source" select (WO invoices / Subcontractor deductions); deductions from GET /api/revenue/subcon-deduction-invoices, read-only drawer with lines
+- ✅ 3. EN + TH (22 keys); Vitest 251 pass; tsc, lint clean; build passes; live check; commit + push
+
 ## Conventions for the next prompts (from 03–13)
 > Write the step list here first (like the blocks above), then build. Reuse what 03–10 built:
 > - adapters `src/lib/api/fleet/<entity>.ts`: `toViewModel`/`toFormValues`, `toRequest` (send fields with no input as read),

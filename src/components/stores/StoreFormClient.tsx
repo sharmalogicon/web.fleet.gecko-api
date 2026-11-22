@@ -5,6 +5,7 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { FormLayout } from '@/components/shared/FormLayout'
+import { TransferTargetsTab } from '@/components/stores/TransferTargetsTab'
 import { LineItemsEditor } from '@/components/shared/LineItemsEditor'
 import { Field, inputClass } from '@/components/shared/FormField'
 import { useT } from '@/i18n/I18nContext'
@@ -147,6 +148,8 @@ export function StoreFormClient({ values, current, isNew }: Props) {
       tabs={[
         { id: 'general', label: t('form.general'), content: general },
         { id: 'bins', label: t('store.bins'), content: binsTable },
+        // Saved stores only: the list is its own endpoint and save (owner-approved 2026-11-22).
+        ...(current ? [{ id: 'targets', label: t('store.targets.tab'), content: <TransferTargetsTab store={current} canManage={canManage} /> }] : []),
       ]}
       isNew={isNew}
       actions={

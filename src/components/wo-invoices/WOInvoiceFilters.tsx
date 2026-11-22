@@ -13,6 +13,8 @@ interface WOInvoiceFiltersProps {
   status: string
   dateFrom: string
   dateTo: string
+  /** WO (Revenue WO invoices) or SUBCON (SCT tax invoices for subcontractor deductions). */
+  source: string
 }
 
 export function WOInvoiceFilters({
@@ -21,6 +23,7 @@ export function WOInvoiceFilters({
   status,
   dateFrom,
   dateTo,
+  source,
 }: WOInvoiceFiltersProps) {
   const router = useRouter()
   const { t } = useT()
@@ -32,6 +35,7 @@ export function WOInvoiceFilters({
       status?: string
       dateFrom?: string
       dateTo?: string
+      source?: string
     }) => {
       const sp = new URLSearchParams()
       const rn = params.receiptNo ?? receiptNo
@@ -44,13 +48,26 @@ export function WOInvoiceFilters({
       if (st && st !== 'ALL') sp.set('status', st)
       if (df) sp.set('dateFrom', df)
       if (dt) sp.set('dateTo', dt)
+      const src = params.source ?? source
+      if (src && src !== 'WO') sp.set('source', src)
       router.push(`/invoice/work-order?${sp.toString()}`)
     },
-    [receiptNo, customerName, status, dateFrom, dateTo, router],
+    [receiptNo, customerName, status, dateFrom, dateTo, source, router],
   )
 
   return (
     <>
+      <div className="flex flex-col gap-1">
+        <label className="text-xs font-medium text-gray-500">{t('woInvoice.source.label')}</label>
+        <select
+          value={source || 'WO'}
+          onChange={(e) => push({ source: e.target.value, status: 'ALL' })}
+          className="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="WO">{t('woInvoice.source.WO')}</option>
+          <option value="SUBCON">{t('woInvoice.source.SUBCON')}</option>
+        </select>
+      </div>
       <SearchInput
         value={receiptNo}
         onChange={(v) => push({ receiptNo: v })}

@@ -909,6 +909,19 @@
       "code": "Letters, digits and - _ / . only.",
       "nameRequired": "Enter the name.",
       "binTwice": "This bin code is listed twice."
+    },
+    "targets": {
+      "tab": "Transfer targets",
+      "hint": "Which stores this store may send stock to by transfer.",
+      "any": "Any active store (no list)",
+      "list": "Only the stores ticked below",
+      "noOthers": "No other active store.",
+      "otherBranch": "other branch",
+      "save": "Save transfer targets",
+      "saved": "Transfer targets saved",
+      "rule": {
+        "pickOne": "Tick at least one store, or choose Any active store"
+      }
     }
   },
   "stock": {
@@ -1371,7 +1384,22 @@
     "pickCharges": "Tick at least one charge.",
     "pickPayer": "Pick the customer to invoice; all their ready charges are ticked.",
     "selected": "Selected",
-    "toInvoice": "Ready to invoice"
+    "toInvoice": "Ready to invoice",
+    "source": {
+      "label": "Source",
+      "WO": "WO invoices",
+      "SUBCON": "Subcontractor deductions"
+    },
+    "subcontractor": "Subcontractor",
+    "subconCount": "subcontractor tax invoice(s) found",
+    "subconHint": "Issued automatically when Trucking marks a subcontractor statement PAID. Read-only.",
+    "settlement": "Statement",
+    "paidOn": "Paid on",
+    "issuedAt": "Issued",
+    "vehicle": "Vehicle",
+    "recharge": "Recharge",
+    "charge": "Charge",
+    "subconCorrect": "A wrong one is corrected with a credit note (WO credit notes)."
   },
   "tyre": {
     "addLine": "Add line",

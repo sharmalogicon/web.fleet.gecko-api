@@ -11,6 +11,7 @@ import { Field, inputClass } from '@/components/shared/FormField'
 import { ToolbarButton } from '@/components/shared/ReasonDialog'
 import { Alert, Loading, StatusPill, fmtDate, money, num, useSaveFailure } from '@/components/docs/DocBits'
 import { WOInvoiceFilters } from '@/components/wo-invoices/WOInvoiceFilters'
+import { SubconDeductionList } from '@/components/wo-invoices/SubconDeductionViews'
 import { useT } from '@/i18n/I18nContext'
 import { useAuth } from '@/lib/contexts/AuthContext'
 import { errorText } from '@/lib/api/errorText'
@@ -27,7 +28,13 @@ const lcol = createColumnHelper<InvoiceLineView>()
 const STATUS_CLASS = { ACTIVE: 'bg-green-100 text-green-700', CANCELLED: 'bg-red-100 text-red-700' }
 const pill = (s: string) => { const v = viewInvoiceStatus(s); return <StatusPill view={v} api={s} className={STATUS_CLASS[v]} /> }
 
-export function WOInvoicesListView(p: { receiptNo: string; customerName: string; status: string; dateFrom: string; dateTo: string }) {
+export function WOInvoicesListView(p: { receiptNo: string; customerName: string; status: string; dateFrom: string; dateTo: string; source?: string }) {
+  // "Source" filter (owner-approved 2026-11-22): subcontractor deduction tax invoices in the same list frame.
+  if (p.source === 'SUBCON') return <SubconDeductionList {...p} source="SUBCON" />
+  return <WOInvoicesList {...p} />
+}
+
+function WOInvoicesList(p: { receiptNo: string; customerName: string; status: string; dateFrom: string; dateTo: string }) {
   const { t } = useT()
   const router = useRouter()
   const { canAtBranch } = useAuth()
@@ -52,7 +59,7 @@ export function WOInvoicesListView(p: { receiptNo: string; customerName: string;
       title={t('nav.woInvoices')}
       subtitle={`${rows.length} WO invoice${rows.length !== 1 ? 's' : ''} found`}
       actions={canAtBranch('revenue.invoice.issue', currentBranchId) && <Link href={`${BASE}/new`} className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700">+ {t('nav.woInvoices')}</Link>}
-      filters={<WOInvoiceFilters receiptNo={p.receiptNo} customerName={p.customerName} status={p.status} dateFrom={p.dateFrom} dateTo={p.dateTo} />}
+      filters={<WOInvoiceFilters receiptNo={p.receiptNo} customerName={p.customerName} status={p.status} dateFrom={p.dateFrom} dateTo={p.dateTo} source="WO" />}
     >
       {list.isLoading ? <Loading /> : list.error ? <div className="m-4"><Alert>{errorText(list.error, t)}</Alert></div> : <DataTable data={rows} columns={columns} pageSize={15} />}
     </ListPage>

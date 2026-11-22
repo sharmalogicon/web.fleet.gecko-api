@@ -170,3 +170,33 @@ export function useTransferTargets(fromWarehouseId: string | null) {
     enabled: !!fromWarehouseId,
   });
 }
+
+// ── transfer targets setup (owner-approved proposal 2026-11-22, backend #12) ─
+export type TargetsMode = 'ANY' | 'LIST';
+
+/**
+ * The tab's starting state. The API answers the configured list, or every other active store when there is none, so a
+ * list that holds every other active store reads as ANY (the same effect today; ANY also lets new stores in later).
+ */
+export function targetsState(targets: Pick<WarehouseDto, 'warehouseId'>[] | undefined, others: Pick<WarehouseDto, 'warehouseId'>[]): { mode: TargetsMode; ids: string[] } {
+  const ids = (targets ?? []).map((w) => w.warehouseId);
+  const all = others.length > 0 && others.every((o) => ids.includes(o.warehouseId));
+  return all || ids.length === 0 ? { mode: 'ANY', ids: all ? [] : ids } : { mode: 'LIST', ids };
+}
+
+/** ANY → an empty list (no restriction); LIST → the ticked stores (at least one; an i18n key otherwise). */
+export function toTargetsRequest(mode: TargetsMode, ids: string[]): { body: { targetWarehouseIds: string[] } | null; error: string | null } {
+  if (mode === 'ANY') return { body: { targetWarehouseIds: [] }, error: null };
+  if (!ids.length) return { body: null, error: 'store.targets.rule.pickOne' };
+  return { body: { targetWarehouseIds: [...new Set(ids)] }, error: null };
+}
+
+export function useSaveTransferTargets(warehouseId: string) {
+  const client = useQueryClient();
+  const tenant = useTenant();
+  return useMutation({
+    mutationFn: (body: { targetWarehouseIds: string[] }) =>
+      apiSend<WarehouseDto[]>('PUT', `${BASE}/${encodeURIComponent(warehouseId)}/transfer-targets`, body),
+    onSettled: () => client.invalidateQueries({ queryKey: [...keys.one(tenant, warehouseId), 'transfer-targets'] }),
+  });
+}
