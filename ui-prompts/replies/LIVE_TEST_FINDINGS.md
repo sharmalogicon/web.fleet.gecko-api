@@ -201,4 +201,4 @@ screens in a browser (the pages render in the browser behind login, which these 
 - **F3 / #22 — VERIFIED (option A).** New invoice `VIN-SCT-LCB01-2611-00210` + a waiting payment → cancel 409 "A payment on this invoice
   waits for approval: approve or reject it first."; approve on the cancelled `…-00185` (as `ops.lcb`) → 409 "The invoice is cancelled.";
   reject → 200; cancel after the reject → 200. Both test payments rejected (cleanup).
-- Observation: the person who keyed a payment cannot reject it (403) — withdrawing one's own waiting payment needs a second person. Owner to say if that should change.
+- Observation: the person who keyed a payment cannot reject it (403) — withdrawing one's own waiting payment needs a second person. **Owner 2026-11-22: intended, no change.**

@@ -49,7 +49,7 @@ Code paths are in `platform/` (Gecko.Fleet = Fleet API :5300; Gecko.MasterData /
 > "The invoice is cancelled." (as `ops.lcb`, who holds `fleet.vendorinvoice.approve` at SCT-LCB01); reject still allowed; cancel
 > after the reject → 200. Note: `VIN-SCT-LCB01-2611-00185` **did exist** on this PC (CANCELLED, 100.00 waiting) — the waiting
 > payment was rejected by `ops.lcb` as cleanup; nothing waits on a cancelled invoice now.
-> Observation (no action unless the owner wants it): the person who keyed a payment cannot **reject** it either (403 "You keyed
+> Observation — **owner 2026-11-22: intended, no change**: the person who keyed a payment cannot **reject** it either (403 "You keyed
 > this payment: someone else must approve it."), so withdrawing one's own waiting payment needs a second person.
 
 ## P4 — from the live run of prompts 14–23 (2026-11-22, `LIVE_TEST_FINDINGS.md` §F)
