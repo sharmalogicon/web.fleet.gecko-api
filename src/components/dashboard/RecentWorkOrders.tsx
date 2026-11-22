@@ -1,27 +1,38 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
-const RECENT_WO = [
-  { id: "WO-2024-0089", equipment: "TRK-001 — Isuzu NPR", type: "Corrective", status: "In Progress", priority: "High", date: "22 Apr 2026" },
-  { id: "WO-2024-0088", equipment: "TRK-004 — Hino 300", type: "Preventive", status: "Pending", priority: "Normal", date: "21 Apr 2026" },
-  { id: "WO-2024-0087", equipment: "FKL-002 — Toyota Forklift", type: "Corrective", status: "Completed", priority: "Normal", date: "20 Apr 2026" },
-  { id: "WO-2024-0086", equipment: "TRK-007 — Isuzu FRR", type: "Preventive", status: "In Progress", priority: "Normal", date: "19 Apr 2026" },
-  { id: "WO-2024-0085", equipment: "TRK-002 — Hino 500", type: "Corrective", status: "Completed", priority: "High", date: "18 Apr 2026" },
-];
+export interface RecentWorkOrder {
+  workOrderId: string;
+  documentNo: string;
+  assetCode: string;
+  woType: string;
+  status: string;
+  priority: string;
+  documentDate: string;
+}
 
-const statusConfig: Record<string, { label: string; className: string }> = {
-  "In Progress": { label: "In Progress", className: "bg-primary-100 text-primary-700" },
-  "Pending": { label: "Pending", className: "bg-warning-100 text-warning-700" },
-  "Completed": { label: "Completed", className: "bg-success-100 text-success-700" },
+const statusConfig: Record<string, string> = {
+  DRAFT: "bg-gray-100 text-gray-600",
+  OPEN: "bg-warning-100 text-warning-700",
+  IN_PROGRESS: "bg-primary-100 text-primary-700",
+  ON_HOLD: "bg-warning-100 text-warning-700",
+  COMPLETED: "bg-success-100 text-success-700",
+  CLOSED: "bg-success-100 text-success-700",
+  CANCELLED: "bg-gray-100 text-gray-500",
 };
 
 const priorityConfig: Record<string, string> = {
-  "High": "bg-error-100 text-error-700",
-  "Normal": "bg-gray-100 text-gray-600",
+  URGENT: "bg-error-100 text-error-700",
+  HIGH: "bg-error-100 text-error-700",
+  NORMAL: "bg-gray-100 text-gray-600",
+  LOW: "bg-gray-100 text-gray-500",
 };
 
-export function RecentWorkOrders() {
+const label = (s: string) => s.replace(/_/g, " ").toLowerCase().replace(/^\w/, (c) => c.toUpperCase());
+const fmt = (d: string) => new Date(d.slice(0, 10) + "T00:00:00").toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+
+/** The latest 5 work orders (GET /dashboard). */
+export function RecentWorkOrders({ items }: { items: RecentWorkOrder[] }) {
   return (
     <Card>
       <CardHeader className="pb-4">
@@ -34,24 +45,25 @@ export function RecentWorkOrders() {
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {RECENT_WO.map((wo) => (
-            <div key={wo.id} className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0">
+          {items.length === 0 && <p className="text-sm text-gray-400">No work orders yet.</p>}
+          {items.map((wo) => (
+            <Link key={wo.workOrderId} href={`/fleet/work-orders/${wo.workOrderId}`} className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0 hover:bg-gray-50">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-sm font-medium text-gray-900">{wo.id}</span>
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${priorityConfig[wo.priority]}`}>
-                    {wo.priority}
+                  <span className="text-sm font-medium text-gray-900">{wo.documentNo}</span>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${priorityConfig[wo.priority] ?? priorityConfig.NORMAL}`}>
+                    {label(wo.priority)}
                   </span>
                 </div>
-                <p className="text-xs text-gray-500 truncate">{wo.equipment} · {wo.type}</p>
+                <p className="text-xs text-gray-500 truncate">{wo.assetCode} · {label(wo.woType)}</p>
               </div>
               <div className="text-right shrink-0">
-                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${statusConfig[wo.status]?.className}`}>
-                  {wo.status}
+                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${statusConfig[wo.status] ?? "bg-gray-100 text-gray-600"}`}>
+                  {label(wo.status)}
                 </span>
-                <p className="text-xs text-gray-400 mt-0.5">{wo.date}</p>
+                <p className="text-xs text-gray-400 mt-0.5">{fmt(wo.documentDate)}</p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </CardContent>

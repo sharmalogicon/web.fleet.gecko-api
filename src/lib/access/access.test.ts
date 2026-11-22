@@ -113,7 +113,7 @@ describe('route guard map', () => {
     expect(visibleNavigation(NAVIGATION, () => false, false)).toEqual([]);
 
     const tyresOnly = visibleNavigation(NAVIGATION, (p) => p === 'fleet.tyre.view', true);
-    expect(tyresOnly.map((g) => g.titleKey)).toEqual(['nav.dashboard', 'nav.master', 'nav.tireManagement', 'nav.inquiry']);
+    expect(tyresOnly.map((g) => g.titleKey)).toEqual(['nav.dashboard', 'nav.master', 'nav.tireManagement']); // inquiries need fleet.report.view (prompt 16)
     expect(tyresOnly.find((g) => g.titleKey === 'nav.master')?.items?.map((i) => i.href)).toEqual(['/master/fleet-setup']);
   });
 });

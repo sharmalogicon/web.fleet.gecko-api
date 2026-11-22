@@ -1,47 +1,21 @@
-import { getPOInquiry } from '@/lib/data/inquiry/purchase-orders'
+import { InquiryView } from '@/components/inquiry/InquiryView'
 import { POInquiryFilters } from '@/components/inquiry/POInquiryFilters'
-import { POInquiryClient } from '@/components/inquiry/POInquiryClient'
-import { ListPage } from '@/components/shared/ListPage'
-import { getT } from '@/i18n/server'
 
 export const metadata = { title: 'Purchase Order Inquiry | Fleet' }
 
 interface PageProps {
-  searchParams: Promise<{
-    documentNo?: string
-    vendorName?: string
-    status?: string
-    dateFrom?: string
-    dateTo?: string
-  }>
+  searchParams: Promise<{ documentNo?: string; vendorName?: string; status?: string; dateFrom?: string; dateTo?: string }>
 }
 
+/** `GET /api/fleet/inquiry/purchase-orders`: doc no → poNo, vendor → supplier. */
 export default async function POInquiryPage({ searchParams }: PageProps) {
-  const params = await searchParams
-  const { t } = await getT()
-  const data = await getPOInquiry({
-    documentNo: params.documentNo,
-    vendorName: params.vendorName,
-    status: params.status,
-    dateFrom: params.dateFrom,
-    dateTo: params.dateTo,
-  })
-
+  const p = await searchParams
   return (
-    <ListPage
-      title={t('nav.inquiryPurchaseOrders')}
-      subtitle={`${data.length} record${data.length !== 1 ? 's' : ''} found`}
-      filters={
-        <POInquiryFilters
-          documentNo={params.documentNo ?? ''}
-          vendorName={params.vendorName ?? ''}
-          status={params.status ?? 'ALL'}
-          dateFrom={params.dateFrom ?? ''}
-          dateTo={params.dateTo ?? ''}
-        />
-      }
-    >
-      <POInquiryClient data={data} />
-    </ListPage>
+    <InquiryView
+      code="purchase-orders"
+      titleKey="nav.inquiryPurchaseOrders"
+      values={{ poNo: p.documentNo, vendorName: p.vendorName, status: p.status, dateFrom: p.dateFrom, dateTo: p.dateTo }}
+      filters={<POInquiryFilters documentNo={p.documentNo ?? ''} vendorName={p.vendorName ?? ''} status={p.status ?? 'ALL'} dateFrom={p.dateFrom ?? ''} dateTo={p.dateTo ?? ''} />}
+    />
   )
 }

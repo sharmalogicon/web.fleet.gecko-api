@@ -358,7 +358,14 @@
     "movement": "Movement",
     "qtyAfter": "Qty after",
     "avgAfter": "Average after",
-    "sourceDoc": "Document"
+    "sourceDoc": "Document",
+    "selectAndGenerate": "Select a report and click Generate to preview",
+    "records": "records",
+    "noRows": "No rows for these filters.",
+    "total": "Total",
+    "truncated": "More than 5,000 rows: only the first 5,000 are shown. Narrow the filters.",
+    "exportFailed": "Export failed",
+    "itemOrDocument": "Item / document"
   },
   "tireMap": {
     "title": "Tire Axle Map",
@@ -1756,6 +1763,23 @@
       "amount": "Enter an amount more than 0",
       "reversal": "A reversal is a negative amount",
       "tooMuch": "More than is still owed on the invoice"
+    }
+  },
+  "dashboard": {
+    "stat": {
+      "ACTIVE_WORK_ORDERS": "Active Work Orders",
+      "PENDING_PM": "Pending PM",
+      "OPEN_PURCHASE_ORDERS": "Open PO",
+      "TOTAL_VEHICLES": "Total Vehicles",
+      "OVERDUE_SERVICE": "Overdue Service",
+      "FUEL_LITERS_MONTH": "Fuel"
+    },
+    "vsLastMonth": "vs last month",
+    "fleet": {
+      "ACTIVE": "Active",
+      "UNDER_MAINTENANCE": "Under Maintenance",
+      "IDLE": "Idle",
+      "OUT_OF_SERVICE": "Out of Service"
     }
   }
 }

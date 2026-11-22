@@ -1,44 +1,21 @@
-import { getTruckMovementInquiry } from '@/lib/data/inquiry/truck-movements'
+import { InquiryView } from '@/components/inquiry/InquiryView'
 import { TruckMovementFilters } from '@/components/inquiry/TruckMovementFilters'
-import { TruckMovementClient } from '@/components/inquiry/TruckMovementClient'
-import { ListPage } from '@/components/shared/ListPage'
-import { getT } from '@/i18n/server'
 
 export const metadata = { title: 'Truck Movement Inquiry | Fleet' }
 
 interface PageProps {
-  searchParams: Promise<{
-    truckNo?: string
-    tripType?: string
-    dateFrom?: string
-    dateTo?: string
-  }>
+  searchParams: Promise<{ truckNo?: string; tripType?: string; dateFrom?: string; dateTo?: string }>
 }
 
+/** `GET /api/fleet/inquiry/truck-movements`: Trucking job-order legs of linked trucks; truck no → equipmentCode. */
 export default async function TruckMovementInquiryPage({ searchParams }: PageProps) {
-  const params = await searchParams
-  const { t } = await getT()
-  const data = await getTruckMovementInquiry({
-    truckNo: params.truckNo,
-    tripType: params.tripType,
-    dateFrom: params.dateFrom,
-    dateTo: params.dateTo,
-  })
-
+  const p = await searchParams
   return (
-    <ListPage
-      title={t('nav.inquiryTruckMovements')}
-      subtitle={`${data.length} record${data.length !== 1 ? 's' : ''} found`}
-      filters={
-        <TruckMovementFilters
-          truckNo={params.truckNo ?? ''}
-          tripType={params.tripType ?? 'ALL'}
-          dateFrom={params.dateFrom ?? ''}
-          dateTo={params.dateTo ?? ''}
-        />
-      }
-    >
-      <TruckMovementClient data={data} />
-    </ListPage>
+    <InquiryView
+      code="truck-movements"
+      titleKey="nav.inquiryTruckMovements"
+      values={{ equipmentCode: p.truckNo, tripType: p.tripType, dateFrom: p.dateFrom, dateTo: p.dateTo }}
+      filters={<TruckMovementFilters truckNo={p.truckNo ?? ''} tripType={p.tripType ?? 'ALL'} dateFrom={p.dateFrom ?? ''} dateTo={p.dateTo ?? ''} />}
+    />
   )
 }

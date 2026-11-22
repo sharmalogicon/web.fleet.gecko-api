@@ -229,6 +229,18 @@
 - ✅ 8. `ui-prompts/replies/15_REPLY.md` (5 questions)
 - ⬜ 9. LIVE checks (needs APIs)
 
+## Dashboard + reports + inquiries — ui-prompts/16_REPORTS_DASHBOARD_P9.md (started 2026-11-22)
+> Recovery: read the prompt (A dashboard, B 19 reports, C 5 inquiries, D cost = report only, E fuel summary / driver incidents optional).
+
+- ✅ 1. Survey dashboard / report / inquiry screens + schemas
+- ✅ 2. A (header branch; cost figures not shown — no place, asked): dashboard adapter `src/lib/api/fleet/dashboard.ts` (stats → 6 cards, change %, fleet status, recent WOs, upcoming PM) + Vitest; page on the API
+- ✅ 3. B (`useReportScreen.ts`, params components take `fields`; 5 tests incl. dashboard): reports adapter `src/lib/api/fleet/reports.ts` (catalogue, params → visible fields, run json, cell formatter, pdf / xlsx download) + Vitest; both report pages + Stock Movement
+- ✅ 4. C (generic `InquiryView.tsx`; inquiry route guards → fleet.report.view; old inquiry clients, TyreEventInquiryView + 6 unused mocks removed): 5 inquiry pages on `/inquiry/{code}` (filters mapped, export, WIP daysOpen orange)
+- ✅ 5. E: no room on the driver form → asked in the reply (not built): driver incidents on the driver form only if room (else ask)
+- ✅ 6. EN + TH (18 keys); old mocks removed; tsc clean, Vitest 234 pass, lint clean, build passes
+- ✅ 7. `ui-prompts/replies/16_REPLY.md` (5 questions); commit + push to clean-push
+- ⬜ 8. LIVE checks (needs APIs)
+
 ## Conventions for the next prompts (from 03–13)
 > Write the step list here first (like the blocks above), then build. Reuse what 03–10 built:
 > - adapters `src/lib/api/fleet/<entity>.ts`: `toViewModel`/`toFormValues`, `toRequest` (send fields with no input as read),

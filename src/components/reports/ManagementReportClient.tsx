@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { ReportSidebar, type ReportGroup } from './ReportSidebar'
 import { ManagementReportParams } from './ManagementReportParams'
 import { ReportPreview } from './ReportPreview'
+import { useReportScreen } from './useReportScreen'
 
 const REPORT_GROUPS: ReportGroup[] = [
   {
@@ -32,18 +33,9 @@ const REPORT_GROUPS: ReportGroup[] = [
   },
 ]
 
-function findReportLabel(id: string | null): string | null {
-  if (!id) return null
-  for (const group of REPORT_GROUPS) {
-    const found = group.reports.find((r) => r.id === id)
-    if (found) return found.label
-  }
-  return null
-}
-
 export function ManagementReportClient() {
-  const [selectedReport, setSelectedReport] = useState<string | null>(null)
-  const [generated, setGenerated] = useState(false)
+  const screen = useReportScreen(REPORT_GROUPS)
+  const selectedReport = screen.selected
 
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
@@ -51,14 +43,10 @@ export function ManagementReportClient() {
   const [equipmentCategory, setEquipmentCategory] = useState('All')
   const [status, setStatus] = useState('All')
 
-  function handleSelect(id: string) {
-    setSelectedReport(id)
-    setGenerated(false)
-  }
+  const handleSelect = screen.select
 
   function handleGenerate() {
-    if (!selectedReport) return
-    setGenerated(true)
+    screen.generate({ dateFrom, dateTo, equipmentCode, equipmentCategory, status })
   }
 
   function handleClear() {
@@ -67,16 +55,16 @@ export function ManagementReportClient() {
     setEquipmentCode('')
     setEquipmentCategory('All')
     setStatus('All')
-    setGenerated(false)
+    screen.clear()
   }
 
-  const reportLabel = findReportLabel(selectedReport)
+  const reportLabel = screen.label
 
   return (
     <div className="flex gap-6 h-full">
       {/* Left: Report selector */}
       <ReportSidebar
-        groups={REPORT_GROUPS}
+        groups={screen.groups}
         selectedReport={selectedReport}
         onSelect={handleSelect}
       />
@@ -86,6 +74,7 @@ export function ManagementReportClient() {
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <ManagementReportParams
             reportLabel={reportLabel}
+            fields={screen.fields}
             dateFrom={dateFrom}
             dateTo={dateTo}
             equipmentCode={equipmentCode}
@@ -105,7 +94,10 @@ export function ManagementReportClient() {
           <ReportPreview
             reportId={selectedReport}
             reportLabel={reportLabel}
-            generated={generated}
+            query={screen.query}
+            result={screen.result.data}
+            loading={screen.result.isFetching}
+            error={screen.result.error}
           />
         </div>
       </div>

@@ -71,11 +71,11 @@ export const ROUTE_PERMISSIONS: Record<string, readonly string[]> = {
   '/invoice/work-order': ['revenue.charge.view', 'revenue.invoice.issue'],
 
   // Inquiry
-  '/inquiry/work-orders': ['fleet.workorder.view'],
-  '/inquiry/wip': ['fleet.workorder.view'],
-  '/inquiry/purchase-orders': ['fleet.purchase.view'],
-  '/inquiry/tire-changes': ['fleet.tyre.view'],
-  '/inquiry/truck-movements': ['fleet.asset.view'],
+  '/inquiry/work-orders': ['fleet.report.view'],
+  '/inquiry/wip': ['fleet.report.view'],
+  '/inquiry/purchase-orders': ['fleet.report.view'],
+  '/inquiry/tire-changes': ['fleet.report.view'],
+  '/inquiry/truck-movements': ['fleet.report.view'],
 
   // Reports
   '/reports': ['fleet.report.view'],

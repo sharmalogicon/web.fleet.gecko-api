@@ -1,7 +1,11 @@
 'use client'
 
+import type { ReportField } from '@/lib/api/fleet/reports'
+
 interface OperationsReportParamsProps {
   reportLabel: string | null
+  /** The report's filter fields (from the catalogue's params); undefined = all. */
+  fields?: Set<ReportField>
   reportId: string | null
   dateFrom: string
   dateTo: string
@@ -26,10 +30,9 @@ interface OperationsReportParamsProps {
 const CATEGORY_OPTIONS = ['All', 'TRUCK', 'TRAILER', 'FORKLIFT', 'OTHER']
 const STATUS_OPTIONS = ['All', 'Draft', 'Approved', 'Cancelled']
 
-const PO_REPORT_IDS = ['purchase-order-report', 'goods-receipt-report']
-const TIRE_REPORT_IDS = ['tire-profile-report', 'tire-change-history', 'pending-recap-report']
 
 export function OperationsReportParams({
+  fields,
   reportLabel,
   reportId,
   dateFrom,
@@ -51,12 +54,14 @@ export function OperationsReportParams({
   onGenerate,
   onClear,
 }: OperationsReportParamsProps) {
+  const show = (f: ReportField) => !fields || fields.has(f)
   const labelClass = 'block text-xs font-medium text-gray-600 mb-1'
   const inputClass =
     'w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 
-  const showPoNo = reportId !== null && PO_REPORT_IDS.includes(reportId)
-  const showSerialNo = reportId !== null && TIRE_REPORT_IDS.includes(reportId)
+  // From the catalogue's params (no hard-coded report lists).
+  const showPoNo = reportId !== null && show('poNo') && !!fields
+  const showSerialNo = reportId !== null && show('serialNo') && !!fields
 
   return (
     <div className="flex flex-col gap-5">
@@ -78,7 +83,7 @@ export function OperationsReportParams({
         </div>
 
         {/* Date From */}
-        <div>
+        {show('dateRange') && <div>
           <label className={labelClass}>Date From</label>
           <input
             type="date"
@@ -86,10 +91,10 @@ export function OperationsReportParams({
             onChange={(e) => onDateFromChange(e.target.value)}
             className={inputClass}
           />
-        </div>
+        </div>}
 
         {/* Date To */}
-        <div>
+        {show('dateRange') && <div>
           <label className={labelClass}>Date To</label>
           <input
             type="date"
@@ -97,10 +102,10 @@ export function OperationsReportParams({
             onChange={(e) => onDateToChange(e.target.value)}
             className={inputClass}
           />
-        </div>
+        </div>}
 
         {/* Equipment Code */}
-        <div>
+        {show('equipmentCode') && <div>
           <label className={labelClass}>Equipment Code</label>
           <input
             type="text"
@@ -109,10 +114,10 @@ export function OperationsReportParams({
             onChange={(e) => onEquipmentCodeChange(e.target.value)}
             className={inputClass}
           />
-        </div>
+        </div>}
 
         {/* Equipment Category */}
-        <div>
+        {show('equipmentCategory') && <div>
           <label className={labelClass}>Equipment Category</label>
           <select
             value={equipmentCategory}
@@ -125,10 +130,10 @@ export function OperationsReportParams({
               </option>
             ))}
           </select>
-        </div>
+        </div>}
 
         {/* Vendor Name */}
-        <div>
+        {show('vendorName') && <div>
           <label className={labelClass}>Vendor Name</label>
           <input
             type="text"
@@ -137,10 +142,10 @@ export function OperationsReportParams({
             onChange={(e) => onVendorNameChange(e.target.value)}
             className={inputClass}
           />
-        </div>
+        </div>}
 
         {/* Document Status */}
-        <div>
+        {show('status') && <div>
           <label className={labelClass}>Document Status</label>
           <select
             value={documentStatus}
@@ -153,7 +158,7 @@ export function OperationsReportParams({
               </option>
             ))}
           </select>
-        </div>
+        </div>}
 
         {/* PO No — shown only for PO / GR reports */}
         {showPoNo && (

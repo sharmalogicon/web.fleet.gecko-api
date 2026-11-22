@@ -1,157 +1,105 @@
 'use client'
 
-import { getMockEquipment } from '@/lib/mock/equipment'
+import { useState } from 'react'
+import { Loader2 } from 'lucide-react'
+import { alignClass, downloadReport, formatCell, type ReportKind, type ReportResultDto } from '@/lib/api/fleet/reports'
+import { errorText } from '@/lib/api/errorText'
+import { useToastStore } from '@/lib/stores/useToastStore'
+import { useT } from '@/i18n/I18nContext'
 
 interface ReportPreviewProps {
+  kind?: ReportKind
   reportId: string | null
   reportLabel: string | null
-  generated: boolean
+  /** The filters of the run (for the PDF / Excel of the same run). */
+  query: Record<string, string | undefined> | null
+  result?: ReportResultDto
+  loading?: boolean
+  error?: unknown
+  /** Per-row class (e.g. WIP rows open > 7 days in orange). */
+  rowClass?: (row: unknown[], columns: ReportResultDto['columns']) => string | undefined
 }
 
-const PLACEHOLDER_ROWS = [
-  { col1: 'REF-001', col2: 'Category A', col3: '฿12,500' },
-  { col1: 'REF-002', col2: 'Category B', col3: '฿8,750' },
-  { col1: 'REF-003', col2: 'Category A', col3: '฿21,000' },
-  { col1: 'REF-004', col2: 'Category C', col3: '฿5,200' },
-  { col1: 'REF-005', col2: 'Category B', col3: '฿17,300' },
-]
+/** The run's columns + rows (formatted by each column's `format` / `align`), totals as the bold last row; PDF / Excel export. */
+export function ReportPreview({ kind = 'reports', reportId, reportLabel, query, result, loading, error, rowClass }: ReportPreviewProps) {
+  const { t } = useT()
+  const toast = useToastStore()
+  const [exporting, setExporting] = useState<'pdf' | 'xlsx' | null>(null)
 
-function EquipmentSummaryTable() {
-  const rows = getMockEquipment().slice(0, 5)
-  return (
-    <table className="w-full text-sm border-collapse">
-      <thead>
-        <tr className="bg-gray-50 border-b border-gray-200">
-          <th className="text-left px-3 py-2 font-medium text-gray-600">Code</th>
-          <th className="text-left px-3 py-2 font-medium text-gray-600">Category</th>
-          <th className="text-left px-3 py-2 font-medium text-gray-600">Status</th>
-          <th className="text-right px-3 py-2 font-medium text-gray-600">Meter</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((eq) => (
-          <tr key={eq.equipmentID} className="border-b border-gray-100 hover:bg-gray-50">
-            <td className="px-3 py-2 font-mono text-blue-700">{eq.code}</td>
-            <td className="px-3 py-2 text-gray-700">{eq.category}</td>
-            <td className="px-3 py-2">
-              <span
-                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                  eq.status === 'ACTIVE'
-                    ? 'bg-green-50 text-green-700'
-                    : 'bg-gray-100 text-gray-500'
-                }`}
-              >
-                {eq.status}
-              </span>
-            </td>
-            <td className="px-3 py-2 text-right text-gray-700">
-              {eq.currentMeter?.toLocaleString() ?? '—'} {eq.meterType}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  )
-}
-
-function GenericSummaryTable({ label }: { label: string }) {
-  return (
-    <table className="w-full text-sm border-collapse">
-      <thead>
-        <tr className="bg-gray-50 border-b border-gray-200">
-          <th className="text-left px-3 py-2 font-medium text-gray-600">Reference</th>
-          <th className="text-left px-3 py-2 font-medium text-gray-600">Type</th>
-          <th className="text-right px-3 py-2 font-medium text-gray-600">Amount</th>
-        </tr>
-      </thead>
-      <tbody>
-        {PLACEHOLDER_ROWS.map((row) => (
-          <tr key={row.col1} className="border-b border-gray-100 hover:bg-gray-50">
-            <td className="px-3 py-2 font-mono text-blue-700">{row.col1}</td>
-            <td className="px-3 py-2 text-gray-700">{row.col2}</td>
-            <td className="px-3 py-2 text-right text-gray-700">{row.col3}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  )
-}
-
-export function ReportPreview({ reportId, reportLabel, generated }: ReportPreviewProps) {
-  if (!generated || !reportId) {
-    return (
-      <div className="flex items-center justify-center min-h-48 text-sm text-gray-400 italic">
-        Select a report and click Generate to preview
-      </div>
-    )
+  if (!reportId || (!query && !loading)) {
+    return <div className="flex items-center justify-center min-h-48 text-sm text-gray-400 italic">{t('report.selectAndGenerate')}</div>
+  }
+  if (loading) return <div className="flex justify-center py-12 text-gray-400"><Loader2 size={20} className="animate-spin" /></div>
+  if (error || !result) {
+    return <div role="alert" className="p-3 rounded-lg border border-red-200 bg-red-50 text-sm text-red-700">{errorText(error, t)}</div>
   }
 
-  const now = new Date().toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  const exportAs = async (format: 'pdf' | 'xlsx') => {
+    setExporting(format)
+    try {
+      await downloadReport(kind, reportId, query ?? {}, format)
+    } catch (e) {
+      toast.error(t('report.exportFailed'), errorText(e, t))
+    } finally {
+      setExporting(null)
+    }
+  }
 
-  const isEquipmentSummary = reportId === 'equipment-summary'
+  const now = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+  const btn = 'px-3 py-1.5 text-xs font-medium rounded border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 inline-flex items-center gap-1'
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h3 className="text-base font-semibold text-gray-900">
-            Report Preview — {reportLabel}
-          </h3>
-          <p className="text-xs text-gray-400 mt-0.5">Generated on {now}</p>
+          <h3 className="text-base font-semibold text-gray-900">Report Preview — {result.title || reportLabel}</h3>
+          <p className="text-xs text-gray-400 mt-0.5">Generated on {now} · {Number(result.rowCount).toLocaleString()} {t('report.records')}</p>
         </div>
-        {/* Export buttons */}
         <div className="flex items-center gap-2 flex-shrink-0">
-          <div className="relative group">
-            <button
-              type="button"
-              disabled
-              className="px-3 py-1.5 text-xs font-medium rounded border border-gray-200 text-gray-400 bg-gray-50 cursor-not-allowed"
-            >
-              Export PDF
-            </button>
-            <span className="absolute right-0 top-full mt-1 w-48 text-xs bg-gray-800 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 pointer-events-none z-10 whitespace-nowrap">
-              Available in full API mode
-            </span>
-          </div>
-          <div className="relative group">
-            <button
-              type="button"
-              disabled
-              className="px-3 py-1.5 text-xs font-medium rounded border border-gray-200 text-gray-400 bg-gray-50 cursor-not-allowed"
-            >
-              Export Excel
-            </button>
-            <span className="absolute right-0 top-full mt-1 w-48 text-xs bg-gray-800 text-white rounded px-2 py-1 opacity-0 group-hover:opacity-100 pointer-events-none z-10 whitespace-nowrap">
-              Available in full API mode
-            </span>
-          </div>
+          <button type="button" disabled={!!exporting} onClick={() => exportAs('pdf')} className={btn}>
+            {exporting === 'pdf' && <Loader2 size={12} className="animate-spin" />}Export PDF
+          </button>
+          <button type="button" disabled={!!exporting} onClick={() => exportAs('xlsx')} className={btn}>
+            {exporting === 'xlsx' && <Loader2 size={12} className="animate-spin" />}Export Excel
+          </button>
         </div>
       </div>
 
-      {/* Summary note for non-equipment reports */}
-      {!isEquipmentSummary && (
-        <p className="text-sm text-gray-600">
-          Report generated on {now}.{' '}
-          <span className="font-medium">5 records found.</span>
-        </p>
+      {result.truncated && (
+        <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2">{t('report.truncated')}</p>
       )}
 
-      {/* Table */}
-      <div className="rounded-lg border border-gray-200 overflow-hidden">
-        {isEquipmentSummary ? <EquipmentSummaryTable /> : <GenericSummaryTable label={reportLabel ?? ''} />}
+      <div className="rounded-lg border border-gray-200 overflow-x-auto">
+        <table className="w-full text-sm border-collapse">
+          <thead>
+            <tr className="bg-gray-50 border-b border-gray-200">
+              {result.columns.map((c) => (
+                <th key={c.key} className={`px-3 py-2 font-medium text-gray-600 whitespace-nowrap ${alignClass(c.align)}`}>{c.header}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {result.rows.length === 0 ? (
+              <tr><td colSpan={result.columns.length} className="px-3 py-6 text-center text-gray-400">{t('report.noRows')}</td></tr>
+            ) : result.rows.map((row, i) => (
+              <tr key={i} className={`border-b border-gray-100 hover:bg-gray-50 ${rowClass?.(row as unknown[], result.columns) ?? ''}`}>
+                {result.columns.map((c, j) => (
+                  <td key={c.key} className={`px-3 py-2 text-gray-700 whitespace-nowrap ${alignClass(c.align)}`}>{formatCell((row as unknown[])[j], c.format)}</td>
+                ))}
+              </tr>
+            ))}
+            {result.totals && (
+              <tr className="bg-gray-50 font-semibold text-gray-900 border-t border-gray-300">
+                {result.columns.map((c, j) => (
+                  <td key={c.key} className={`px-3 py-2 whitespace-nowrap ${alignClass(c.align)}`}>
+                    {j === 0 && (result.totals as unknown[])[0] == null ? t('report.total') : formatCell((result.totals as unknown[])[j], c.format)}
+                  </td>
+                ))}
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
-
-      {/* Footer */}
-      <p className="text-xs text-gray-400 text-right">
-        Showing 5 of {isEquipmentSummary ? 6 : 24} records. Full data available in production API.
-      </p>
     </div>
   )
 }

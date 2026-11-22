@@ -1,50 +1,21 @@
-import { getWOInquiry } from '@/lib/data/inquiry/work-orders'
+import { InquiryView } from '@/components/inquiry/InquiryView'
 import { WOInquiryFilters } from '@/components/inquiry/WOInquiryFilters'
-import { WOInquiryClient } from '@/components/inquiry/WOInquiryClient'
-import { ListPage } from '@/components/shared/ListPage'
-import { getT } from '@/i18n/server'
 
 export const metadata = { title: 'Work Order Inquiry | Fleet' }
 
 interface PageProps {
-  searchParams: Promise<{
-    workOrderNo?: string
-    equipmentCode?: string
-    woType?: string
-    status?: string
-    dateFrom?: string
-    dateTo?: string
-  }>
+  searchParams: Promise<{ workOrderNo?: string; equipmentCode?: string; woType?: string; status?: string; dateFrom?: string; dateTo?: string }>
 }
 
+/** `GET /api/fleet/inquiry/work-orders` (prompt 16 §C): WO no → search, type → woType. */
 export default async function WOInquiryPage({ searchParams }: PageProps) {
-  const params = await searchParams
-  const { t } = await getT()
-  const data = await getWOInquiry({
-    workOrderNo: params.workOrderNo,
-    equipmentCode: params.equipmentCode,
-    woType: params.woType,
-    status: params.status,
-    dateFrom: params.dateFrom,
-    dateTo: params.dateTo,
-  })
-
+  const p = await searchParams
   return (
-    <ListPage
-      title={t('nav.inquiryWorkOrders')}
-      subtitle={`${data.length} record${data.length !== 1 ? 's' : ''} found`}
-      filters={
-        <WOInquiryFilters
-          workOrderNo={params.workOrderNo ?? ''}
-          equipmentCode={params.equipmentCode ?? ''}
-          woType={params.woType ?? 'ALL'}
-          status={params.status ?? 'ALL'}
-          dateFrom={params.dateFrom ?? ''}
-          dateTo={params.dateTo ?? ''}
-        />
-      }
-    >
-      <WOInquiryClient data={data} />
-    </ListPage>
+    <InquiryView
+      code="work-orders"
+      titleKey="nav.inquiryWorkOrders"
+      values={{ search: p.workOrderNo, equipmentCode: p.equipmentCode, woType: p.woType, status: p.status, dateFrom: p.dateFrom, dateTo: p.dateTo }}
+      filters={<WOInquiryFilters workOrderNo={p.workOrderNo ?? ''} equipmentCode={p.equipmentCode ?? ''} woType={p.woType ?? 'ALL'} status={p.status ?? 'ALL'} dateFrom={p.dateFrom ?? ''} dateTo={p.dateTo ?? ''} />}
+    />
   )
 }

@@ -1,16 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils/cn";
 
-const STATUS_DATA = [
-  { label: "Active", count: 18, color: "bg-success-500", textColor: "text-success-700" },
-  { label: "Under Maintenance", count: 4, color: "bg-warning-500", textColor: "text-warning-700" },
-  { label: "Idle", count: 6, color: "bg-gray-400", textColor: "text-gray-600" },
-  { label: "Out of Service", count: 2, color: "bg-error-500", textColor: "text-error-700" },
-];
+const STYLE: Record<string, { label: string; color: string; textColor: string }> = {
+  ACTIVE: { label: "Active", color: "bg-success-500", textColor: "text-success-700" },
+  UNDER_MAINTENANCE: { label: "Under Maintenance", color: "bg-warning-500", textColor: "text-warning-700" },
+  IDLE: { label: "Idle", color: "bg-gray-400", textColor: "text-gray-600" },
+  OUT_OF_SERVICE: { label: "Out of Service", color: "bg-error-500", textColor: "text-error-700" },
+};
 
-const total = STATUS_DATA.reduce((sum, s) => sum + s.count, 0);
-
-export function FleetStatus() {
+/** Counts per state (GET /dashboard `fleetStatus`); `labels` = translated names by key. */
+export function FleetStatus({ items, labels }: { items: { key: string; count: number }[]; labels?: Record<string, string> }) {
+  const STATUS_DATA = items.map((i) => ({ ...STYLE[i.key], label: labels?.[i.key] ?? STYLE[i.key]?.label ?? i.key, count: i.count }));
+  const total = STATUS_DATA.reduce((sum, s) => sum + s.count, 0);
+  const pct = (n: number) => (total ? (n / total) * 100 : 0);
   return (
     <Card>
       <CardHeader className="pb-4">
@@ -23,7 +25,7 @@ export function FleetStatus() {
             <div
               key={s.label}
               className={cn("h-full transition-all", s.color)}
-              style={{ width: `${(s.count / total) * 100}%` }}
+              style={{ width: `${pct(s.count)}%` }}
             />
           ))}
         </div>
@@ -37,7 +39,7 @@ export function FleetStatus() {
               </div>
               <div className="flex items-center gap-2">
                 <span className={cn("text-sm font-semibold", s.textColor)}>{s.count}</span>
-                <span className="text-xs text-gray-400">({Math.round((s.count / total) * 100)}%)</span>
+                <span className="text-xs text-gray-400">({Math.round(pct(s.count))}%)</span>
               </div>
             </div>
           ))}

@@ -5,6 +5,7 @@ import { ReportSidebar, type ReportGroup } from './ReportSidebar'
 import { OperationsReportParams } from './OperationsReportParams'
 import { ReportPreview } from './ReportPreview'
 import { StockMovementReport } from './StockMovementReport'
+import { useReportScreen } from './useReportScreen'
 
 const REPORT_GROUPS: ReportGroup[] = [
   {
@@ -34,19 +35,10 @@ const REPORT_GROUPS: ReportGroup[] = [
   },
 ]
 
-function findReportLabel(id: string | null): string | null {
-  if (!id) return null
-  for (const group of REPORT_GROUPS) {
-    const found = group.reports.find((r) => r.id === id)
-    if (found) return found.label
-  }
-  return null
-}
-
 
 export function OperationsReportClient() {
-  const [selectedReport, setSelectedReport] = useState<string | null>(null)
-  const [generated, setGenerated] = useState(false)
+  const screen = useReportScreen(REPORT_GROUPS)
+  const selectedReport = screen.selected
 
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
@@ -57,14 +49,10 @@ export function OperationsReportClient() {
   const [poNo, setPoNo] = useState('')
   const [serialNo, setSerialNo] = useState('')
 
-  function handleSelect(id: string) {
-    setSelectedReport(id)
-    setGenerated(false)
-  }
+  const handleSelect = screen.select
 
   function handleGenerate() {
-    if (!selectedReport) return
-    setGenerated(true)
+    screen.generate({ dateFrom, dateTo, equipmentCode, equipmentCategory, vendorName, status: documentStatus, poNo, serialNo })
   }
 
   function handleClear() {
@@ -76,16 +64,16 @@ export function OperationsReportClient() {
     setDocumentStatus('All')
     setPoNo('')
     setSerialNo('')
-    setGenerated(false)
+    screen.clear()
   }
 
-  const reportLabel = findReportLabel(selectedReport)
+  const reportLabel = screen.label
 
   return (
     <div className="flex gap-6 h-full">
       {/* Left: Report selector */}
       <ReportSidebar
-        groups={REPORT_GROUPS}
+        groups={screen.groups}
         selectedReport={selectedReport}
         onSelect={handleSelect}
       />
@@ -96,6 +84,7 @@ export function OperationsReportClient() {
           <OperationsReportParams
             reportLabel={reportLabel}
             reportId={selectedReport}
+            fields={screen.fields}
             dateFrom={dateFrom}
             dateTo={dateTo}
             equipmentCode={equipmentCode}
@@ -124,7 +113,10 @@ export function OperationsReportClient() {
             <ReportPreview
               reportId={selectedReport}
               reportLabel={reportLabel}
-              generated={generated}
+              query={screen.query}
+              result={screen.result.data}
+              loading={screen.result.isFetching}
+              error={screen.result.error}
             />
           )}
         </div>
