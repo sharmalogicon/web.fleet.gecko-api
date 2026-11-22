@@ -4,11 +4,15 @@ import type { UseFormReturn } from 'react-hook-form'
 import type { StockFormValues } from '@/types/stock'
 import { useT } from '@/i18n/I18nContext'
 import type { WarehouseDto } from '@/lib/api/fleet/warehouses'
+import { ItemReservations } from '@/components/docs/ReserveStockDialog'
+import { useFleetAccess } from '@/lib/api/fleet/access'
 
 interface Props {
   form: UseFormReturn<StockFormValues>
   /** The header branch's default store: its reorder policy is edited here (null = inputs disabled). */
   warehouse?: WarehouseDto | null
+  /** The saved item (the Reserved list); absent on a new item. */
+  itemId?: string
 }
 
 function Field({
@@ -47,8 +51,9 @@ function fmt(value: number | undefined): string {
   return value.toLocaleString('th-TH', { minimumFractionDigits: 0, maximumFractionDigits: 2 })
 }
 
-export function InventorySection({ form, warehouse }: Props) {
+export function InventorySection({ form, warehouse, itemId }: Props) {
   const { t } = useT()
+  const { canAnywhere } = useFleetAccess()
   const { register, watch, formState: { errors } } = form
   const noStore = !warehouse
   const later = t('equipment.laterPhase')
@@ -58,6 +63,8 @@ export function InventorySection({ form, warehouse }: Props) {
   const lowestCostPerUnit = watch('lowestCostPerUnit')
   const highestCostPerUnit = watch('highestCostPerUnit')
   const pendingQty = watch('pendingQty')
+  const totalQtyReserved = watch('totalQtyReserved')
+  const totalQtyAvailable = watch('totalQtyAvailable')
 
   return (
     <div className="flex flex-col gap-6">
@@ -73,6 +80,14 @@ export function InventorySection({ form, warehouse }: Props) {
               value={fmt(totalQtyOnHand) || '—'}
               className={inputClass(true)}
             />
+          </Field>
+
+          <Field label={t('reserve.reservedQty')} readOnly>
+            <input readOnly value={fmt(totalQtyReserved) || '—'} className={inputClass(true)} />
+          </Field>
+
+          <Field label={t('reserve.availableQty')} readOnly>
+            <input readOnly value={fmt(totalQtyAvailable) || '—'} className={inputClass(true)} />
           </Field>
 
           <Field label="Avg Cost / Unit" readOnly>
@@ -112,6 +127,8 @@ export function InventorySection({ form, warehouse }: Props) {
           </Field>
         </div>
       </div>
+
+      {itemId && <ItemReservations itemId={itemId} canRelease={canAnywhere('fleet.stock.issue')} />}
 
       {/* Editable inventory settings */}
       <div>

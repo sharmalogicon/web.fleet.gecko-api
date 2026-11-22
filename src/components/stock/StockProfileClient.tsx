@@ -74,7 +74,7 @@ export function StockProfileClient({ stock, current, warehouse, isNew }: Props) 
     {
       id: 'inventory',
       label: t('nav.inventory'),
-      content: <InventorySection form={form} warehouse={warehouse} />,
+      content: <InventorySection form={form} warehouse={warehouse} itemId={current?.id} />,
     },
   ]
 

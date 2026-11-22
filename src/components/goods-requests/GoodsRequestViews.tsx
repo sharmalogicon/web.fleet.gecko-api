@@ -11,6 +11,7 @@ import { FormLayout } from '@/components/shared/FormLayout'
 import { LineItemsEditor } from '@/components/shared/LineItemsEditor'
 import { Field, inputClass } from '@/components/shared/FormField'
 import { ReasonDialog, ToolbarButton } from '@/components/shared/ReasonDialog'
+import { ReserveStockDialog } from '@/components/docs/ReserveStockDialog'
 import { useT } from '@/i18n/I18nContext'
 import type { components } from '@/lib/api/fleet.schema'
 import { useDoc, useDocList, useDocMutations, viewGoodsRequestStatus } from '@/lib/api/fleet/documents'
@@ -114,6 +115,9 @@ function GoodsRequestForm({ base, current }: { base: string; current?: GR }) {
   const editable = (status === 'NEW' || status === 'DRAFT') && (current ? canAt('fleet.purchase.request', branchId) : canAnywhere('fleet.purchase.request'))
   const canApprove = status === 'SUBMITTED' && current?.approvalStatus === 'PENDING' && canAt('fleet.purchase.approve', branchId)
   const canCancel = ['DRAFT', 'SUBMITTED', 'APPROVED'].includes(status) && canAt('fleet.purchase.request', branchId)
+  // Reserve stock for the request's item lines in its store (prompt 19 §B).
+  const canReserve = !!current && !!current.warehouseId && ['SUBMITTED', 'APPROVED', 'PARTIAL'].includes(status) && canAt('fleet.stock.issue', branchId) && current.lines.some((l) => l.itemId)
+  const [reserving, setReserving] = useState(false)
   const canPo = ['APPROVED', 'PARTIAL'].includes(status) && canAt('fleet.purchase.manage', branchId) && (current?.lines ?? []).some((l) => Number(l.openBaseQty) > 0)
   const wo = wos.data?.find((w) => w.documentNo.toUpperCase() === woNo.trim().toUpperCase())
   const setLine = (i: number, p: Partial<Line>) => setLines((ls) => ls.map((l, j) => (j === i ? { ...l, ...p } : l)))
@@ -216,6 +220,7 @@ function GoodsRequestForm({ base, current }: { base: string; current?: GR }) {
             {canCancel && <ToolbarButton tone="danger" disabled={busy} onClick={() => setDialog('cancel')}>{t('docs.action.cancel')}</ToolbarButton>}
             {canApprove && <ToolbarButton tone="danger" disabled={busy} onClick={() => setDialog('reject')}>{t('wo.action.REJECTED')}</ToolbarButton>}
             {canApprove && <ToolbarButton tone="success" disabled={busy} onClick={() => run('approval', { decision: 'APPROVED', reason: null })}>{t('wo.action.APPROVED')}</ToolbarButton>}
+            {canReserve && <ToolbarButton onClick={() => setReserving(true)}>{t('reserve.button')}</ToolbarButton>}
             {canPo && <ToolbarButton tone="primary" onClick={() => router.push(`/fleet/purchase-orders/new?goodsRequestId=${current!.goodsRequestId}`)}>{t('docs.action.createPo')}</ToolbarButton>}
             <ToolbarButton onClick={() => router.back()}>{t('common.close')}</ToolbarButton>
             {editable && <ToolbarButton disabled={busy} onClick={() => persist(true)}>{t('wr.action.submit')}</ToolbarButton>}
@@ -233,6 +238,17 @@ function GoodsRequestForm({ base, current }: { base: string; current?: GR }) {
           error={dialogError}
           onConfirm={(reason) => run(dialog === 'reject' ? 'approval' : 'cancel', dialog === 'reject' ? { decision: 'REJECTED', reason } : { reason: reason || null })}
           onClose={() => setDialog(null)}
+        />
+      )}
+      {reserving && current && (
+        <ReserveStockDialog
+          title={`${t('reserve.button')} · ${current.documentNo}`}
+          branchId={branchId}
+          defaultWarehouseId={current.warehouseId}
+          lines={current.lines.filter((l) => l.itemId).map((l) => ({
+            kind: 'GOODS_REQUEST' as const, lineId: l.goodsRequestLineId, itemCode: l.itemCode ?? '', description: l.description, qty: Number(l.qty), uomCode: l.uomCode,
+          }))}
+          onClose={() => setReserving(false)}
         />
       )}
     </>

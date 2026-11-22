@@ -23,6 +23,8 @@ export const stockSchema = z.object({
   remarks: z.string().optional(),
   // Read-only inventory fields (populated from API)
   totalQtyOnHand: optNum,
+  totalQtyReserved: optNum,
+  totalQtyAvailable: optNum,
   avgCostPerUnit: optNum,
   lowestCostPerUnit: optNum,
   highestCostPerUnit: optNum,

@@ -1912,5 +1912,24 @@
     "updated": "updated",
     "unchanged": "unchanged",
     "deactivated": "deactivated"
+  },
+  "reserve": {
+    "button": "Reserve stock",
+    "hint": "Pick the store. Qty empty = what the line still needs. Issuing a WO part uses its reservation.",
+    "reserve": "Reserve",
+    "release": "Release",
+    "reserved": "Reserved",
+    "allNeeded": "all needed",
+    "done": "Reserved",
+    "released": "Reservation released",
+    "noLines": "No stock item lines.",
+    "rule": {
+      "qty": "Qty must be more than 0 (or empty)"
+    },
+    "listTitle": "Reserved",
+    "none": "Nothing reserved.",
+    "for": "For",
+    "reservedQty": "Reserved Qty",
+    "availableQty": "Available Qty"
   }
 }

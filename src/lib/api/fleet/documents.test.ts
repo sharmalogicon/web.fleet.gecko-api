@@ -50,7 +50,11 @@ describe('stock snapshot (prompt 11 §A)', () => {
   it('sums on hand, weights the cost and adds the open PO qty', () => {
     const bal = (qty: number, cost: number) => ({ qtyOnHand: qty, avgUnitCost: cost, stockValue: qty * cost }) as never
     expect(stockSnapshot([bal(10, 100), bal(30, 120), bal(0, 999)], [{ pendingQty: '5' }, { pendingQty: 2 }] as never)).toEqual({
-      totalQtyOnHand: 40, avgCostPerUnit: 115, lowestCostPerUnit: 100, highestCostPerUnit: 120, pendingQty: 7,
+      totalQtyOnHand: 40, totalQtyReserved: 0, totalQtyAvailable: 40, avgCostPerUnit: 115, lowestCostPerUnit: 100, highestCostPerUnit: 120, pendingQty: 7,
     })
+  })
+  it('sums the real reserved / available qty (prompt 19 §B)', () => {
+    const b = (onHand: number, reserved: number, available?: number) => ({ qtyOnHand: onHand, qtyReserved: reserved, qtyAvailable: available ?? null, avgUnitCost: 1, stockValue: onHand }) as never
+    expect(stockSnapshot([b(10, 4, 6), b(5, 1)], [])).toMatchObject({ totalQtyOnHand: 15, totalQtyReserved: 5, totalQtyAvailable: 10 })
   })
 })

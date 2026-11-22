@@ -194,8 +194,13 @@ export function stockSnapshot(balances: StockBalanceDto[], openLines: OpenPoLine
   const qty = balances.reduce((s, b) => s + Number(b.qtyOnHand), 0);
   const value = balances.reduce((s, b) => s + Number(b.stockValue), 0);
   const costs = balances.filter((b) => Number(b.qtyOnHand) > 0).map((b) => Number(b.avgUnitCost));
+  // Real reserved / available since P12 (prompt 19 §B); available falls back to on hand − reserved.
+  const reserved = balances.reduce((s, b) => s + Number(b.qtyReserved ?? 0), 0);
+  const available = balances.reduce((s, b) => s + (b.qtyAvailable === null || b.qtyAvailable === undefined ? Number(b.qtyOnHand) - Number(b.qtyReserved ?? 0) : Number(b.qtyAvailable)), 0);
   return {
     totalQtyOnHand: qty,
+    totalQtyReserved: reserved,
+    totalQtyAvailable: available,
     avgCostPerUnit: qty > 0 ? Math.round((value / qty) * 10000) / 10000 : undefined,
     lowestCostPerUnit: costs.length ? Math.min(...costs) : undefined,
     highestCostPerUnit: costs.length ? Math.max(...costs) : undefined,

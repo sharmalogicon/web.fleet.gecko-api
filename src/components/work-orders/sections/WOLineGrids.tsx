@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useFieldArray, type UseFormReturn } from 'react-hook-form'
 import { ToolbarButton } from '@/components/shared/ReasonDialog'
 import { IssueFromStockDialog } from '@/components/work-orders/IssueFromStockDialog'
+import { ReserveStockDialog } from '@/components/docs/ReserveStockDialog'
 import { useFleetAccess } from '@/lib/api/fleet/access'
 import { LineItemsEditor } from '@/components/shared/LineItemsEditor'
 import { useT } from '@/i18n/I18nContext'
@@ -90,6 +91,7 @@ export function WOPartsGrid({ form, current, editable }: Props) {
   const { t } = useT()
   const { canAt } = useFleetAccess()
   const [issuing, setIssuing] = useState(false)
+  const [reserving, setReserving] = useState(false)
   const canIssue = !!current && !form.formState.isDirty && !['CLOSED', 'CANCELLED', 'COMPLETED'].includes(current.status) && canAt('fleet.stock.issue', current.branchId) && current.parts.some((p) => p.source === 'STOCK')
   const { register, control, setValue, watch, formState: { errors } } = form
   const rows = useFieldArray({ control, name: 'parts' })
@@ -102,8 +104,24 @@ export function WOPartsGrid({ form, current, editable }: Props) {
   }
   return (
     <>
-      {canIssue && <div className="mb-3 flex justify-end"><ToolbarButton onClick={() => setIssuing(true)}>{t('docs.action.issueFromStock')}</ToolbarButton></div>}
+      {canIssue && (
+        <div className="mb-3 flex justify-end gap-2">
+          <ToolbarButton onClick={() => setReserving(true)}>{t('reserve.button')}</ToolbarButton>
+          <ToolbarButton onClick={() => setIssuing(true)}>{t('docs.action.issueFromStock')}</ToolbarButton>
+        </div>
+      )}
       {issuing && current && <IssueFromStockDialog wo={current} onClose={() => setIssuing(false)} />}
+      {reserving && current && (
+        <ReserveStockDialog
+          title={`${t('reserve.button')} · ${current.documentNo}`}
+          branchId={current.branchId}
+          workOrderId={current.workOrderId}
+          lines={current.parts.filter((p) => p.source === 'STOCK').map((p) => ({
+            kind: 'WO_PART' as const, lineId: p.woPartId, itemCode: p.itemCode ?? '', description: p.description, qty: Number(p.qty), uomCode: p.uomCode,
+          }))}
+          onClose={() => setReserving(false)}
+        />
+      )}
       <datalist id="wo-items">{items.data?.map((x) => <option key={x.itemId} value={x.itemCode}>{x.descriptionEn}</option>)}</datalist>
       <LineItemsEditor
         items={rows.fields}

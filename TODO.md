@@ -259,6 +259,16 @@
 - ✅ 4. EN + TH (37 keys); tsc clean, Vitest 240 pass, lint clean, build passes; `replies/18_REPLY.md`; commit + push
 - ⬜ 5. LIVE checks (needs APIs)
 
+## Gap closing 1 — ui-prompts/19_GAP_CLOSING_P12.md (started 2026-11-22)
+> Recovery: A payment approval was DONE in prompt 15 (VendorPaymentViews.tsx); B stock reservations; C depreciation = catalogue column (check only).
+
+- ✅ 1. A: payment approval (status filter, Approve / Reject, own entry hidden, invoice pendingPaymentAmount) — done with prompt 15; VENDOR_PAYMENT_APPROVAL setting appears via the settings catalogue
+- ✅ 2. (3 tests) B: reservations adapter (`stockReservations.ts`: list / reserve / release, reserve-qty default) + Vitest
+- ✅ 3. (shared `docs/ReserveStockDialog.tsx` + `ItemReservations`) B: Reserve on WO part lines + goods-request lines (store chosen); Stock form: real reserved / available qty + "Reserved" list with Release
+- ✅ 4. (no code; live check) C: check the Service Cost Summary preview shows the catalogue's Depreciation column (no code)
+- ✅ 5. EN + TH (15 keys); tsc clean, Vitest 244 pass, lint 0 errors, build passes; `replies/19_REPLY.md`; commit + push
+- ⬜ 6. LIVE checks (needs APIs)
+
 ## Conventions for the next prompts (from 03–13)
 > Write the step list here first (like the blocks above), then build. Reuse what 03–10 built:
 > - adapters `src/lib/api/fleet/<entity>.ts`: `toViewModel`/`toFormValues`, `toRequest` (send fields with no input as read),
