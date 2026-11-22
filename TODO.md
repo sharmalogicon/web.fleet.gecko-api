@@ -301,8 +301,8 @@
 - 🔄 3. LIVE (2026-11-22): API flows PASS — see LIVE_TEST_FINDINGS §F; browser walk-through open (PC out of commit memory, F4)
 
 ## Backend #21 / #22 (live findings F2 / F3) — shipped by the backend 2026-11-22 (platform db889b7)
-- ⬜ 1. Re-test on the rebuilt APIs: `npx vitest run --config live/vitest.config.mts live/p_fix2122.live.ts --pool=threads` (APIs were down at 2026-11-22 after the backend change)
-- ⬜ 2. Check: the backend says `VIN-SCT-LCB01-2611-00185` no longer exists locally — the live run created it on this PC's DB (the re-test prints whether it is there)
+- ✅ 1. (2026-11-22, both VERIFIED — LIVE_TEST_FINDINGS re-test section) Re-test on the rebuilt APIs: `npx vitest run --config live/vitest.config.mts live/p_fix2122.live.ts --pool=threads` (APIs were down at 2026-11-22 after the backend change)
+- ✅ 2. (it did exist: CANCELLED with 100.00 waiting → rejected by ops.lcb) Check: the backend says `VIN-SCT-LCB01-2611-00185` no longer exists locally — the live run created it on this PC's DB (the re-test prints whether it is there)
 
 ## Conventions for the next prompts (from 03–13)
 > Write the step list here first (like the blocks above), then build. Reuse what 03–10 built:

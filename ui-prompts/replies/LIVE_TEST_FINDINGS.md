@@ -194,3 +194,11 @@ The screen walk-through (prompt 01 step 15 + every screen of 14–23) is still o
 server then started (Ready in 1.7 s). Through `https://localhost:5001`: login via the proxy OK, and `/api/fleet`, `/api/revenue` and `/api/branches`
 → 200; **all 34 pages changed in 14–23 compile and answer 200**, no errors in the dev log. Still open: clicking through the
 screens in a browser (the pages render in the browser behind login, which these checks cannot see).
+
+### Re-test of the backend fixes (2026-11-22, rebuilt APIs, platform db889b7)
+- **F2 / #21 — VERIFIED.** METERS, PM_BASELINES, STOCK, TYRES × (plain text, empty zip) → 400 `file`: "This is not an Excel
+  workbook (.xlsx). Download the template, fill it and upload it again."
+- **F3 / #22 — VERIFIED (option A).** New invoice `VIN-SCT-LCB01-2611-00210` + a waiting payment → cancel 409 "A payment on this invoice
+  waits for approval: approve or reject it first."; approve on the cancelled `…-00185` (as `ops.lcb`) → 409 "The invoice is cancelled.";
+  reject → 200; cancel after the reject → 200. Both test payments rejected (cleanup).
+- Observation: the person who keyed a payment cannot reject it (403) — withdrawing one's own waiting payment needs a second person. Owner to say if that should change.

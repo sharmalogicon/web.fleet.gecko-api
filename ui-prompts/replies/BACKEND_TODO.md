@@ -44,6 +44,14 @@ Code paths are in `platform/` (Gecko.Fleet = Fleet API :5300; Gecko.MasterData /
 | 19 | Amounts with 4 decimals on stock documents (e.g. −103.5556) — round to 2 on documents shown to people? | live B4 |
 | 20 | Wording: "A approved / A invoiced / A draft …" → "An approved …" in 409 messages | live B, C |
 
+> **2026-11-22 UI re-test on the rebuilt APIs — #21 and #22 VERIFIED.** #21: all four kinds, plain text and an empty zip → 400 on
+> `file` with the new message. #22: cancel with a waiting payment → 409 (message as shipped); approve on a CANCELLED invoice → 409
+> "The invoice is cancelled." (as `ops.lcb`, who holds `fleet.vendorinvoice.approve` at SCT-LCB01); reject still allowed; cancel
+> after the reject → 200. Note: `VIN-SCT-LCB01-2611-00185` **did exist** on this PC (CANCELLED, 100.00 waiting) — the waiting
+> payment was rejected by `ops.lcb` as cleanup; nothing waits on a cancelled invoice now.
+> Observation (no action unless the owner wants it): the person who keyed a payment cannot **reject** it either (403 "You keyed
+> this payment: someone else must approve it."), so withdrawing one's own waiting payment needs a second person.
+
 ## P4 — from the live run of prompts 14–23 (2026-11-22, `LIVE_TEST_FINDINGS.md` §F)
 
 ### #21 (F2) — ✅ SHIPPED 2026-11-22 (db889b7) — Opening-balance import: a file that is not a spreadsheet → 500 instead of 400 on `file`
