@@ -19,7 +19,7 @@ import { useWarehouses } from '@/lib/api/fleet/warehouses'
 import { useAsset } from '@/lib/api/fleet/assets'
 import { useBranchContext } from '@/lib/api/platform/branches'
 import { useToastStore } from '@/lib/stores/useToastStore'
-import { DEFAULT_TYRE_CONDITIONS, TYRE_CONDITION_LIST, useTyre, useTyreEvents, useTyreMutations, useTyres, viewTyreStatus, type SaveTyreRequest, type TyreDto } from '@/lib/api/fleet/tyres'
+import { TYRE_CONDITION_LIST, useTyre, useTyreEvents, useTyreMutations, useTyres, viewTyreStatus, type SaveTyreRequest, type TyreDto } from '@/lib/api/fleet/tyres'
 import { useCodeList } from '@/lib/api/fleet/setup'
 
 const BASE = '/fleet/tires/profiles'
@@ -113,12 +113,12 @@ function TyreProfileForm({ current }: { current?: TyreDto }) {
   const asset = useAsset(current?.assetProfileId ?? null)
   const events = useTyreEvents({ tyreId: current?.tyreId }, !!current)
   const conditionList = useCodeList(TYRE_CONDITION_LIST)
-  const conditions = conditionList.data?.length
-    ? conditionList.data.filter((c) => c.isActive).map((c) => ({ code: c.code, label: `${c.code} · ${c.descriptionEn}` }))
-    : DEFAULT_TYRE_CONDITIONS.map((c) => ({ code: c, label: c }))
+  // FLEET_TYRE_CONDITION code list only (#1); a saved code no longer in the list still shows.
+  const listed = (conditionList.data ?? []).filter((c) => c.isActive).map((c) => ({ code: c.code, label: `${c.code} · ${c.descriptionEn}` }))
+  const conditions = current?.condition && !listed.some((c) => c.code === current.condition) ? [...listed, { code: current.condition, label: current.condition }] : listed
   const [f, setF] = useState<F>({
     serialNo: s(current?.serialNo), brandCode: s(current?.brandCode), modelName: s(current?.modelName), sizeCode: s(current?.sizeCode), plyRating: s(current?.plyRating),
-    tyreType: current?.tyreType ?? 'NEW', recapCount: s(current?.recapCount ?? 0), condition: current?.condition ?? 'GOOD', targetPsi: s(current?.targetPsi),
+    tyreType: current?.tyreType ?? 'NEW', recapCount: s(current?.recapCount ?? 0), condition: current?.condition ?? '', targetPsi: s(current?.targetPsi),
     originalTreadMm: s(current?.originalTreadMm), currentTreadMm: s(current?.currentTreadMm), expectedKm: s(current?.expectedKm), expectedHours: s(current?.expectedHours),
     purchasedDate: s(current?.purchasedDate).slice(0, 10), purchaseCost: s(current?.purchaseCost ?? ''), supplierPartyCode: s(current?.supplierPartyCode),
     vendorInvoiceNo: s(current?.vendorInvoiceNo), purchaseOrderNo: s(current?.purchaseOrderNo), warrantyKm: s(current?.warrantyKm),
@@ -158,6 +158,7 @@ function TyreProfileForm({ current }: { current?: TyreDto }) {
       )}</Field>
       <Field label={`${t('form.condition')} *`}>
         <select value={f.condition} onChange={(e) => set({ condition: e.target.value })} disabled={dis} className={inputClass(false, dis)}>
+          {!f.condition && <option value="">—</option>}
           {[...new Set([...conditions.map((c) => c.code), f.condition].filter(Boolean))].map((c) => <option key={c} value={c}>{conditions.find((x) => x.code === c)?.label ?? c}</option>)}
         </select>
       </Field>

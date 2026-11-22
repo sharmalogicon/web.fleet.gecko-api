@@ -286,6 +286,15 @@
 - ✅ 4. EN + TH (23 keys); mocks removed; tsc clean, Vitest 248 pass, lint 0 errors, build passes; `replies/21_REPLY.md`; commit + push
 - ⬜ 5. LIVE checks (needs APIs)
 
+## Backend to-do shipped — ui-prompts/22_BACKEND_TODO_P13.md (started 2026-11-22)
+> Recovery: remove the UI fallbacks for backend items #1–#20 (no redesign). Findings in replies/22_REPLY.md.
+
+- ✅ 1. Find every fallback (grep: GOOD/FAIR/POOR, transfer-targets 404, client-side filters, invoice line charge join, withdraw on DRAFT, issued qty, tyre last event, axle-map driver, documentDate)
+- ✅ 2. Fleet items (#1, #4–#12, #17) fallbacks removed / bound
+- ✅ 3. Platform items (#13–#15) fallbacks removed / bound
+- ✅ 4. tsc clean, Vitest 247 pass, lint clean, build passes; `replies/22_REPLY.md`; commit + push
+- ⬜ 5. LIVE re-tests per item (needs APIs)
+
 ## Conventions for the next prompts (from 03–13)
 > Write the step list here first (like the blocks above), then build. Reuse what 03–10 built:
 > - adapters `src/lib/api/fleet/<entity>.ts`: `toViewModel`/`toFormValues`, `toRequest` (send fields with no input as read),

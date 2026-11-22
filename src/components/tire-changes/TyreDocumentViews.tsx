@@ -22,7 +22,7 @@ import { useWorkOrders } from '@/lib/api/fleet/workOrders'
 import { useBranchContext } from '@/lib/api/platform/branches'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { useCodeList } from '@/lib/api/fleet/setup'
-import { DEFAULT_TYRE_CONDITIONS, TYRE_CONDITION_LIST, changeLines, useAxleMap, useTyreDocument, useTyreDocuments, useTyreMutations, useTyres, type TyreAction, type TyreDocumentDto } from '@/lib/api/fleet/tyres'
+import { TYRE_CONDITION_LIST, changeLines, useAxleMap, useTyreDocument, useTyreDocuments, useTyreMutations, useTyres, type TyreAction, type TyreDocumentDto } from '@/lib/api/fleet/tyres'
 
 export type TyreDocKind = 'CHANGE' | 'MAINTENANCE'
 const BASE: Record<TyreDocKind, string> = { CHANGE: '/fleet/tires/changes', MAINTENANCE: '/fleet/tires/maintenance' }
@@ -173,7 +173,7 @@ function NewChange() {
   const [driverId, setDriverId] = useState<string | null>(null)
   const [h, setH] = useState({ date: new Date().toISOString().slice(0, 10), changedBy: '', woNo: '', category: '', meterKm: '', meterHours: '', remarks: '' })
   const conditionList = useCodeList(TYRE_CONDITION_LIST)
-  const conditionCodes = conditionList.data?.length ? conditionList.data.filter((c) => c.isActive).map((c) => c.code) : DEFAULT_TYRE_CONDITIONS
+  const conditionCodes = (conditionList.data ?? []).filter((c) => c.isActive).map((c) => c.code)
   const [rows, setRows] = useState<ChangeRow[]>([])
   const [banner, setBanner] = useState<string | null>(null)
   const positions = map.data?.positions ?? []

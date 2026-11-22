@@ -41,10 +41,8 @@ export function PurchaseOrdersListView(p: { documentNo: string; vendorName: stri
   const router = useRouter()
   const { canAnywhere } = useFleetAccess()
   const list = useDocList<PO>('purchaseOrders', { search: p.documentNo || undefined, supplierName: p.vendorName.trim() || undefined, from: p.dateFrom || undefined, to: p.dateTo || undefined })
-  const vendor = p.vendorName.trim().toUpperCase()
-  const rows = (list.data ?? []).filter((d) =>
-    (p.status === 'ALL' || viewPoStatus(d.status) === p.status) &&
-    (!vendor || d.supplierPartyCode.toUpperCase().includes(vendor) || (d.supplierName ?? '').toUpperCase().includes(vendor)))
+  // supplierName is filtered by the API (backend #11); the screen status still maps several API statuses.
+  const rows = (list.data ?? []).filter((d) => p.status === 'ALL' || viewPoStatus(d.status) === p.status)
   const open = (d: PO) => router.push(`${BASE}/${d.purchaseOrderId}`)
   const columns = [
     col.display({ id: 'no', header: 'PO No / Date', cell: ({ row: { original: d } }) => <div className="flex flex-col gap-0.5"><button type="button" onClick={() => open(d)} className="text-blue-600 hover:underline text-left text-sm font-medium font-mono">{d.documentNo}</button><span className="text-xs text-gray-400">{fmtDate(d.documentDate)}</span></div> }),

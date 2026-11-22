@@ -17,7 +17,7 @@ import { errorText } from '@/lib/api/errorText'
 import { useBranchContext } from '@/lib/api/platform/branches'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import {
-  linesNeedCharges, partyAddress, toInvoiceLines, useFleetCharges, useFleetInvoice, useFleetInvoices, useInvoiceable, useIssueFleetInvoice, useParty, viewInvoiceStatus,
+  partyAddress, toInvoiceLines, useFleetCharges, useFleetInvoice, useFleetInvoices, useInvoiceable, useIssueFleetInvoice, useParty, viewInvoiceStatus,
   type FleetInvoiceDto, type FleetInvoiceable, type InvoiceLineView,
 } from '@/lib/api/platform/fleetInvoices'
 
@@ -33,13 +33,13 @@ export function WOInvoicesListView(p: { receiptNo: string; customerName: string;
   const { canAtBranch } = useAuth()
   const { currentBranchId } = useBranchContext()
   const list = useFleetInvoices({ branchId: currentBranchId ?? undefined, search: p.receiptNo.trim() || p.customerName.trim() || undefined, status: p.status === 'ALL' ? undefined : p.status === 'ACTIVE' ? 'ISSUED' : p.status, from: p.dateFrom || undefined, to: p.dateTo || undefined })
-  const no = p.receiptNo.trim().toUpperCase()
+  // search / status / from / to are the API's (backend #14). The API has one `search`: with both boxes filled the customer
+  // is still matched here.
+  const no = p.receiptNo.trim()
   const cust = p.customerName.trim().toUpperCase()
   const rows = (list.data ?? []).filter((d) =>
-    (!no || d.invoiceNo.toUpperCase().includes(no)) &&
-    (!cust || (d.payerPartyCode ?? '').toUpperCase().includes(cust) || (d.payerName ?? '').toUpperCase().includes(cust)) &&
-    (p.status === 'ALL' || viewInvoiceStatus(d.status) === p.status) &&
-    (!p.dateFrom || d.issuedAt.slice(0, 10) >= p.dateFrom) && (!p.dateTo || d.issuedAt.slice(0, 10) <= p.dateTo))
+    (!no || !cust || (d.payerPartyCode ?? '').toUpperCase().includes(cust) || (d.payerName ?? '').toUpperCase().includes(cust)) &&
+    (p.status === 'ALL' || viewInvoiceStatus(d.status) === p.status))
   const open = (d: FleetInvoiceDto) => router.push(`${BASE}/${d.invoiceId}`)
   const columns = [
     col.display({ id: 'no', header: 'Receipt No / Date', cell: ({ row: { original: d } }) => <div className="flex flex-col gap-0.5"><button type="button" onClick={() => open(d)} className="text-blue-600 hover:underline text-left text-sm font-medium font-mono">{d.invoiceNo}</button><span className="text-xs text-gray-400">{fmtDate(d.issuedAt)}</span></div> }),
@@ -81,11 +81,10 @@ function InvoiceDetail({ id }: { id: string }) {
   const router = useRouter()
   const inv = useFleetInvoice(id)
   const d = inv.data
-  const charges = useFleetCharges({ branchId: d?.branchId, payerPartyCode: d?.payerPartyCode ?? undefined, status: 'INVOICED' }, !!d && linesNeedCharges(d.lines))
   const party = useParty(d?.payerPartyCode ?? null)
   if (inv.isLoading) return <Loading />
   if (!d) return inv.error ? <Alert>{errorText(inv.error, t)}</Alert> : <p className="text-sm text-red-600">Not found.</p>
-  const lines = toInvoiceLines(d.lines, (charges.data ?? []).filter((c) => c.invoiceId === d.invoiceId || !c.invoiceId))
+  const lines = toInvoiceLines(d.lines)
   const ro = (v: string) => <input readOnly value={v} placeholder="—" className={inputClass(false, true)} />
   const header = (
     <div className="flex flex-col gap-6">

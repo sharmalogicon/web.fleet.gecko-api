@@ -30,22 +30,13 @@ export interface InvoiceLineView {
   key: string; workOrderNo: string; chargeCode: string; chargeName: string; quantity: number; unitPrice: number; totalAmount: number
   equipmentCode: string; serviceType: string; transactionType: string; stockType: string
 }
-/** Fields the invoice line carries itself (owner answer 12 Q6); optional until `npm run api:types` brings them in. */
-export type InvoiceLineWithCharge = FleetInvoiceLineDto & { assetCode?: string | null; sourceLineType?: string | null; rateCardRef?: string | null; rechargeNo?: string | null };
-/** True while a line lacks them, so the screen must join `/fleet/charges`. */
-export const linesNeedCharges = (lines: InvoiceLineWithCharge[]) => lines.some((l) => l.sourceLineType === undefined);
-
-export function toInvoiceLines(lines: InvoiceLineWithCharge[], charges: FleetChargeDto[]): InvoiceLineView[] {
-  const byId = new Map(charges.map((c) => [c.fleetChargeId, c]));
-  return lines.map((l) => {
-    const c = byId.get(l.fleetChargeId);
-    return {
-      key: l.invoiceLineId, workOrderNo: l.workOrderNo ?? c?.workOrderNo ?? '', chargeCode: l.chargeCode, chargeName: l.chargeName,
-      quantity: Number(l.quantity), unitPrice: Number(l.unitRate), totalAmount: Number(l.amount),
-      equipmentCode: l.assetCode ?? c?.assetCode ?? '', serviceType: l.sourceLineType ?? c?.sourceLineType ?? '',
-      transactionType: l.rechargeNo ?? c?.rechargeNo ?? '', stockType: l.rateCardRef ?? c?.rateCardRef ?? '',
-    };
-  });
+/** The invoice line carries its charge's fields itself (owner answer 12 Q6, backend #13): no join with `/fleet/charges`. */
+export function toInvoiceLines(lines: FleetInvoiceLineDto[]): InvoiceLineView[] {
+  return lines.map((l) => ({
+    key: l.invoiceLineId, workOrderNo: l.workOrderNo ?? '', chargeCode: l.chargeCode, chargeName: l.chargeName,
+    quantity: Number(l.quantity), unitPrice: Number(l.unitRate), totalAmount: Number(l.amount),
+    equipmentCode: l.assetCode ?? '', serviceType: l.sourceLineType ?? '', transactionType: l.rechargeNo ?? '', stockType: l.rateCardRef ?? '',
+  }));
 }
 
 function useTenant() {

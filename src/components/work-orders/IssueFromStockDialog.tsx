@@ -3,10 +3,10 @@
 import { useState } from 'react'
 import { Panel } from '@/components/fleet-setup/ui'
 import { ToolbarButton } from '@/components/shared/ReasonDialog'
-import { Alert, Loading, cellInput, num, useSaveFailure } from '@/components/docs/DocBits'
+import { Alert, cellInput, num, useSaveFailure } from '@/components/docs/DocBits'
 import { useT } from '@/i18n/I18nContext'
 import type { components } from '@/lib/api/fleet.schema'
-import { useDocList, useDocMutations } from '@/lib/api/fleet/documents'
+import { useDocMutations } from '@/lib/api/fleet/documents'
 import { useWarehouses } from '@/lib/api/fleet/warehouses'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import type { WorkOrderDto } from '@/lib/api/fleet/workOrders'
@@ -34,18 +34,13 @@ export function IssueFromStockDialog({ wo, onClose }: { wo: WorkOrderDto; onClos
   const failure = useSaveFailure()
   const { save } = useDocMutations<Issue>('stockIssues')
   const stores = useWarehouses({ branchId: wo.branchId, active: true })
-  const issues = useDocList<Issue>('stockIssues', { workOrderId: wo.workOrderId })
   const [kind, setKind] = useState<'ISSUE' | 'RETURN'>('ISSUE')
   const [warehouseId, setWarehouseId] = useState('')
   const [qty, setQty] = useState<Record<string, string>>({})
   const [banner, setBanner] = useState<string | null>(null)
-  // `issuedBaseQty` on the WO part (owner answer 11 Q3) wins; until the API sends it, add up the WO's posted issues.
-  const counted = issuedByPart(issues.data ?? [])
+  // `issuedBaseQty` on the WO part (backend #9): posted issues net of posted returns.
   const parts = wo.parts.filter((p) => p.source === 'STOCK' && p.itemId)
-  const issued: Record<string, number> = Object.fromEntries(parts.map((p) => {
-    const own = (p as typeof p & { issuedBaseQty?: number | string | null }).issuedBaseQty
-    return [p.woPartId, own === undefined || own === null ? counted[p.woPartId] ?? 0 : num(own)]
-  }))
+  const issued: Record<string, number> = Object.fromEntries(parts.map((p) => [p.woPartId, num(p.issuedBaseQty)]))
   const max = (p: (typeof parts)[number]) => (kind === 'ISSUE' ? Math.max(0, num(p.qty) - (issued[p.woPartId] ?? 0)) : issued[p.woPartId] ?? 0)
   const chosen = parts.filter((p) => num(qty[p.woPartId]) > 0)
 
@@ -94,7 +89,7 @@ export function IssueFromStockDialog({ wo, onClose }: { wo: WorkOrderDto; onClos
             {stores.data?.map((w) => <option key={w.warehouseId} value={w.warehouseId}>{w.warehouseCode} · {w.nameEn}</option>)}
           </select>
         </div>
-        {issues.isLoading ? <Loading /> : !parts.length ? <p className="text-sm text-gray-500">{t('docs.noStockParts')}</p> : (
+        {!parts.length ? <p className="text-sm text-gray-500">{t('docs.noStockParts')}</p> : (
           <table className="w-full text-sm">
             <thead><tr className="text-left text-xs text-gray-500 border-b"><th className="py-2">Stock Code</th><th>Description</th><th className="text-right">Qty</th><th className="text-right">{t('docs.issued')}</th><th className="w-24">{kind === 'ISSUE' ? t('docs.action.issue') : t('docs.action.returnParts')}</th></tr></thead>
             <tbody>

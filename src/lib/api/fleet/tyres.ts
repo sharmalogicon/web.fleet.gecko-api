@@ -21,18 +21,17 @@ export type TyreDocumentDto = S['TyreDocumentDto'];
 export type TyreEventDto = S['TyreEventDto'];
 
 /*
- * Fields the backend agreed to add (owner answers in replies/13_REPLY.md). Optional until `npm run api:types` brings them
- * in; the screens use them when present and fall back otherwise.
+ * Backend to-do #5–#8 shipped (prompt 22): driver on the axle map, documentDate on change / maintenance, documentNo / assetCode
+ * on events, a tyre's last event. The generated types carry them; these names stay for the existing callers.
  */
-export type AxleMapWithDriver = AxleMapDto & { driverId?: string | null; driverCode?: string | null; driverName?: string | null };
-export type DatedTyreChangeRequest = TyreChangeRequest & { documentDate?: string | null };
-export type DatedTyreMaintenanceRequest = TyreMaintenanceRequest & { documentDate?: string | null };
-export type TyreEventWithDoc = TyreEventDto & { documentNo?: string | null; assetCode?: string | null };
-export type TyreWithLastEvent = TyreDto & { lastEventAt?: string | null; lastEventType?: string | null; lastDocumentNo?: string | null; lastPartyCode?: string | null };
+export type AxleMapWithDriver = AxleMapDto;
+export type DatedTyreChangeRequest = TyreChangeRequest;
+export type DatedTyreMaintenanceRequest = TyreMaintenanceRequest;
+export type TyreEventWithDoc = TyreEventDto;
+export type TyreWithLastEvent = TyreDto;
 
+/** Conditions come only from the tenant's code list (#1: the API checks the code against it). */
 export const TYRE_CONDITION_LIST = 'FLEET_TYRE_CONDITION';
-/** Used until the FLEET_TYRE_CONDITION code list is seeded (replies/13_tyre_condition_seed.sql). */
-export const DEFAULT_TYRE_CONDITIONS = ['NEW', 'GOOD', 'FAIR', 'WORN', 'IRREGULAR_WEAR', 'CUT', 'PUNCTURED', 'SIDEWALL_DAMAGE', 'BULGE', 'SEPARATION', 'BEAD_DAMAGE', 'CRACKED', 'POOR', 'SCRAP'];
 
 const n = (v: number | string | null | undefined, d = 0) => (v === null || v === undefined || v === '' ? d : Number(v));
 

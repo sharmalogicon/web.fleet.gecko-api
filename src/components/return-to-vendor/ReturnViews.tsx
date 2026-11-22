@@ -43,8 +43,8 @@ export function ReturnsListView(p: { documentNo: string; vendorName: string; dat
   const router = useRouter()
   const { canAnywhere } = useFleetAccess()
   const list = useDocList<RTV>('vendorReturns', { search: p.documentNo || undefined, supplierName: p.vendorName.trim() || undefined, from: p.dateFrom || undefined, to: p.dateTo || undefined })
-  const vendor = p.vendorName.trim().toUpperCase()
-  const rows = (list.data ?? []).filter((d) => !vendor || d.supplierPartyCode.toUpperCase().includes(vendor) || (d.supplierName ?? '').toUpperCase().includes(vendor))
+  // supplierName is filtered by the API (backend #11).
+  const rows = list.data ?? []
   const open = (d: RTV) => router.push(`${BASE}/${d.vendorReturnId}`)
   const columns = [
     col.display({ id: 'no', header: 'Return No / Date', cell: ({ row: { original: d } }) => <div className="flex flex-col gap-0.5"><button type="button" onClick={() => open(d)} className="text-blue-600 hover:underline text-left text-sm font-medium font-mono">{d.documentNo}</button><span className="text-xs text-gray-400">{fmtDate(d.documentDate)}</span></div> }),

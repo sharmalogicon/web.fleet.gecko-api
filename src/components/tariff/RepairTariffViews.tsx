@@ -176,7 +176,7 @@ function RepairTariffForm({ variant, current, copy }: { variant: TariffVariant; 
             {status === 'PENDING' && approve && <ToolbarButton tone="danger" disabled={busy} onClick={() => acts.ask('reject', `${t('wo.action.REJECTED')} · ${no}`, true)}>{t('wo.action.REJECTED')}</ToolbarButton>}
             {status === 'PENDING' && approve && <ToolbarButton tone="success" disabled={busy} onClick={() => acts.run('approve')}>{t('common.approve')}</ToolbarButton>}
             {/* Withdraw hidden on DRAFT until the API allows it (live test C1, owner 2026-11-20) */}
-            {['PENDING', 'APPROVED'].includes(status) && approve && <ToolbarButton tone="danger" disabled={busy} onClick={() => acts.ask('withdraw', `${t('tariff.withdraw')} · ${no}`)}>{t('tariff.withdraw')}</ToolbarButton>}
+            {['DRAFT', 'PENDING', 'APPROVED'].includes(status) && approve && <ToolbarButton tone="danger" disabled={busy} onClick={() => acts.ask('withdraw', `${t('tariff.withdraw')} · ${no}`)}>{t('tariff.withdraw')}</ToolbarButton>}
             {current && !editable && manage && <ToolbarButton onClick={() => router.push(`${base}/new?copyFrom=${current.repairRateCardId}`)}>{t('tariff.copy')}</ToolbarButton>}
             <ToolbarButton onClick={() => router.back()}>{t('common.close')}</ToolbarButton>
             {editable && <ToolbarButton disabled={busy} onClick={() => persist(true)}>{t('wr.action.submit')}</ToolbarButton>}

@@ -5,7 +5,6 @@ import { z } from 'zod';
 import { apiGet, apiSend, query } from '@/lib/api/client';
 import type { components } from '@/lib/api/fleet.schema';
 import { useAuth } from '@/lib/contexts/AuthContext';
-import { ApiError } from '@/lib/api/problem';
 
 /** Stores + bins (prompt 07 §C). Rules: Gecko.Fleet warehouse endpoints. */
 
@@ -160,22 +159,14 @@ export function useSaveStore() {
 }
 
 /**
- * Stores a transfer may go to from `fromWarehouseId` (owner answer 11 Q6: a configured list). Asks
- * `GET /warehouses/{id}/transfer-targets`; `null` while the API has no such endpoint (404) → the caller shows all stores.
+ * Stores a transfer may go to from `fromWarehouseId` (owner answer 11 Q6, backend #12): the store's configured list, or
+ * every other active store when it has none — the API answers both (`GET /warehouses/{id}/transfer-targets`).
  */
 export function useTransferTargets(fromWarehouseId: string | null) {
   const tenant = useTenant();
   return useQuery({
     queryKey: [...keys.one(tenant, fromWarehouseId ?? ''), 'transfer-targets'],
-    queryFn: async () => {
-      try {
-        return await apiGet<WarehouseDto[]>(`${BASE}/${encodeURIComponent(fromWarehouseId!)}/transfer-targets`);
-      } catch (e) {
-        if (e instanceof ApiError && (e.status === 404 || e.status === 405)) return null;
-        throw e;
-      }
-    },
+    queryFn: () => apiGet<WarehouseDto[]>(`${BASE}/${encodeURIComponent(fromWarehouseId!)}/transfer-targets`),
     enabled: !!fromWarehouseId,
-    retry: false,
   });
 }

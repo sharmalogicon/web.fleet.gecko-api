@@ -30,10 +30,8 @@ export function toMonitorRow(d: Issue, i: number): SparePartsMonitor {
 export function SparePartsMonitorView({ workOrderNo, equipmentCode, status }: { workOrderNo: string; equipmentCode: string; status: string }) {
   const { t } = useT()
   const list = useDocList<Issue>('stockIssues', { workOrderNo: workOrderNo.trim() || undefined, assetCode: equipmentCode.trim() || undefined })
-  const wo = workOrderNo.trim().toUpperCase()
-  const eq = equipmentCode.trim().toUpperCase()
-  const rows = (list.data ?? []).map(toMonitorRow).filter((r) =>
-    (!wo || r.workOrderNo.toUpperCase().includes(wo)) && (!eq || r.equipmentCode.toUpperCase().includes(eq)) && (status === 'ALL' || r.status === status))
+  // workOrderNo / assetCode are filtered by the API (backend #11).
+  const rows = (list.data ?? []).map(toMonitorRow).filter((r) => status === 'ALL' || r.status === status)
   return (
     <ListPage
       title={t('nav.spareParts')}
