@@ -2,6 +2,7 @@
 
 > **2026-11-21: ALL items #1–#20 shipped by the backend (P13). See prompt `22_BACKEND_TODO_P13.md` for names, rules and the UI actions.**
 > **2026-11-22: two new items from the live run of prompts 14–23 — #21 (F2) and #22 (F3), section P4 below. No UI change is needed for either.**
+> **2026-11-22 (later): #21 and #22 shipped by the backend (platform `db889b7`, local; Fleet API needs a rebuild). #21: any file that does not open as an .xlsx → 400 on `file` "This is not an Excel workbook (.xlsx). Download the template, fill it and upload it again." (ClosedXML threw `FileFormatException` / `NullReferenceException`). #22: option A — cancel → 409 "A payment on this invoice waits for approval: approve or reject it first."; approving a payment on a CANCELLED invoice → 409 "The invoice is cancelled."; reject still allowed. No API fields changed (no OpenAPI re-export). Data: `VIN-SCT-LCB01-2611-00185` no longer exists locally and no waiting payment is on any cancelled invoice — nothing to reject.**
 
 One list for the API owner, from the owner's answers in `11_REPLY.md`, `12_REPLY.md`, `13_REPLY.md` and the live tests
 (`LIVE_TEST_FINDINGS.md`). **The UI is already built for every item** (it sends / reads the names below and falls
@@ -45,7 +46,7 @@ Code paths are in `platform/` (Gecko.Fleet = Fleet API :5300; Gecko.MasterData /
 
 ## P4 — from the live run of prompts 14–23 (2026-11-22, `LIVE_TEST_FINDINGS.md` §F)
 
-### #21 (F2) — Opening-balance import: a file that is not a spreadsheet → 500 instead of 400 on `file`
+### #21 (F2) — ✅ SHIPPED 2026-11-22 (db889b7) — Opening-balance import: a file that is not a spreadsheet → 500 instead of 400 on `file`
 **Evidence.** `POST /api/fleet/opening-balances/STOCK?commit=false`, multipart `file` = the bytes `not a spreadsheet` named
 `x.xlsx`, owner of SCT-TEST → **500** "Something failed on our side…" (reference `b15f245127ae3edb45208231f50fb625`).
 Prompt 18 promises **400 on `file`** for a wrong file, missing columns or an empty sheet; the UI's card shows the 400 message
@@ -69,7 +70,7 @@ or a `NotSupportedException`) — none of the three filtered types. Reproduce fi
 
 **Done when.** No input file can make the import answer 500; the four kinds answer 400 on `file` for a non-workbook.
 
-### #22 (F3) — A vendor invoice can be cancelled while a payment waits for approval
+### #22 (F3) — ✅ SHIPPED 2026-11-22 (db889b7, option A) — A vendor invoice can be cancelled while a payment waits for approval
 **Evidence.** SCT-TEST, `VENDOR_PAYMENT_APPROVAL = true`: invoice `VIN-SCT-LCB01-2611-00185` APPROVED → `POST …/payments`
 `{ amount: 100 }` → the payment waits (`paidAmount` 0, `pendingPaymentAmount` 100, payment status PENDING_APPROVAL) →
 `POST …/cancel { reason }` → **200 CANCELLED**. The payment is still PENDING_APPROVAL on the cancelled invoice and
