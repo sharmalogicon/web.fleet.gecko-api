@@ -1307,7 +1307,9 @@
       "flatIncluded": "In flat-rate job",
       "tariff": "Tariff sundry",
       "other": "Ref"
-    }
+    },
+    "taxInvoice": "SCT tax invoice",
+    "taxInvoicePending": "Issued when Trucking marks the subcontractor's statement PAID"
   },
   "tariff": {
     "addLine": "Add rate line",

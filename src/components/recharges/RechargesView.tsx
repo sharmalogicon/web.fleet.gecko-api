@@ -14,6 +14,7 @@ import { useT } from '@/i18n/I18nContext'
 import { errorText } from '@/lib/api/errorText'
 import { useFleetAccess } from '@/lib/api/fleet/access'
 import { useBranchContext } from '@/lib/api/platform/branches'
+import { needsTaxInvoice, useSubconTaxInvoice } from '@/lib/api/platform/subconDeductionInvoices'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import {
   RECHARGE_STATUSES, modeClass, rechargeActions, statusClass, useRecharge, useRechargeCandidates, useRechargeMutations, useRecharges,
@@ -165,6 +166,8 @@ function RechargeDrawer({ id, onClose }: { id: string; onClose: () => void }) {
   const { t } = useT()
   const r = useRecharge(id)
   const d = r.data
+  // SCT tax invoice of a deducted subcontractor recharge (prompt 23): issued when Trucking marks the statement PAID.
+  const taxInv = useSubconTaxInvoice(d?.rechargeNo, needsTaxInvoice(d))
   return (
     <Panel open title={d ? `${d.rechargeNo} · ${d.workOrderNo}` : t('common.loading')} onClose={onClose} footer={<div />}>
       {r.isLoading ? <Loading /> : r.error ? <Alert>{errorText(r.error, t)}</Alert> : d && (
@@ -176,6 +179,14 @@ function RechargeDrawer({ id, onClose }: { id: string; onClose: () => void }) {
             <div><p className="text-xs text-gray-500">{t('recharge.externalRef')}</p><p className="font-mono">{d.externalRef ?? '—'}</p></div>
             <div><p className="text-xs text-gray-500">{t('recharge.releasedAt')}</p><p>{fmtDate(d.releasedAt)}</p></div>
             <div><p className="text-xs text-gray-500">{t('recharge.delivered')}</p><p>{d.deliveredAt ? fmtDate(d.deliveredAt) : '—'} · {Number(d.deliveryAttempts)}×</p></div>
+            {needsTaxInvoice(d) && (
+              <div className="col-span-2">
+                <p className="text-xs text-gray-500">{t('recharge.taxInvoice')}</p>
+                {taxInv.isLoading ? <p className="text-gray-400">…</p> : taxInv.data ? (
+                  <p className="font-mono">{taxInv.data.invoiceNo} <span className="font-sans text-xs text-gray-500">· {taxInv.data.settlementNo} · {fmtDate(taxInv.data.settledAt)}</span></p>
+                ) : <p className="text-xs text-gray-500">{taxInv.error ? errorText(taxInv.error, t) : t('recharge.taxInvoicePending')}</p>}
+              </div>
+            )}
           </div>
           {d.deliveryError && <Alert>{d.deliveryError}</Alert>}
           {d.cancelReason && <p className="text-xs text-gray-600">{t('docs.action.cancel')}: {d.cancelReason}</p>}

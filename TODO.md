@@ -295,6 +295,11 @@
 - ✅ 4. tsc clean, Vitest 247 pass, lint clean, build passes; `replies/22_REPLY.md`; commit + push
 - ⬜ 5. LIVE re-tests per item (needs APIs)
 
+## Subcon deduction tax invoice — ui-prompts/23_SUBCON_DEDUCTION_TAX_INVOICE_P14.md (started 2026-11-22)
+- ✅ 1. (1 test) Adapter (platform `subconDeductionInvoices.ts`) + show the tax invoice no on DEDUCTED recharges (detail drawer); WO invoice list: propose only
+- ✅ 2. EN + TH; checks pass; `replies/23_REPLY.md`; commit + push
+- ⬜ 3. LIVE check (needs APIs)
+
 ## Conventions for the next prompts (from 03–13)
 > Write the step list here first (like the blocks above), then build. Reuse what 03–10 built:
 > - adapters `src/lib/api/fleet/<entity>.ts`: `toViewModel`/`toFormValues`, `toRequest` (send fields with no input as read),
