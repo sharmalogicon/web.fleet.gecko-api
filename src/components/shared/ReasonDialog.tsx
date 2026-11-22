@@ -6,7 +6,7 @@ import { useT } from '@/i18n/I18nContext'
 
 /** A confirm dialog with a reason (required or optional) and optional extra inputs; for status actions. */
 export function ReasonDialog({
-  title, confirmLabel, reasonRequired, busy, error, onConfirm, onClose, children, hint, danger,
+  title, confirmLabel, reasonRequired, busy, error, onConfirm, onClose, children, hint, danger, reasonLabel, hideReason,
 }: {
   title: string
   confirmLabel: string
@@ -18,6 +18,10 @@ export function ReasonDialog({
   children?: ReactNode
   hint?: string
   danger?: boolean
+  /** The text box label (default "Reason"). */
+  reasonLabel?: string
+  /** No text box (the action takes no text). */
+  hideReason?: boolean
 }) {
   const { t } = useT()
   const [reason, setReason] = useState('')
@@ -38,11 +42,11 @@ export function ReasonDialog({
     >
       {hint && <p className="text-sm text-gray-600">{hint}</p>}
       {children}
-      <label className="flex flex-col gap-1 text-xs font-medium text-gray-700">
-        {t('meter.reason')}{reasonRequired ? ' *' : ''}
+      {!hideReason && <label className="flex flex-col gap-1 text-xs font-medium text-gray-700">
+        {reasonLabel ?? t('meter.reason')}{reasonRequired ? ' *' : ''}
         <textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={3} maxLength={400}
           className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-blue-500" />
-      </label>
+      </label>}
       {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
     </Panel>
   )

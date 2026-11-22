@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { SearchInput } from '@/components/shared/SearchInput'
 import { useT } from '@/i18n/I18nContext'
+import { CLAIM_STATUSES } from '@/lib/api/fleet/insuranceClaims'
 
 interface InsuranceClaimFiltersProps {
   documentNo: string
@@ -70,8 +71,7 @@ export function InsuranceClaimFilters({
           className="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">{t('common.all')}</option>
-          <option value="active">Active</option>
-          <option value="cancelled">Cancelled</option>
+          {CLAIM_STATUSES.map((s) => <option key={s} value={s}>{t(`claim.status.${s}`)}</option>)}
         </select>
       </div>
     </>

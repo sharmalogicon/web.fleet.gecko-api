@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 import { SearchInput } from '@/components/shared/SearchInput'
 import { useT } from '@/i18n/I18nContext'
 
-const STATUS_OPTIONS = ['ALL', 'ACTIVE', 'CANCELLED'] as const
+const STATUS_OPTIONS = ['ALL', 'DRAFT', 'APPROVED', 'EXPORTED', 'CANCELLED'] as const
 
 interface VendorCreditNoteFiltersProps {
   creditNoteNo: string
@@ -72,7 +72,7 @@ export function VendorCreditNoteFilters({
         >
           {STATUS_OPTIONS.map((s) => (
             <option key={s} value={s}>
-              {s === 'ALL' ? t('common.all') : s}
+              {s === 'ALL' ? t('common.all') : t(`vcn.status.${s}`)}
             </option>
           ))}
         </select>

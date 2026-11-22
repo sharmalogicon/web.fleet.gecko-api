@@ -1,8 +1,5 @@
-import { notFound } from 'next/navigation'
-import { getVendorInvoice } from '@/lib/data/vendor-invoices'
-import { VendorInvoiceFormClient } from '@/components/vendor-invoices/VendorInvoiceFormClient'
-import { NEW_VENDOR_INVOICE_DEFAULTS } from '@/types/vendor-invoice'
-import type { VendorInvoice } from '@/types/vendor-invoice'
+import { Suspense } from 'react'
+import { VendorInvoiceView } from '@/components/vendor-invoices/VendorInvoiceViews'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -10,44 +7,10 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps) {
   const { id } = await params
-  if (id === 'new') return { title: 'New Vendor Invoice | Fleet' }
-  const record = await getVendorInvoice(parseInt(id, 10))
-  return {
-    title: record ? `${record.documentNo} | Fleet` : 'Vendor Invoice | Fleet',
-  }
-}
-
-const NEW_RECORD: VendorInvoice = {
-  ...NEW_VENDOR_INVOICE_DEFAULTS,
-  vendorInvoiceID: 0,
-  status: 'ACTIVE',
-  lines: [],
+  return { title: id === 'new' ? 'New Vendor Invoice | Fleet' : 'Vendor Invoice | Fleet' }
 }
 
 export default async function VendorInvoiceDetailPage({ params }: PageProps) {
   const { id } = await params
-
-  if (id === 'new') {
-    return (
-      <VendorInvoiceFormClient
-        vendorInvoice={NEW_RECORD}
-        vendorInvoiceID="new"
-        isNew={true}
-      />
-    )
-  }
-
-  const vendorInvoiceID = parseInt(id, 10)
-  if (isNaN(vendorInvoiceID)) notFound()
-
-  const record = await getVendorInvoice(vendorInvoiceID)
-  if (!record) notFound()
-
-  return (
-    <VendorInvoiceFormClient
-      vendorInvoice={record}
-      vendorInvoiceID={id}
-      isNew={false}
-    />
-  )
+  return <Suspense fallback={null}><VendorInvoiceView id={id} /></Suspense>
 }

@@ -1,30 +1,9 @@
-import { VendorInvoiceFormClient } from '@/components/vendor-invoices/VendorInvoiceFormClient'
-import { NEW_VENDOR_INVOICE_DEFAULTS } from '@/types/vendor-invoice'
-import type { VendorInvoice } from '@/types/vendor-invoice'
+import { Suspense } from 'react'
+import { VendorInvoiceView } from '@/components/vendor-invoices/VendorInvoiceViews'
 
 export const metadata = { title: 'New Vendor Invoice | Fleet' }
 
-interface PageProps {
-  searchParams: Promise<{ grNo?: string }>
-}
-
-export default async function NewVendorInvoicePage({ searchParams }: PageProps) {
-  const params = await searchParams
-
-  const NEW_RECORD: VendorInvoice = {
-    ...NEW_VENDOR_INVOICE_DEFAULTS,
-    vendorInvoiceID: 0,
-    status: 'ACTIVE',
-    lines: [],
-    // Pre-fill vendorInvoiceRef from grNo if coming from unbilled list
-    remarks: params.grNo ? `Created from GR: ${params.grNo}` : '',
-  }
-
-  return (
-    <VendorInvoiceFormClient
-      vendorInvoice={NEW_RECORD}
-      vendorInvoiceID="new"
-      isNew={true}
-    />
-  )
+/** `?supplier=&branch=&pick=` (from Unbilled) pre-selects that row's lines. */
+export default function NewVendorInvoicePage() {
+  return <Suspense fallback={null}><VendorInvoiceView id="new" /></Suspense>
 }

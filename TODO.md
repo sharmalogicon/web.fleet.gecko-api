@@ -201,7 +201,35 @@
 - ✅ 9. Owner answers (13_REPLY Q1–7): documentDate on change/maintenance, driver on map, Repaired action + last-event column, event documentNo/assetCode, FLEET_TYRE_CONDITION list (seed SQL in replies/13_tyre_condition_seed.sql, NOT run), tread editable; backend to-do table at the end of 13_REPLY.md
 - ✅ 8. LIVE checks — done 2026-11-20 (LIVE_TEST_FINDINGS §A)
 
-## NEXT: P7 (incidents and fuel) — owner answered Q1–Q6 (2026-11-20, see P7_UI_NEEDS.md "Owner answers"); Q3 fuel-stock rule PROPOSED, awaiting confirmation; still no incident/fuel endpoints in platform/Gecko.Fleet — UI needs written: ui-prompts/replies/P7_UI_NEEDS.md (6 owner questions); waits for the backend P7 endpoints + a 14_* prompt
+## Fuel + incidents — ui-prompts/14_INCIDENTS_FUEL_P7.md (started 2026-11-22)
+> Recovery: read the prompt (A lookups, B fuel, C accidents, D claims, E violations). Backend complete P0–P14; prompts 15–23 follow.
+> Pattern: like Work Requests (adapter + `*Views.tsx` + FormClient on the API, actions via ReasonDialog / useDocActions).
+
+- ✅ 1. `npm run api:types`; tsc clean (fixed workOrders.test fixture: issuedBaseQty)
+- ✅ 2. A: lookups adapter `src/lib/api/fleet/lookups.ts` (accident types / responsibilities / violation types, staleTime ∞, TH → nameLocal)
+- ✅ 3. B: fuel adapter + 5 tests; list / approval (approve, reject+reason, own entry hidden) / form (store+item for OWN_TANK, read-only API costs, Trucking-linked rows); mocks removed; tsc clean `src/lib/api/fleet/fuelLogs.ts` (+ Vitest: status map, OWN_TANK vs VENDOR request) + list / form / approval on the API + Trucking-linked read-only fuel
+- ✅ 4. C: accidents adapter + 5 tests; list (status, lookups, no Delete) / form (one third party, WR link + WO table, Raise WR / Close / Cancel, Photos tab via shared `AttachmentsTab` + generic owner hooks in woAttachments.ts); mocks removed; tsc clean
+- ✅ 5. D: claims adapter + 4 tests; list (API status, no Delete) / form (accident picker + `new?accidentId=`, editable lines with WO source kept, totals preview, Copy from WOs / Submit / Approve / Reject / Settle / Revise → new draft / Cancel); mocks removed; tsc clean
+- ✅ 6. E: violations adapter + 3 tests; list (status, lookups, no Delete, Payroll deductions dialog + CSV) / form (Payment + deduction block, Pay / Deduct / Take back / Refresh / Dispute / Reopen / Cancel); ReasonDialog got reasonLabel + hideReason; mocks removed; tsc clean
+- ✅ 7. EN + TH (163 keys, scratchpad merge script); old mocks removed; tsc clean, Vitest 219 pass, lint 0 errors on new files, `next build --webpack` passes
+- ✅ 8. `ui-prompts/replies/14_REPLY.md` (6 questions)
+- ⬜ 9. LIVE checks (needs APIs; run Setup → Set up defaults for FLT_FUEL / FLT_TVN)
+
+## Vendor billing (AP-lite) — ui-prompts/15_VENDOR_BILLING_P8.md (started 2026-11-22)
+> Recovery: read the prompt (A unbilled, B invoices, C credit notes, D payments, E export). WO invoices / WO credit notes NOT here.
+> P12 (prompt 19) later adds payment approval; P10 (prompt 17) adds the SAP export target.
+
+- ✅ 1. Schemas check (VendorInvoiceDto, UnbilledLineDto, VendorCreditNoteDto, VendorPaymentDto, ApExport*)
+- ✅ 2. A: adapter `src/lib/api/fleet/vendorInvoices.ts` unbilled (group per GRN, VAT/net per row) + Vitest; unbilled page on the API, Create Invoice → `/invoice/vendor/new?supplier=&lines=`
+- ✅ 3. B (+ 7 tests incl. A/D/E helpers; views in `VendorInvoiceViews.tsx`; tsc clean): invoice adapter (form ↔ request, WHT tick → 3, line sources, actions; own-entry approval hidden) + Vitest; list / form (Add lines picker, Other charge, Submit / Approve / Send back / Cancel, credited / paid / outstanding)
+- ✅ 4. C (+ 3 tests; `VendorCreditNoteViews.tsx`, return / invoice-line pickers; mocks removed; tsc clean): credit note adapter `vendorCreditNotes.ts` + Vitest; list / form (invoice / return links, RTV_LINE / INVOICE_LINE / MANUAL lines, Approve / Cancel)
+- ✅ 5. D (+ prompt 19 §A payment approval done here: status filter, Approve / Reject, own entry hidden, invoice pendingPaymentAmount; `VendorPaymentViews.tsx`; mocks removed): payments list on `/vendor-payments` (no approval: Approve + Pending hidden) + "Record payment" form (invoice with outstanding > 0, amount, date, ref; reversal) + Vitest
+- ✅ 6. E (in `VendorInvoiceViews.tsx`, tabs Pending / History): Export dialog on the invoice list (pending → tick → POST → batch + Download CSV) + history
+- ✅ 7. EN + TH (104 keys); old mocks removed; tsc clean, Vitest 230 pass, lint 0 errors, build passes
+- ✅ 8. `ui-prompts/replies/15_REPLY.md` (5 questions)
+- ⬜ 9. LIVE checks (needs APIs)
+
+## Conventions for the next prompts (from 03–13)
 > Write the step list here first (like the blocks above), then build. Reuse what 03–10 built:
 > - adapters `src/lib/api/fleet/<entity>.ts`: `toViewModel`/`toFormValues`, `toRequest` (send fields with no input as read),
 >   React Query hooks with keys `['fleet', '<entity>', tenant, ...]`, mutations invalidate the entity key; Vitest per adapter.

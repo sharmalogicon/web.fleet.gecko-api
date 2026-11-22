@@ -15,7 +15,7 @@ const dto = (p: Partial<WorkOrderDto> = {}): WorkOrderDto => ({
     { woTaskId: 't2', seqNo: 2, serviceTaskId: 'st2', pmTaskStateId: null, description: 'Brakes', complaint: 'squeal', cause: null, correction: null, status: 'OPEN', partsCost: 0, laborCost: 0, subletCost: 0, partsPrice: 0, laborPrice: 0, discountAmount: 0, remarks: null },
     { woTaskId: 't1', seqNo: 1, serviceTaskId: 'st1', pmTaskStateId: 'pm1', description: 'Oil change', complaint: null, cause: null, correction: null, status: 'DONE', partsCost: 0, laborCost: 0, subletCost: 0, partsPrice: 0, laborPrice: 0, discountAmount: 0, remarks: null },
   ],
-  parts: [{ woPartId: 'p1', taskSeqNo: 1, itemId: 'i1', itemCode: 'OIL-15W40', description: 'Engine oil', qty: '20', uomCode: 'LTR', source: 'STOCK', unitCost: 95, costAmount: 1900, charge: charge() }],
+  parts: [{ woPartId: 'p1', taskSeqNo: 1, itemId: 'i1', itemCode: 'OIL-15W40', description: 'Engine oil', qty: '20', uomCode: 'LTR', source: 'STOCK', unitCost: 95, costAmount: 1900, issuedBaseQty: 0, charge: charge() }],
   labor: [{ woLaborId: 'l1', taskSeqNo: 2, technicianId: 'tech1', technicianCode: 'T1', tradeCode: 'MECHANIC', description: null, timeBand: 'OT', startAt: null, endAt: null, hours: 1.5, stdHours: 1, costRate: 180, costRateSource: 'TENANT_TRADE', costAmount: 270, charge: charge({ chargeCode: 'LAB' }) }],
   sublets: [], sundries: [],
   ...p,

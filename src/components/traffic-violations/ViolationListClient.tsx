@@ -1,19 +1,16 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createColumnHelper } from '@tanstack/react-table'
-import type { TrafficViolation, ViolationType } from '@/types/traffic-violation'
-import { VIOLATION_TYPE_MAP } from '@/types/traffic-violation'
 import { DataTable } from '@/components/shared/DataTable'
-import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
-import { useToastStore } from '@/lib/stores/useToastStore'
-import { removeMockTrafficViolation } from '@/lib/mock/traffic-violations'
+import { fmtDate } from '@/components/docs/DocBits'
+import { VIOLATION_STATUS_TONE, type ViolationRow } from '@/lib/api/fleet/trafficViolations'
+import { useLookup } from '@/lib/api/fleet/lookups'
 import { useT } from '@/i18n/I18nContext'
 
-const col = createColumnHelper<TrafficViolation>()
+const col = createColumnHelper<ViolationRow>()
 
-const TYPE_COLORS: Record<ViolationType, string> = {
+const TYPE_COLORS: Record<string, string> = {
   SPEEDING: 'bg-red-100 text-red-700',
   PARKING: 'bg-yellow-100 text-yellow-700',
   RED_LIGHT: 'bg-orange-100 text-orange-700',
@@ -21,16 +18,11 @@ const TYPE_COLORS: Record<ViolationType, string> = {
   OTHER: 'bg-gray-100 text-gray-600',
 }
 
-interface ViolationListClientProps {
-  initialData: TrafficViolation[]
-}
-
-export function ViolationListClient({ initialData }: ViolationListClientProps) {
-  const [data, setData] = useState<TrafficViolation[]>(initialData)
-  const [deleteTarget, setDeleteTarget] = useState<TrafficViolation | null>(null)
+/** Same columns; the API status under the amount; no Delete (a violation is cancelled). */
+export function ViolationListClient({ data }: { data: ViolationRow[] }) {
   const router = useRouter()
-  const { success, error } = useToastStore()
   const { t } = useT()
+  const types = useLookup('violation-types')
 
   const columns = [
     col.display({
@@ -47,7 +39,7 @@ export function ViolationListClient({ initialData }: ViolationListClientProps) {
             >
               {r.ticketNo}
             </button>
-            <span className="text-xs text-gray-400">{r.violationDate}</span>
+            <span className="text-xs text-gray-400">{r.documentNo} · {fmtDate(r.violationDate)}</span>
           </div>
         )
       },
@@ -75,9 +67,9 @@ export function ViolationListClient({ initialData }: ViolationListClientProps) {
         return (
           <div className="flex flex-col gap-0.5">
             <span
-              className={`inline-block self-start px-2 py-0.5 text-xs font-medium rounded-full ${TYPE_COLORS[r.violationType]}`}
+              className={`inline-block self-start px-2 py-0.5 text-xs font-medium rounded-full ${TYPE_COLORS[r.violationType] ?? 'bg-gray-100 text-gray-600'}`}
             >
-              {VIOLATION_TYPE_MAP[r.violationType]}
+              {types.labelOf(r.violationType)}
             </span>
             {r.violationTypeDescription && (
               <span className="text-xs text-gray-400 truncate max-w-[200px]">
@@ -99,6 +91,7 @@ export function ViolationListClient({ initialData }: ViolationListClientProps) {
             <span className="text-sm font-medium text-gray-900 font-mono">
               ฿{r.violationAmount.toLocaleString()}
             </span>
+            <span className={`inline-flex w-fit px-1.5 rounded text-[10px] font-medium ${VIOLATION_STATUS_TONE[r.status] ?? 'bg-gray-100 text-gray-600'}`}>{t(`violation.status.${r.status}`)}</span>
             <div className="flex items-center gap-2">
               <button
                 type="button"
@@ -107,13 +100,6 @@ export function ViolationListClient({ initialData }: ViolationListClientProps) {
               >
                 {t('common.edit')}
               </button>
-              <button
-                type="button"
-                onClick={() => setDeleteTarget(r)}
-                className="text-xs text-red-500 hover:underline"
-              >
-                {t('common.delete')}
-              </button>
             </div>
           </div>
         )
@@ -121,35 +107,5 @@ export function ViolationListClient({ initialData }: ViolationListClientProps) {
     }),
   ]
 
-  const handleDelete = async () => {
-    if (!deleteTarget) return
-    try {
-      removeMockTrafficViolation(deleteTarget.violationID)
-      setData((prev) => prev.filter((r) => r.violationID !== deleteTarget.violationID))
-      success('Traffic violation deleted', `${deleteTarget.ticketNo} has been removed.`)
-    } catch {
-      error('Delete failed', 'An error occurred. Please try again.')
-    } finally {
-      setDeleteTarget(null)
-    }
-  }
-
-  return (
-    <>
-      <DataTable data={data} columns={columns} pageSize={15} />
-      <ConfirmDialog
-        open={deleteTarget !== null}
-        title="Delete Traffic Violation"
-        message={
-          deleteTarget
-            ? `Are you sure you want to delete "${deleteTarget.ticketNo}"? This action cannot be undone.`
-            : ''
-        }
-        confirmLabel={t('common.delete')}
-        onConfirm={handleDelete}
-        onCancel={() => setDeleteTarget(null)}
-        destructive
-      />
-    </>
-  )
+  return <DataTable data={data} columns={columns} pageSize={15} />
 }

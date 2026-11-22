@@ -3,131 +3,132 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import type { VendorInvoice, VendorInvoiceFormValues } from '@/types/vendor-invoice'
-import { vendorInvoiceSchema } from '@/types/vendor-invoice'
-import { useVendorInvoice } from '@/lib/hooks/useVendorInvoice'
-import { useToastStore } from '@/lib/stores/useToastStore'
 import { FormLayout } from '@/components/shared/FormLayout'
-import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
+import { ToolbarButton } from '@/components/shared/ReasonDialog'
+import { Alert, useDocActions } from '@/components/docs/DocBits'
 import { InvoiceHeaderSection } from '@/components/vendor-invoices/sections/InvoiceHeaderSection'
 import { InvoiceLinesSection } from '@/components/vendor-invoices/sections/InvoiceLinesSection'
+import {
+  INVOICE_API_TO_FORM, INVOICE_STATUS_TONE, invoiceActions, invoiceFormSchema, useSaveVendorInvoice, useVendorInvoiceAction,
+  type InvoiceFormValues, type VendorInvoiceDto,
+} from '@/lib/api/fleet/vendorInvoices'
+import { useFleetAccess } from '@/lib/api/fleet/access'
+import { useAuth } from '@/lib/contexts/AuthContext'
+import { handleSaveError } from '@/lib/api/saveErrors'
+import { useToastStore } from '@/lib/stores/useToastStore'
 import { useT } from '@/i18n/I18nContext'
 
 interface Props {
-  vendorInvoice: VendorInvoice
-  vendorInvoiceID: string
+  record: InvoiceFormValues
+  current?: VendorInvoiceDto
   isNew: boolean
 }
 
-export function VendorInvoiceFormClient({ vendorInvoice, vendorInvoiceID, isNew }: Props) {
+/**
+ * Same two tabs. Save (DRAFT) / Save & submit: all lines matched → APPROVED at once, else PENDING_APPROVAL.
+ * Approve / Send back (not by the person who keyed it), Cancel (not once exported / paid), Record payment.
+ */
+export function VendorInvoiceFormClient({ record, current, isNew }: Props) {
   const { t } = useT()
-  const [showDelete, setShowDelete] = useState(false)
   const router = useRouter()
-  const { isSaving, isDeleting, save, remove } = useVendorInvoice(vendorInvoiceID)
-  const { success, error } = useToastStore()
+  const toast = useToastStore()
+  const { user } = useAuth()
+  const { canAt } = useFleetAccess()
+  const save = useSaveVendorInvoice()
+  const act = useVendorInvoiceAction()
+  const docs = useDocActions(act, current?.vendorInvoiceId, current?.rowVersion)
+  const [banner, setBanner] = useState<string | null>(null)
 
-  const form = useForm<VendorInvoiceFormValues>({
-    resolver: zodResolver(vendorInvoiceSchema) as any,
-    defaultValues: vendorInvoice,
+  const form = useForm<InvoiceFormValues>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(invoiceFormSchema) as any,
+    defaultValues: record,
   })
+  const { handleSubmit, watch, formState: { isDirty } } = form
 
-  const {
-    handleSubmit,
-    watch,
-    formState: { isDirty },
-  } = form
+  const branchId = current?.branchId ?? watch('branchId')
+  const can = { manage: canAt('fleet.vendorinvoice.manage', branchId), approve: !!current && canAt('fleet.vendorinvoice.approve', branchId) }
+  const allowed = invoiceActions(current, can, user?.userId)
+  const busy = save.isPending || act.isPending
 
-  const handleSave = handleSubmit(async (values) => {
-    try {
-      const saved = await save(values, vendorInvoice)
-      success('Vendor invoice saved', `${saved.documentNo} has been saved.`)
-      form.reset(saved)
-      if (isNew) router.push(`/invoice/vendor/${saved.vendorInvoiceID}`)
-    } catch {
-      error('Save failed', 'An error occurred.')
-    }
-  })
+  const doSave = (submit: boolean) =>
+    handleSubmit(async (values) => {
+      setBanner(null)
+      try {
+        let saved = current && !isDirty ? current : await save.mutateAsync({ values, current, submit: submit && !current })
+        if (submit && current) saved = await act.mutateAsync({ id: saved.vendorInvoiceId, action: 'submit', body: { reason: null, rowVersion: saved.rowVersion } })
+        toast.success(submit ? t(`vinv.status.${saved.status}`) : 'Vendor invoice saved', `${saved.documentNo} · ${saved.vendorInvoiceNo}`)
+        if (isNew) router.push(`/invoice/vendor/${saved.vendorInvoiceId}`)
+      } catch (e) {
+        handleSaveError(e, { setError: form.setError, apiToForm: INVOICE_API_TO_FORM, setBanner, t, toast })
+      }
+    })()
 
-  const handleDelete = async () => {
-    try {
-      await remove()
-      success('Deleted', 'Vendor invoice has been removed.')
-      router.push('/invoice/vendor')
-    } catch {
-      error('Delete failed', 'An error occurred.')
-    } finally {
-      setShowDelete(false)
-    }
-  }
-
-  const documentNo = watch('documentNo')
-  const title = isNew ? `${t('common.new')} ${t('nav.vendorInvoices')}` : documentNo || t('nav.vendorInvoices')
-
-  const canDelete = !isNew && vendorInvoice.status === 'ACTIVE' && vendorInvoice.lines.length === 0
+  const title = isNew ? `${t('common.new')} ${t('nav.vendorInvoices')}` : current?.documentNo ?? t('nav.vendorInvoices')
+  const lineCount = watch('lines').length
 
   const tabs = [
     {
       id: 'header',
       label: t('form.invoiceHeader'),
-      content: <InvoiceHeaderSection form={form} isNew={isNew} />,
+      content: (
+        <>
+          {banner && <div className="mb-4"><Alert>{banner}</Alert></div>}
+          {current && (
+            <div className="mb-4 flex flex-wrap items-center gap-3 text-xs text-gray-600">
+              <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${INVOICE_STATUS_TONE[current.status] ?? ''}`}>{t(`vinv.status.${current.status}`)}</span>
+              <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${current.matchStatus === 'MATCHED' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'}`}>
+                {t(`vinv.match.${current.matchStatus}`)}
+              </span>
+              {current.approvalNote && <span className="text-amber-700">{t('vinv.approvalNote')}: {current.approvalNote}</span>}
+              {current.cancelReason && <span>{t('fuel.cancelReason')}: {current.cancelReason}</span>}
+              {current.erpDocNum && <span className="font-mono">ERP {current.erpDocNum}</span>}
+              {current.erpError && <span className="text-red-600">{current.erpError}</span>}
+            </div>
+          )}
+          <InvoiceHeaderSection form={form} isNew={isNew} editable={allowed.save} current={current} />
+        </>
+      ),
     },
-    {
-      id: 'lines',
-      label: `${t('form.lineItems')} (${vendorInvoice.lines.length})`,
-      content: <InvoiceLinesSection lines={vendorInvoice.lines} />,
-    },
+    { id: 'lines', label: `${t('form.lineItems')} (${lineCount})`, content: <InvoiceLinesSection form={form} editable={allowed.save} /> },
   ]
 
   return (
     <>
       <FormLayout
         title={title}
-        subtitle={
-          isNew
-            ? 'Create a new vendor invoice'
-            : `${vendorInvoiceID} · ${vendorInvoice.status}`
-        }
+        subtitle={isNew ? 'Create a new vendor invoice' : `${current?.supplierName} · ${current?.vendorInvoiceNo}`}
         tabs={tabs}
         isNew={isNew}
         actions={
-          <div className="flex items-center gap-2">
-            {canDelete && (
-              <button
-                type="button"
-                onClick={() => setShowDelete(true)}
-                disabled={isDeleting}
-                className="px-4 py-2 text-sm font-medium rounded-lg border border-red-300 text-red-600 hover:bg-red-50 disabled:opacity-50"
-              >
-                {isDeleting ? t('common.loading') : t('common.delete')}
-              </button>
+          <div className="flex items-center gap-2 flex-wrap justify-end">
+            {allowed.cancel && current && (
+              <ToolbarButton tone="danger" disabled={busy} onClick={() => docs.ask('cancel', `${t('vinv.action.cancel')} · ${current.documentNo}`, true)}>{t('vinv.action.cancel')}</ToolbarButton>
             )}
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-            >
-              {t('common.cancel')}
-            </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={isSaving || !isDirty}
-              className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSaving ? t('common.loading') : t('common.save')}
-            </button>
+            {allowed.sendBack && current && (
+              <ToolbarButton tone="danger" disabled={busy}
+                onClick={() => docs.ask('approval', `${t('vinv.action.sendBack')} · ${current.documentNo}`, true, (reason) => ({ decision: 'REJECTED', reason }))}>
+                {t('vinv.action.sendBack')}
+              </ToolbarButton>
+            )}
+            {allowed.approve && current && (
+              <ToolbarButton tone="success" disabled={busy}
+                onClick={() => docs.ask('approval', `${t('vinv.action.approve')} · ${current.documentNo}`, false, (reason) => ({ decision: 'APPROVED', reason: reason || null }))}>
+                {t('vinv.action.approve')}
+              </ToolbarButton>
+            )}
+            {allowed.pay && current && (
+              <ToolbarButton disabled={busy} onClick={() => router.push(`/invoice/vendor-payments/new?invoiceId=${current.vendorInvoiceId}`)}>{t('vpay.record')}</ToolbarButton>
+            )}
+            <ToolbarButton onClick={() => router.back()}>{t('common.close')}</ToolbarButton>
+            {allowed.submit && <ToolbarButton disabled={busy} onClick={() => doSave(true)}>{t('vinv.action.submit')}</ToolbarButton>}
+            {allowed.save && (
+              <ToolbarButton tone="primary" disabled={busy || !isDirty} onClick={() => doSave(false)}>{save.isPending ? t('common.loading') : t('common.save')}</ToolbarButton>
+            )}
           </div>
         }
       />
-      <ConfirmDialog
-        open={showDelete}
-        title="Delete Vendor Invoice"
-        message="Delete this vendor invoice? This cannot be undone."
-        confirmLabel="Delete"
-        onConfirm={handleDelete}
-        onCancel={() => setShowDelete(false)}
-        destructive
-      />
+      {docs.dialogNode}
     </>
   )
 }

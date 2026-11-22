@@ -1,16 +1,14 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createColumnHelper } from '@tanstack/react-table'
-import type { AccidentReport } from '@/types/accident-report'
 import { DataTable } from '@/components/shared/DataTable'
-import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
-import { useToastStore } from '@/lib/stores/useToastStore'
-import { removeMockAccidentReport } from '@/lib/mock/accident-reports'
+import { fmtDate } from '@/components/docs/DocBits'
+import { ACCIDENT_STATUS_TONE, type AccidentRow } from '@/lib/api/fleet/accidents'
+import { useLookup } from '@/lib/api/fleet/lookups'
 import { useT } from '@/i18n/I18nContext'
 
-const col = createColumnHelper<AccidentReport>()
+const col = createColumnHelper<AccidentRow>()
 
 const TYPE_COLORS: Record<string, string> = {
   COLLISION: 'bg-orange-100 text-orange-700',
@@ -20,16 +18,11 @@ const TYPE_COLORS: Record<string, string> = {
   OTHER: 'bg-gray-100 text-gray-600',
 }
 
-interface AccidentListClientProps {
-  initialData: AccidentReport[]
-}
-
-export function AccidentListClient({ initialData }: AccidentListClientProps) {
-  const [data, setData] = useState<AccidentReport[]>(initialData)
-  const [deleteTarget, setDeleteTarget] = useState<AccidentReport | null>(null)
+/** Same columns; the status under the document no; no Delete (the API has none: an accident is cancelled). */
+export function AccidentListClient({ data }: { data: AccidentRow[] }) {
   const router = useRouter()
-  const { success, error } = useToastStore()
   const { t } = useT()
+  const types = useLookup('accident-types')
 
   const columns = [
     col.display({
@@ -46,7 +39,8 @@ export function AccidentListClient({ initialData }: AccidentListClientProps) {
             >
               {r.documentNo}
             </button>
-            <span className="text-xs text-gray-400">{r.accidentDate}</span>
+            <span className="text-xs text-gray-400">{fmtDate(r.accidentDate)}</span>
+            <span className={`inline-flex w-fit px-1.5 rounded text-[10px] font-medium ${ACCIDENT_STATUS_TONE[r.status] ?? 'bg-gray-100 text-gray-600'}`}>{t(`accident.status.${r.status}`)}</span>
           </div>
         )
       },
@@ -76,7 +70,7 @@ export function AccidentListClient({ initialData }: AccidentListClientProps) {
             <span
               className={`inline-block self-start px-2 py-0.5 text-xs font-medium rounded-full ${TYPE_COLORS[r.accidentType] ?? 'bg-gray-100 text-gray-600'}`}
             >
-              {r.accidentType}
+              {types.labelOf(r.accidentType)}
             </span>
             {r.accidentLocation && (
               <span className="text-xs text-gray-400 truncate max-w-[180px]">
@@ -131,13 +125,6 @@ export function AccidentListClient({ initialData }: AccidentListClientProps) {
               >
                 {t('common.edit')}
               </button>
-              <button
-                type="button"
-                onClick={() => setDeleteTarget(r)}
-                className="text-xs text-red-500 hover:underline"
-              >
-                {t('common.delete')}
-              </button>
             </div>
           </div>
         )
@@ -145,35 +132,5 @@ export function AccidentListClient({ initialData }: AccidentListClientProps) {
     }),
   ]
 
-  const handleDelete = async () => {
-    if (!deleteTarget) return
-    try {
-      removeMockAccidentReport(deleteTarget.accidentID)
-      setData((prev) => prev.filter((r) => r.accidentID !== deleteTarget.accidentID))
-      success('Accident report deleted', `${deleteTarget.documentNo} has been removed.`)
-    } catch {
-      error('Delete failed', 'An error occurred. Please try again.')
-    } finally {
-      setDeleteTarget(null)
-    }
-  }
-
-  return (
-    <>
-      <DataTable data={data} columns={columns} pageSize={15} />
-      <ConfirmDialog
-        open={deleteTarget !== null}
-        title="Delete Accident Report"
-        message={
-          deleteTarget
-            ? `Are you sure you want to delete "${deleteTarget.documentNo}"? This action cannot be undone.`
-            : ''
-        }
-        confirmLabel={t('common.delete')}
-        onConfirm={handleDelete}
-        onCancel={() => setDeleteTarget(null)}
-        destructive
-      />
-    </>
-  )
+  return <DataTable data={data} columns={columns} pageSize={15} />
 }

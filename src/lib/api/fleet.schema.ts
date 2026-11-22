@@ -438,6 +438,301 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/fleet/assets/{assetProfileId}/fuel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A LINKED asset's fuel from Trucking's ledger, read only (?from, to, take ≤ 1000); empty for a FLEET asset (use /fuel-logs) */
+        get: {
+            parameters: {
+                query?: {
+                    from?: string;
+                    to?: string;
+                    take?: number | string;
+                };
+                header?: never;
+                path: {
+                    assetProfileId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AssetFuelDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/vendor-payments/{paymentId}/approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve / reject a payment waiting for approval (setting VENDOR_PAYMENT_APPROVAL); not one you keyed */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    paymentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["PaymentDecisionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["VendorPaymentDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/vendor-payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Payments recorded on vendor invoices (?search, supplierPartyCode, vendorInvoiceId, status APPROVED|PENDING_APPROVAL|REJECTED, from, to, page, pageSize) */
+        get: {
+            parameters: {
+                query?: {
+                    search?: string;
+                    supplierPartyCode?: string;
+                    vendorInvoiceId?: string;
+                    from?: string;
+                    to?: string;
+                    page?: number | string;
+                    pageSize?: number | string;
+                    status?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PagedResultOfVendorPaymentDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/fuel-logs/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Fuel efficiency per asset (?assetProfileId, from, to, branchId): approved logs */
+        get: {
+            parameters: {
+                query?: {
+                    assetProfileId?: string;
+                    from?: string;
+                    to?: string;
+                    branchId?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FuelSummaryDto"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/drivers/{driverId}/incidents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A driver's accidents and traffic violations, newest first */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    driverId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["DriverIncidentDto"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/sync/trucking": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Pull vehicles / chassis, drivers and job-order odometers from Trucking now (also nightly when enabled) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TruckingSyncResult"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/cost-adjustments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Stock revaluations from invoice price variances (?itemId, warehouseId, vendorInvoiceId, from, to); newest first, max 2000 */
+        get: {
+            parameters: {
+                query?: {
+                    itemId?: string;
+                    warehouseId?: string;
+                    vendorInvoiceId?: string;
+                    from?: string;
+                    to?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CostAdjustmentDto"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/fleet/setup/catalogue": {
         parameters: {
             query?: never;
@@ -2273,6 +2568,79 @@ export interface paths {
                     };
                     content: {
                         "application/json": components["schemas"]["WarehouseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/warehouses/{warehouseId}/transfer-targets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Stores this store may send stock to: its configured list, or every other active store when it has none (backend #12) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    warehouseId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["WarehouseDto"][];
+                    };
+                };
+            };
+        };
+        /** Replace this store's transfer-target list (empty = any active store) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    warehouseId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SaveTransferTargetsRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["WarehouseDto"][];
                     };
                 };
                 /** @description Bad Request */
@@ -4342,7 +4710,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Recharges (?status, mode, workOrderId, billToPartyCode, page, pageSize) */
+        /** Recharges (?status, mode, workOrderId, billToPartyCode, page, pageSize); ACCEPTED rows catch up with Revenue / Trucking first */
         get: {
             parameters: {
                 query?: {
@@ -4952,7 +5320,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Stock issues (?status, workOrderId, warehouseId, from, to, page, pageSize) */
+        /** Stock issues (?status, workOrderId, workOrderNo, assetCode, warehouseId, from, to, page, pageSize) */
         get: {
             parameters: {
                 query?: {
@@ -4963,6 +5331,8 @@ export interface paths {
                     to?: string;
                     page?: number | string;
                     pageSize?: number | string;
+                    workOrderNo?: string;
+                    assetCode?: string;
                 };
                 header?: never;
                 path?: never;
@@ -6367,7 +6737,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Purchase orders (?search, supplierPartyCode, status, from, to, page, pageSize) */
+        /** Purchase orders (?search, supplierPartyCode, supplierName, status, from, to, page, pageSize) */
         get: {
             parameters: {
                 query?: {
@@ -6378,6 +6748,7 @@ export interface paths {
                     to?: string;
                     page?: number | string;
                     pageSize?: number | string;
+                    supplierName?: string;
                 };
                 header?: never;
                 path?: never;
@@ -6810,7 +7181,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Goods receipts (?search, supplierPartyCode, status, from, to, page, pageSize) */
+        /** Goods receipts (?search, supplierPartyCode, supplierName, status, from, to, page, pageSize) */
         get: {
             parameters: {
                 query?: {
@@ -6821,6 +7192,7 @@ export interface paths {
                     to?: string;
                     page?: number | string;
                     pageSize?: number | string;
+                    supplierName?: string;
                 };
                 header?: never;
                 path?: never;
@@ -7060,7 +7432,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Returns to suppliers (?search, supplierPartyCode, status, from, to, page, pageSize) */
+        /** Returns to suppliers (?search, supplierPartyCode, supplierName, status, from, to, page, pageSize) */
         get: {
             parameters: {
                 query?: {
@@ -7071,6 +7443,7 @@ export interface paths {
                     to?: string;
                     page?: number | string;
                     pageSize?: number | string;
+                    supplierName?: string;
                 };
                 header?: never;
                 path?: never;
@@ -7302,10 +7675,3722 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/fleet/lookups/accident-types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Accident types (fixed list): code, English and Thai label */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["LookupOption"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/lookups/accident-responsibilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Who caused an accident (fixed list): code, English and Thai label */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["LookupOption"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/lookups/violation-types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Traffic violation types (fixed list): code, English and Thai label */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["LookupOption"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/fuel-logs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Fuel logs (?search= number / asset / voucher, status, fuelSource, branchId, assetProfileId, driverId, from, to, page, pageSize) */
+        get: {
+            parameters: {
+                query?: {
+                    search?: string;
+                    status?: string;
+                    fuelSource?: string;
+                    branchId?: string;
+                    assetProfileId?: string;
+                    driverId?: string;
+                    from?: string;
+                    to?: string;
+                    page?: number | string;
+                    pageSize?: number | string;
+                    includeTotal?: boolean;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PagedResultOfFuelLogDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Record a refuel of a FLEET-owned asset (FLT_FUEL; a linked asset's fuel is Trucking's → 409) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SaveFuelLogRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FuelLogDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/fuel-logs/{fuelLogId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One fuel log */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    fuelLogId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FuelLogDto"];
+                    };
+                };
+            };
+        };
+        /** Change a DRAFT or PENDING_APPROVAL log (rowVersion; submit = true submits it) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    fuelLogId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SaveFuelLogRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FuelLogDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/fuel-logs/{fuelLogId}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit a fuel log */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    fuelLogId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["FuelLogActionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FuelLogDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/fuel-logs/{fuelLogId}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve a fuel log */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    fuelLogId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["FuelLogActionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FuelLogDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/fuel-logs/{fuelLogId}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reject a fuel log */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    fuelLogId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["FuelLogActionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FuelLogDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/fuel-logs/{fuelLogId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel a fuel log */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    fuelLogId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["FuelLogActionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FuelLogDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/accidents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Accident reports (?search= number / asset / driver / police report, status, accidentType, branchId, assetProfileId, driverId, from, to, page, pageSize) */
+        get: {
+            parameters: {
+                query?: {
+                    search?: string;
+                    status?: string;
+                    accidentType?: string;
+                    branchId?: string;
+                    assetProfileId?: string;
+                    driverId?: string;
+                    from?: string;
+                    to?: string;
+                    page?: number | string;
+                    pageSize?: number | string;
+                    includeTotal?: boolean;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PagedResultOfAccidentDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Report an accident (FLT_ACC) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SaveAccidentRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccidentDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/accidents/{accidentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One accident report with its third parties and repair work orders */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    accidentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccidentDto"];
+                    };
+                };
+            };
+        };
+        /** Change an OPEN or UNDER_REPAIR report (rowVersion; parties = the whole list) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    accidentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SaveAccidentRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccidentDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/accidents/{accidentId}/work-request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Raise the repair work request (also needs fleet.workrequest.create) → UNDER_REPAIR */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    accidentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["RaiseAccidentWorkRequestRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccidentDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/accidents/{accidentId}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Close the report (no repair work order still open) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    accidentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["AccidentActionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccidentDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/accidents/{accidentId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel an OPEN report (reason) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    accidentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["AccidentActionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccidentDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/accidents/{accidentId}/attachments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Photos / files on an accident */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    accidentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccidentAttachmentDto"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Add a photo / PDF (multipart: file, stage SCENE|DAMAGE|POLICE|REPAIR|OTHER, caption) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    accidentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "multipart/form-data": {
+                        file?: components["schemas"]["IFormFile"];
+                    } & {
+                        stage?: string;
+                    } & {
+                        caption?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccidentAttachmentDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/accidents/{accidentId}/attachments/{attachmentId}/content": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The file itself */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    accidentId: string;
+                    attachmentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/accidents/{accidentId}/attachments/{attachmentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Take a file off the accident (the stored file is kept) */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    accidentId: string;
+                    attachmentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/insurance-claims": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Insurance claims (?search= number / accident / asset / insurer ref, status, branchId, accidentId, assetProfileId, from, to, page, pageSize) */
+        get: {
+            parameters: {
+                query?: {
+                    search?: string;
+                    status?: string;
+                    branchId?: string;
+                    accidentId?: string;
+                    assetProfileId?: string;
+                    from?: string;
+                    to?: string;
+                    page?: number | string;
+                    pageSize?: number | string;
+                    includeTotal?: boolean;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PagedResultOfInsuranceClaimDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Start a claim for an accident (FLT_CLM) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SaveInsuranceClaimRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["InsuranceClaimDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/insurance-claims/{claimId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One claim with its lines */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    claimId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["InsuranceClaimDto"];
+                    };
+                };
+            };
+        };
+        /** Change a DRAFT claim (rowVersion; lines = the whole list) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    claimId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SaveInsuranceClaimRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["InsuranceClaimDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/insurance-claims/{claimId}/lines/from-work-orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add the accident's work-order cost lines (parts, labour, sublet) not on the claim yet, at cost */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    claimId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ClaimActionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["InsuranceClaimDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/insurance-claims/{claimId}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send the claim to the insurer (DRAFT → SUBMITTED) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    claimId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ClaimActionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["InsuranceClaimDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/insurance-claims/{claimId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel a DRAFT or SUBMITTED claim (reason) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    claimId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ClaimActionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["InsuranceClaimDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/insurance-claims/{claimId}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record the insurer's decision (fleet.claim.approve): APPROVED with the amount, or REJECTED */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    claimId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ClaimDecisionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["InsuranceClaimDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/insurance-claims/{claimId}/settle": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record the payment received (fleet.claim.approve): APPROVED → SETTLED */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    claimId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ClaimSettleRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["InsuranceClaimDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/insurance-claims/{claimId}/revise": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Copy the claim into a new DRAFT (the old one becomes REVISED) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    claimId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ClaimActionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["InsuranceClaimDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/traffic-violations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Traffic violations (?search= number / ticket / asset / driver, status, violationType, branchId, assetProfileId, driverId, from, to, page, pageSize) */
+        get: {
+            parameters: {
+                query?: {
+                    search?: string;
+                    status?: string;
+                    violationType?: string;
+                    branchId?: string;
+                    assetProfileId?: string;
+                    driverId?: string;
+                    from?: string;
+                    to?: string;
+                    page?: number | string;
+                    pageSize?: number | string;
+                    includeTotal?: boolean;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PagedResultOfTrafficViolationDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Record a ticket (FLT_TVN; ticket no unique) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SaveTrafficViolationRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TrafficViolationDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/traffic-violations/{violationId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One traffic violation */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    violationId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TrafficViolationDto"];
+                    };
+                };
+            };
+        };
+        /** Change an OPEN or DISPUTED violation (rowVersion) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    violationId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SaveTrafficViolationRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TrafficViolationDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/traffic-violations/{violationId}/pay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record the payment: paidBy COMPANY (then deduct from the driver) or DRIVER (done) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    violationId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ViolationPayRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TrafficViolationDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/traffic-violations/{violationId}/deduct": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Deduct a company-paid fine from the driver: payroll (own driver) or the subcontractor's Trucking statement (SUBCON driver) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    violationId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ViolationDeductRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TrafficViolationDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/traffic-violations/{violationId}/deduction/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Take the deduction back (not once exported to payroll / on a statement) → PAID */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    violationId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ViolationActionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TrafficViolationDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/traffic-violations/{violationId}/deduction/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** SUBCON: read the statement number back from Trucking */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    violationId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TrafficViolationDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/traffic-violations/{violationId}/dispute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Dispute a violation */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    violationId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ViolationActionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TrafficViolationDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/traffic-violations/{violationId}/reopen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reopen a violation */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    violationId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ViolationActionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TrafficViolationDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/traffic-violations/{violationId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel a violation */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    violationId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ViolationActionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TrafficViolationDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/traffic-violations/payroll-deductions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Fines to deduct through payroll (?exported=false|true, from, to — deduction date) */
+        get: {
+            parameters: {
+                query?: {
+                    exported?: boolean;
+                    from?: string;
+                    to?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PayrollDeductionDto"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/traffic-violations/payroll-deductions/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark payroll deductions as sent to payroll (returns the rows marked) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["PayrollExportRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PayrollDeductionDto"][];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/vendor-invoices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Vendor invoices (?search, supplierPartyCode, status, matchStatus, branchId, from, to, page, pageSize) */
+        get: {
+            parameters: {
+                query?: {
+                    search?: string;
+                    supplierPartyCode?: string;
+                    status?: string;
+                    matchStatus?: string;
+                    branchId?: string;
+                    from?: string;
+                    to?: string;
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PagedResultOfVendorInvoiceDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Key a vendor invoice (DRAFT, FLT_VIN; submit: true submits) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SaveVendorInvoiceRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["VendorInvoiceDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/vendor-invoices/unbilled": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** What suppliers can still invoice (?supplierPartyCode, branchId, source, search, from, to): posted GRN lines, costed WO sublets, tyre-shop events */
+        get: {
+            parameters: {
+                query?: {
+                    supplierPartyCode?: string;
+                    branchId?: string;
+                    source?: string;
+                    search?: string;
+                    from?: string;
+                    to?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UnbilledLineDto"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/vendor-invoices/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["VendorInvoiceDto"];
+                    };
+                };
+            };
+        };
+        /** Change a DRAFT / PENDING_APPROVAL invoice (lines replaced; back to DRAFT; rowVersion) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SaveVendorInvoiceRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["VendorInvoiceDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/vendor-invoices/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit: MATCHED → APPROVED at once; an exception → PENDING_APPROVAL */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["DocumentActionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["VendorInvoiceDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/vendor-invoices/{id}/approval": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Accept (APPROVED) or send back (REJECTED → DRAFT, reason) an exception; not your own invoice */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ApprovalDecisionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["VendorInvoiceDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/vendor-invoices/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel (not once exported or paid): its lines become billable again */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["DocumentActionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["VendorInvoiceDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/vendor-invoices/{id}/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record a payment (negative = reverse one); PAID when fully paid */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["RecordVendorPaymentRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["VendorInvoiceDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/vendor-credit-notes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Vendor credit notes (?search, supplierPartyCode, status, vendorInvoiceId, branchId, from, to, page, pageSize) */
+        get: {
+            parameters: {
+                query?: {
+                    search?: string;
+                    supplierPartyCode?: string;
+                    status?: string;
+                    vendorInvoiceId?: string;
+                    branchId?: string;
+                    from?: string;
+                    to?: string;
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PagedResultOfVendorCreditNoteDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Key a vendor credit note (DRAFT, FLT_VCN) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SaveVendorCreditNoteRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["VendorCreditNoteDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/vendor-credit-notes/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["VendorCreditNoteDto"];
+                    };
+                };
+            };
+        };
+        /** Change a DRAFT credit note (lines replaced; rowVersion) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SaveVendorCreditNoteRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["VendorCreditNoteDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/vendor-credit-notes/{id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve a DRAFT credit note */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["DocumentActionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["VendorCreditNoteDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/vendor-credit-notes/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel (not once exported); its return lines can be credited again */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["DocumentActionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["VendorCreditNoteDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/ap-exports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export batches, newest first (?from, to, page, pageSize; documents not included) */
+        get: {
+            parameters: {
+                query?: {
+                    from?: string;
+                    to?: string;
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PagedResultOfApExportBatchDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Export the chosen (or all pending) approved invoices + credit notes: target CSV (a file) or SAP_B1 (posted to SAP) → EXPORTED */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateApExportRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ApExportBatchDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/ap-exports/pending": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** What the next export would take (?branchId) */
+        get: {
+            parameters: {
+                query?: {
+                    branchId?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ApExportDocumentDto"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/ap-exports/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ApExportBatchDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/ap-exports/{id}/file": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The batch's CSV file */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/ap-exports/{id}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** SAP_B1 batch: send its failed documents again (a document SAP already holds is matched, not posted twice) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ApExportBatchDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Report catalogue: code, title, group (management / operations / inquiry), the filters it takes, its columns */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ReportCatalogueDto"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/reports/{code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Run a report: format=json (preview) | pdf | xlsx; filters from, to, branchId, assetProfileId, equipmentCode, category, status, supplier, poNo, serialNo, search, woType, tripType */
+        get: {
+            parameters: {
+                query?: {
+                    Format?: string;
+                    From?: string;
+                    To?: string;
+                    BranchId?: string;
+                    AssetProfileId?: string;
+                    EquipmentCode?: string;
+                    Category?: string;
+                    Status?: string;
+                    Supplier?: string;
+                    PoNo?: string;
+                    SerialNo?: string;
+                    Search?: string;
+                    WoType?: string;
+                    TripType?: string;
+                };
+                header?: never;
+                path: {
+                    code: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ReportResultDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/inquiry/{code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Inquiries work-orders | wip | purchase-orders | tyre-changes | truck-movements (same filters / formats as reports) */
+        get: {
+            parameters: {
+                query?: {
+                    Format?: string;
+                    From?: string;
+                    To?: string;
+                    BranchId?: string;
+                    AssetProfileId?: string;
+                    EquipmentCode?: string;
+                    Category?: string;
+                    Status?: string;
+                    Supplier?: string;
+                    PoNo?: string;
+                    SerialNo?: string;
+                    Search?: string;
+                    WoType?: string;
+                    TripType?: string;
+                };
+                header?: never;
+                path: {
+                    code: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ReportResultDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Dashboard: stat cards (with last month), fleet status, recent work orders, upcoming PM, cost this / last month (?branchId) */
+        get: {
+            parameters: {
+                query?: {
+                    branchId?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["DashboardDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/cost/sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Bring the asset cost ledger up to date with every source document (idempotent) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CostSyncResult"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/cost/entries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Cost ledger rows (?assetProfileId, category, sourceDocType, from, to, page, pageSize) */
+        get: {
+            parameters: {
+                query?: {
+                    assetProfileId?: string;
+                    category?: string;
+                    sourceDocType?: string;
+                    from?: string;
+                    to?: string;
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PagedResultOfCostEntryDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/cost/monthly": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Cost per asset × month × category (?assetProfileId, from, to; branch-scoped) */
+        get: {
+            parameters: {
+                query?: {
+                    assetProfileId?: string;
+                    from?: string;
+                    to?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CostMonthlyDto"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/setup/erp-connection": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The SAP B1 connection (404 = none yet) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErpConnectionDto"];
+                    };
+                };
+            };
+        };
+        /** Create / change the SAP B1 connection (the password stays in the host secrets) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SaveErpConnectionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErpConnectionDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/setup/erp-connection/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Log in to SAP and report the company */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErpTestResultDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/setup/erp-mappings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Gecko → SAP code maps (?mapType) */
+        get: {
+            parameters: {
+                query?: {
+                    mapType?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErpMappingDto"][];
+                    };
+                };
+            };
+        };
+        /** Add or change one map (key = mapType + geckoCode) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SaveErpMappingRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErpMappingDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/setup/erp-mappings/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/erp/payments/pull": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Read SAP vendor payments since the last pull (?since to re-read) and record them on the exported invoices */
+        post: {
+            parameters: {
+                query?: {
+                    since?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErpPaymentPullDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/erp/reconciliation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Exported documents vs SAP (?from, to on the Gecko document date): OK / TOTAL_DIFFERS / PAID_DIFFERS / MISSING_IN_SAP */
+        get: {
+            parameters: {
+                query?: {
+                    from?: string;
+                    to?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErpReconciliationRowDto"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/opening-balances/{kind}/template": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Excel template for STOCK | TYRES | PM_BASELINES | METERS */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    kind: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/opening-balances/{kind}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload the filled template (multipart: file). commit=false (default) checks every row; commit=true writes them */
+        post: {
+            parameters: {
+                query?: {
+                    commit?: boolean;
+                };
+                header?: never;
+                path: {
+                    kind: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "multipart/form-data": {
+                        file?: components["schemas"]["IFormFile"];
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OpeningImportResultDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/stock-reservations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Reservations (?itemId, warehouseId, workOrderId, status ACTIVE|CONSUMED|RELEASED; default ACTIVE) */
+        get: {
+            parameters: {
+                query?: {
+                    itemId?: string;
+                    warehouseId?: string;
+                    workOrderId?: string;
+                    status?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StockReservationDto"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Reserve stock for a WO part (woPartId) or a goods-request line (goodsRequestLineId); 409 when not enough is free */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SaveStockReservationRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StockReservationDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fleet/stock-reservations/{id}/release": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Give an ACTIVE reservation back to free stock */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StockReservationDto"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        AccidentActionRequest: {
+            reason?: null | string;
+            /** @default  */
+            rowVersion: string;
+        };
+        AccidentAttachmentDto: {
+            /** Format: uuid */
+            attachmentId: string;
+            stage: string;
+            fileName: string;
+            contentType: string;
+            /** Format: int64 */
+            sizeBytes: number | string;
+            caption: null | string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: uuid */
+            createdBy: null | string;
+        };
+        AccidentDto: {
+            /** Format: uuid */
+            accidentId: string;
+            /** Format: uuid */
+            branchId: string;
+            documentNo: string;
+            /** Format: date */
+            documentDate: string;
+            status: string;
+            /** Format: date-time */
+            occurredAt: string;
+            /** Format: uuid */
+            assetProfileId: string;
+            assetCode: string;
+            registrationNo: null | string;
+            /** Format: uuid */
+            driverId: null | string;
+            driverCode: null | string;
+            driverName: null | string;
+            accidentType: string;
+            responsibility: string;
+            locationText: null | string;
+            address: null | string;
+            city: null | string;
+            countryCode: null | string;
+            /** Format: double */
+            latitude: null | number | string;
+            /** Format: double */
+            longitude: null | number | string;
+            policeStation: null | string;
+            policeReportNo: null | string;
+            hasInjuries: boolean;
+            description: null | string;
+            damageDetails: null | string;
+            insurancePolicyNo: null | string;
+            isClaimable: boolean;
+            /** Format: double */
+            estimatedCost: null | number | string;
+            currencyCode: null | string;
+            /** Format: uuid */
+            workRequestId: null | string;
+            workRequestNo: null | string;
+            /** Format: uuid */
+            claimId: null | string;
+            claimNo: null | string;
+            claimStatus: null | string;
+            /** Format: date-time */
+            closedAt: null | string;
+            cancelReason: null | string;
+            remarks: null | string;
+            parties: components["schemas"]["AccidentPartyDto"][];
+            workOrders: components["schemas"]["AccidentWorkOrderDto"][];
+            /** Format: date-time */
+            createdAt: string;
+            rowVersion: string;
+        };
+        AccidentPartyDto: {
+            /** Format: uuid */
+            accidentPartyId: string;
+            /** Format: int16 */
+            lineNo: number | string;
+            partyCode: null | string;
+            partyName: string;
+            vehiclePlate: null | string;
+            vehicleDescription: null | string;
+            insurerName: null | string;
+            insurerPolicyNo: null | string;
+            contactName: null | string;
+            contactPhone: null | string;
+            statement: null | string;
+        };
+        AccidentPartyInput: {
+            partyName: string;
+            partyCode?: null | string;
+            vehiclePlate?: null | string;
+            vehicleDescription?: null | string;
+            insurerName?: null | string;
+            insurerPolicyNo?: null | string;
+            contactName?: null | string;
+            contactPhone?: null | string;
+            statement?: null | string;
+        };
+        AccidentWorkOrderDto: {
+            /** Format: uuid */
+            workOrderId: string;
+            documentNo: string;
+            status: string;
+            /** Format: date */
+            documentDate: null | string;
+            /** Format: double */
+            totalCost: null | number | string;
+        };
         AddMeterSegmentRequest: {
             meterKind: string;
             reason: string;
@@ -7316,6 +11401,46 @@ export interface components {
             /** Format: double */
             lifetimeAtChange?: null | number | string;
             remarks?: null | string;
+        };
+        ApExportBatchDto: {
+            /** Format: uuid */
+            exportBatchId: string;
+            batchNo: string;
+            target: string;
+            status: string;
+            /** Format: int32 */
+            invoiceCount: number | string;
+            /** Format: int32 */
+            creditNoteCount: number | string;
+            /** Format: double */
+            invoiceTotal: number | string;
+            /** Format: double */
+            creditTotal: number | string;
+            /** Format: uuid */
+            attachmentId: null | string;
+            /** Format: date-time */
+            exportedAt: string;
+            /** Format: uuid */
+            exportedBy: null | string;
+            errorText: null | string;
+            documents: components["schemas"]["ApExportDocumentDto"][];
+        };
+        ApExportDocumentDto: {
+            docType: string;
+            /** Format: uuid */
+            documentId: string;
+            documentNo: string;
+            supplierDocNo: null | string;
+            supplierPartyCode: string;
+            supplierName: null | string;
+            /** Format: date */
+            documentDate: string;
+            currencyCode: string;
+            /** Format: double */
+            amount: number | string;
+            status: string;
+            erpDocNum: null | string;
+            erpError: null | string;
         };
         ApprovalDecisionRequest: {
             decision: string;
@@ -7415,6 +11540,14 @@ export interface components {
             remarks: null | string;
             rowVersion: string;
             specification?: null | components["schemas"]["AssetSpecificationDto"];
+        };
+        AssetFuelDto: {
+            /** Format: uuid */
+            assetProfileId: string;
+            assetCode: string;
+            source: string;
+            isLinked: boolean;
+            truckingRows: components["schemas"]["TruckingFuelRowDto"][];
         };
         AssetMetersDto: {
             /** Format: uuid */
@@ -7538,6 +11671,10 @@ export interface components {
             thresholds: components["schemas"]["MapThresholdsDto"];
             geometry2D: null | components["schemas"]["Geometry2D"];
             geometry3D: null | components["schemas"]["Geometry3D"];
+            /** Format: uuid */
+            driverId?: null | string;
+            driverCode?: null | string;
+            driverName?: null | string;
         };
         BinDto: {
             /** Format: uuid */
@@ -7573,6 +11710,31 @@ export interface components {
              */
             discountAmount: number | string;
         };
+        ClaimActionRequest: {
+            reason?: null | string;
+            /** @default  */
+            rowVersion: string;
+        };
+        ClaimDecisionRequest: {
+            decision: string;
+            /** Format: double */
+            approvedAmount?: null | number | string;
+            /** Format: double */
+            deductibleAmount?: null | number | string;
+            insurerClaimNo?: null | string;
+            reason?: null | string;
+            /** @default  */
+            rowVersion: string;
+        };
+        ClaimSettleRequest: {
+            /** Format: double */
+            settledAmount: number | string;
+            /** Format: date-time */
+            settledAt?: null | string;
+            settlementRef?: null | string;
+            /** @default  */
+            rowVersion: string;
+        };
         CodeDescription: {
             code: string;
             description: string;
@@ -7587,12 +11749,100 @@ export interface components {
             /** @default  */
             rowVersion: string;
         };
+        CostAdjustmentDto: {
+            /** Format: uuid */
+            costAdjustmentId: string;
+            /** Format: uuid */
+            branchId: string;
+            /** Format: uuid */
+            itemId: string;
+            itemCode: string;
+            /** Format: uuid */
+            warehouseId: string;
+            warehouseCode: string;
+            /** Format: uuid */
+            vendorInvoiceId: string;
+            /** Format: uuid */
+            vendorInvoiceLineId: string;
+            /** Format: uuid */
+            goodsReceiptLineId: string;
+            sourceDocNo: string;
+            /** Format: double */
+            basisQty: number | string;
+            /** Format: double */
+            valueDelta: number | string;
+            /** Format: double */
+            qtyOnHand: number | string;
+            /** Format: double */
+            avgCostBefore: number | string;
+            /** Format: double */
+            avgCostAfter: number | string;
+            /** Format: double */
+            revaluedAmount: number | string;
+            /** Format: double */
+            expensedAmount: number | string;
+            /** Format: uuid */
+            workOrderId: null | string;
+            /** Format: uuid */
+            assetProfileId: null | string;
+            currencyCode: string;
+            /** Format: uuid */
+            reversesCostAdjustmentId: null | string;
+            /** Format: date-time */
+            postedAt: string;
+            /** Format: uuid */
+            createdBy: null | string;
+        };
+        CostEntryDto: {
+            /** Format: uuid */
+            assetCostEntryId: string;
+            /** Format: uuid */
+            assetProfileId: string;
+            assetCode: string;
+            /** Format: date */
+            costDate: string;
+            category: string;
+            /** Format: double */
+            amount: number | string;
+            currencyCode: string;
+            sourceDocType: string;
+            /** Format: uuid */
+            sourceDocId: string;
+            sourceDocNo: null | string;
+            /** Format: date-time */
+            postedAt: string;
+        };
+        CostMonthlyDto: {
+            /** Format: uuid */
+            assetProfileId: string;
+            /** Format: date */
+            monthStart: string;
+            category: string;
+            /** Format: double */
+            amount: number | string;
+            /** Format: int32 */
+            entryCount: number | string;
+        };
+        CostSyncResult: {
+            /** Format: int32 */
+            entriesPosted: number | string;
+            /** Format: int32 */
+            monthsRefreshed: number | string;
+        };
         CountedLineInput: {
             /** Format: uuid */
             stockCountLineId: string;
             /** Format: double */
             countedQty: number | string;
             remarks?: null | string;
+        };
+        CreateApExportRequest: {
+            invoiceIds?: null | string[];
+            creditNoteIds?: null | string[];
+            /** Format: uuid */
+            branchId?: null | string;
+            /** @default CSV */
+            target: string;
         };
         CreateApprovalPolicyRequest: {
             documentType: string;
@@ -7711,6 +11961,54 @@ export interface components {
             itemIds?: null | string[];
             remarks?: null | string;
         };
+        DashboardDto: {
+            stats: components["schemas"]["DashboardStatDto"][];
+            fleetStatus: {
+                [key: string]: number | string;
+            };
+            recentWorkOrders: components["schemas"]["DashboardWorkOrderDto"][];
+            upcomingPm: components["schemas"]["DashboardPmDto"][];
+            /** Format: double */
+            costThisMonth: null | number | string;
+            /** Format: double */
+            costLastMonth: null | number | string;
+            /** Format: date */
+            monthStart: string;
+        };
+        DashboardPmDto: {
+            /** Format: uuid */
+            pmTaskStateId: string;
+            /** Format: uuid */
+            assetProfileId: string;
+            assetCode: string;
+            task: string;
+            /** Format: date */
+            nextDueAt: null | string;
+            /** Format: double */
+            nextDueKm: null | number | string;
+            /** Format: double */
+            currentKm: null | number | string;
+            dueStatus: string;
+        };
+        DashboardStatDto: {
+            key: string;
+            /** Format: double */
+            value: number | string;
+            /** Format: double */
+            previousValue: null | number | string;
+            unit: null | string;
+        };
+        DashboardWorkOrderDto: {
+            /** Format: uuid */
+            workOrderId: string;
+            documentNo: string;
+            assetCode: string;
+            woType: string;
+            status: string;
+            priority: string;
+            /** Format: date */
+            documentDate: string;
+        };
         DefectActionRequest: {
             reason?: null | string;
             /** Format: date */
@@ -7785,6 +12083,20 @@ export interface components {
             remarks: null | string;
             rowVersion: string;
         };
+        DriverIncidentDto: {
+            kind: string;
+            /** Format: uuid */
+            id: string;
+            documentNo: string;
+            /** Format: date-time */
+            occurredAt: string;
+            assetCode: string;
+            type: string;
+            status: string;
+            /** Format: double */
+            amount: null | number | string;
+            detail: null | string;
+        };
         DriverPersonalDto: {
             /** Format: uuid */
             driverId: string;
@@ -7841,6 +12153,70 @@ export interface components {
             /** @default  */
             rowVersion: string;
         };
+        ErpConnectionDto: {
+            /** Format: uuid */
+            erpConnectionId: string;
+            target: string;
+            baseUrl: string;
+            companyDb: string;
+            userName: string;
+            passwordRef: null | string;
+            passwordSet: boolean;
+            /** Format: int32 */
+            defaultSeries: null | number | string;
+            isActive: boolean;
+            /** Format: date-time */
+            lastTestAt: null | string;
+            lastTestResult: null | string;
+            /** Format: date-time */
+            lastPaymentSyncAt: null | string;
+            remarks: null | string;
+            rowVersion: string;
+        };
+        ErpMappingDto: {
+            /** Format: uuid */
+            erpMappingId: string;
+            mapType: string;
+            geckoCode: string;
+            erpCode: string;
+            description: null | string;
+            rowVersion: string;
+        };
+        ErpPaymentPullDto: {
+            /** Format: int32 */
+            paymentsRead: number | string;
+            /** Format: int32 */
+            rowsRecorded: number | string;
+            /** Format: int32 */
+            invoicesPaid: number | string;
+            unmatched: string[];
+            /** Format: date-time */
+            syncedAt: string;
+        };
+        ErpReconciliationRowDto: {
+            docType: string;
+            /** Format: uuid */
+            documentId: string;
+            documentNo: string;
+            supplierDocNo: null | string;
+            supplierPartyCode: string;
+            erpDocNum: null | string;
+            /** Format: double */
+            geckoTotal: number | string;
+            /** Format: double */
+            sapTotal: null | number | string;
+            /** Format: double */
+            geckoPaid: number | string;
+            /** Format: double */
+            sapPaid: null | number | string;
+            result: string;
+        };
+        ErpTestResultDto: {
+            ok: boolean;
+            message: string;
+            /** Format: date-time */
+            testedAt: string;
+        };
         FleetAccessEntry: {
             permission: string;
             allBranches: boolean;
@@ -7860,6 +12236,95 @@ export interface components {
             description: null | string;
             isKnown: boolean;
             rowVersion: string;
+        };
+        FuelLogActionRequest: {
+            reason?: null | string;
+            /** @default  */
+            rowVersion: string;
+        };
+        FuelLogDto: {
+            /** Format: uuid */
+            fuelLogId: string;
+            /** Format: uuid */
+            branchId: string;
+            documentNo: string;
+            /** Format: date */
+            documentDate: string;
+            status: string;
+            /** Format: uuid */
+            assetProfileId: string;
+            assetCode: string;
+            registrationNo: null | string;
+            /** Format: uuid */
+            driverId: null | string;
+            driverCode: null | string;
+            driverName: null | string;
+            fuelCardNo: null | string;
+            /** Format: date-time */
+            fuelledAt: string;
+            fuelSource: string;
+            /** Format: uuid */
+            warehouseId: null | string;
+            warehouseCode: null | string;
+            /** Format: uuid */
+            itemId: null | string;
+            itemCode: null | string;
+            supplierPartyCode: null | string;
+            supplierName: null | string;
+            voucherNo: null | string;
+            /** Format: double */
+            liters: number | string;
+            /** Format: double */
+            unitPrice: null | number | string;
+            /** Format: double */
+            amount: null | number | string;
+            currencyCode: string;
+            /** Format: double */
+            meterKm: null | number | string;
+            /** Format: double */
+            meterHours: null | number | string;
+            /** Format: uuid */
+            meterReadingId: null | string;
+            /** Format: double */
+            distanceKm: null | number | string;
+            /** Format: double */
+            hours: null | number | string;
+            /** Format: double */
+            kmPerLiter: null | number | string;
+            /** Format: double */
+            costPerKm: null | number | string;
+            /** Format: double */
+            costPerHour: null | number | string;
+            /** Format: date-time */
+            decidedAt: null | string;
+            /** Format: uuid */
+            decidedBy: null | string;
+            rejectReason: null | string;
+            cancelReason: null | string;
+            remarks: null | string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: uuid */
+            createdBy: null | string;
+            rowVersion: string;
+        };
+        FuelSummaryDto: {
+            /** Format: uuid */
+            assetProfileId: string;
+            assetCode: null | string;
+            registrationNo: null | string;
+            /** Format: int32 */
+            logs: number | string;
+            /** Format: double */
+            liters: number | string;
+            /** Format: double */
+            distanceKm: number | string;
+            /** Format: double */
+            kmPerLiter: null | number | string;
+            /** Format: double */
+            amount: number | string;
+            /** Format: double */
+            costPerKm: null | number | string;
         };
         Geometry2D: {
             /** Format: double */
@@ -8151,6 +12616,112 @@ export interface components {
             items: components["schemas"]["TemplateItemDto"][];
             rowVersion: string;
         };
+        InsuranceClaimDto: {
+            /** Format: uuid */
+            insuranceClaimId: string;
+            /** Format: uuid */
+            branchId: string;
+            documentNo: string;
+            /** Format: date */
+            documentDate: string;
+            status: string;
+            /** Format: uuid */
+            accidentId: string;
+            accidentNo: string;
+            /** Format: uuid */
+            assetProfileId: string;
+            assetCode: string;
+            driverCode: null | string;
+            driverName: null | string;
+            insurerPartyCode: null | string;
+            insurerName: null | string;
+            policyNo: null | string;
+            insurerClaimNo: null | string;
+            contactPerson: null | string;
+            claimedByName: null | string;
+            /** Format: uuid */
+            revisedFromClaimId: null | string;
+            revisedFromNo: null | string;
+            currencyCode: string;
+            /** Format: double */
+            subtotalAmount: number | string;
+            /** Format: double */
+            discountAmount: number | string;
+            /** Format: double */
+            taxRate: number | string;
+            /** Format: double */
+            taxAmount: number | string;
+            /** Format: double */
+            totalAmount: number | string;
+            /** Format: double */
+            approvedAmount: null | number | string;
+            /** Format: double */
+            deductibleAmount: null | number | string;
+            /** Format: double */
+            settledAmount: null | number | string;
+            /** Format: date-time */
+            submittedAt: null | string;
+            /** Format: date-time */
+            decidedAt: null | string;
+            decisionReason: null | string;
+            /** Format: date-time */
+            settledAt: null | string;
+            settlementRef: null | string;
+            erpRef: null | string;
+            cancelReason: null | string;
+            remarks: null | string;
+            lines: components["schemas"]["InsuranceClaimLineDto"][];
+            /** Format: date-time */
+            createdAt: string;
+            rowVersion: string;
+        };
+        InsuranceClaimLineDto: {
+            /** Format: uuid */
+            insuranceClaimLineId: string;
+            /** Format: int16 */
+            lineNo: number | string;
+            lineKind: string;
+            source: string;
+            /** Format: uuid */
+            sourceLineId: null | string;
+            /** Format: uuid */
+            workOrderId: null | string;
+            workOrderNo: null | string;
+            /** Format: uuid */
+            itemId: null | string;
+            itemCode: null | string;
+            description: string;
+            /** Format: double */
+            qty: number | string;
+            /** Format: double */
+            unitPrice: number | string;
+            /** Format: double */
+            amount: number | string;
+            /** Format: double */
+            approvedAmount: null | number | string;
+            remarks: null | string;
+        };
+        InsuranceClaimLineInput: {
+            lineKind: string;
+            description: string;
+            /**
+             * Format: double
+             * @default 1
+             */
+            qty: number | string;
+            /**
+             * Format: double
+             * @default 0
+             */
+            unitPrice: number | string;
+            /** @default MANUAL */
+            source: string;
+            /** Format: uuid */
+            sourceLineId?: null | string;
+            /** Format: uuid */
+            itemId?: null | string;
+            remarks?: null | string;
+        };
         ItemAliasDto: {
             aliasType: string;
             aliasCode: string;
@@ -8249,6 +12820,11 @@ export interface components {
             otCostPerHour: null | number | string;
             currencyCode: string;
             source: string;
+        };
+        LookupOption: {
+            code: string;
+            name: string;
+            nameLocal: string;
         };
         MapAxleDto: {
             /** Format: uint8 */
@@ -8385,6 +12961,22 @@ export interface components {
             totalValue: number | string;
             documentNo: string;
         };
+        OpeningImportErrorDto: {
+            /** Format: int32 */
+            row: number | string;
+            message: string;
+        };
+        OpeningImportResultDto: {
+            kind: string;
+            /** Format: int32 */
+            rows: number | string;
+            /** Format: int32 */
+            valid: number | string;
+            /** Format: int32 */
+            committed: number | string;
+            dryRun: boolean;
+            errors: components["schemas"]["OpeningImportErrorDto"][];
+        };
         OpeningLineInput: {
             /** Format: uuid */
             itemId: string;
@@ -8423,8 +13015,47 @@ export interface components {
             /** Format: date */
             requiredDate: null | string;
         };
+        PagedResultOfAccidentDto: {
+            items: components["schemas"]["AccidentDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages?: number | string;
+            hasMore?: boolean;
+            nextCursor?: null | string;
+        };
+        PagedResultOfApExportBatchDto: {
+            items: components["schemas"]["ApExportBatchDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages?: number | string;
+            hasMore?: boolean;
+            nextCursor?: null | string;
+        };
         PagedResultOfAssetDto: {
             items: components["schemas"]["AssetDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages?: number | string;
+            hasMore?: boolean;
+            nextCursor?: null | string;
+        };
+        PagedResultOfCostEntryDto: {
+            items: components["schemas"]["CostEntryDto"][];
             /** Format: int32 */
             page: number | string;
             /** Format: int32 */
@@ -8451,6 +13082,19 @@ export interface components {
         };
         PagedResultOfDriverDto: {
             items: components["schemas"]["DriverDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages?: number | string;
+            hasMore?: boolean;
+            nextCursor?: null | string;
+        };
+        PagedResultOfFuelLogDto: {
+            items: components["schemas"]["FuelLogDto"][];
             /** Format: int32 */
             page: number | string;
             /** Format: int32 */
@@ -8490,6 +13134,19 @@ export interface components {
         };
         PagedResultOfInspectionDto: {
             items: components["schemas"]["InspectionDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages?: number | string;
+            hasMore?: boolean;
+            nextCursor?: null | string;
+        };
+        PagedResultOfInsuranceClaimDto: {
+            items: components["schemas"]["InsuranceClaimDto"][];
             /** Format: int32 */
             page: number | string;
             /** Format: int32 */
@@ -8683,6 +13340,19 @@ export interface components {
             hasMore?: boolean;
             nextCursor?: null | string;
         };
+        PagedResultOfTrafficViolationDto: {
+            items: components["schemas"]["TrafficViolationDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages?: number | string;
+            hasMore?: boolean;
+            nextCursor?: null | string;
+        };
         PagedResultOfTyreDocumentDto: {
             items: components["schemas"]["TyreDocumentDto"][];
             /** Format: int32 */
@@ -8711,6 +13381,45 @@ export interface components {
         };
         PagedResultOfTyreEventDto: {
             items: components["schemas"]["TyreEventDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages?: number | string;
+            hasMore?: boolean;
+            nextCursor?: null | string;
+        };
+        PagedResultOfVendorCreditNoteDto: {
+            items: components["schemas"]["VendorCreditNoteDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages?: number | string;
+            hasMore?: boolean;
+            nextCursor?: null | string;
+        };
+        PagedResultOfVendorInvoiceDto: {
+            items: components["schemas"]["VendorInvoiceDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages?: number | string;
+            hasMore?: boolean;
+            nextCursor?: null | string;
+        };
+        PagedResultOfVendorPaymentDto: {
+            items: components["schemas"]["VendorPaymentDto"][];
             /** Format: int32 */
             page: number | string;
             /** Format: int32 */
@@ -8760,6 +13469,32 @@ export interface components {
             totalPages?: number | string;
             hasMore?: boolean;
             nextCursor?: null | string;
+        };
+        PaymentDecisionRequest: {
+            decision: string;
+            reason?: null | string;
+        };
+        PayrollDeductionDto: {
+            /** Format: uuid */
+            trafficViolationId: string;
+            documentNo: string;
+            ticketNo: string;
+            /** Format: date-time */
+            occurredAt: string;
+            driverCode: null | string;
+            driverName: null | string;
+            assetCode: string;
+            violationType: string;
+            /** Format: double */
+            amount: number | string;
+            currencyCode: string;
+            /** Format: date-time */
+            deductedAt: string;
+            /** Format: date-time */
+            exportedAt: null | string;
+        };
+        PayrollExportRequest: {
+            ids?: null | string[];
         };
         PmAssignmentDto: {
             /** Format: uuid */
@@ -8997,6 +13732,11 @@ export interface components {
             /** Format: date */
             requiredDate: null | string;
             remarks: null | string;
+            /**
+             * Format: double
+             * @default 0
+             */
+            invoicedQty: number | string;
         };
         PurchaseOrderLineInput: {
             /** Format: double */
@@ -9023,6 +13763,16 @@ export interface components {
             /** Format: date */
             requiredDate?: null | string;
             remarks?: null | string;
+        };
+        RaiseAccidentWorkRequestRequest: {
+            /** @default HIGH */
+            priority: string;
+            problem?: null | string;
+            /** Format: double */
+            meterKm?: null | number | string;
+            billToPartyCode?: null | string;
+            /** @default  */
+            rowVersion: string;
         };
         ReceiveTransferLineInput: {
             /** Format: uuid */
@@ -9139,6 +13889,18 @@ export interface components {
             driverId?: null | string;
             remarks?: null | string;
         };
+        RecordVendorPaymentRequest: {
+            /** Format: double */
+            amount: number | string;
+            /** Format: date */
+            paidAt?: null | string;
+            paymentRef?: null | string;
+            /** Format: uuid */
+            reversesPaymentId?: null | string;
+            remarks?: null | string;
+            /** @default  */
+            rowVersion: string;
+        };
         ReorderSuggestionDto: {
             /** Format: uuid */
             itemId: string;
@@ -9161,12 +13923,73 @@ export interface components {
             suggestedQty: number | string;
             baseUomCode: string;
         };
+        ReportCatalogueDto: {
+            code: string;
+            title: string;
+            group: string;
+            params: string[];
+            columns: components["schemas"]["ReportColumnDto"][];
+        };
+        ReportColumnDto: {
+            key: string;
+            header: string;
+            format: null | string;
+            align: string;
+            sum: boolean;
+        };
+        ReportResultDto: {
+            code: string;
+            title: string;
+            columns: components["schemas"]["ReportColumnDto"][];
+            rows: unknown[][];
+            totals: null | unknown[];
+            /** Format: int32 */
+            rowCount: number | string;
+            truncated: boolean;
+            parameters: string;
+        };
         ReverseMeterRequest: {
             reason: string;
         };
         ReviewMeterRequest: {
             decision: string;
             reason?: null | string;
+        };
+        SaveAccidentRequest: {
+            /** Format: uuid */
+            assetProfileId: string;
+            /** Format: date-time */
+            occurredAt: string;
+            accidentType: string;
+            /** @default UNKNOWN */
+            responsibility: string;
+            /** Format: date */
+            documentDate?: null | string;
+            /** Format: uuid */
+            driverId?: null | string;
+            driverName?: null | string;
+            locationText?: null | string;
+            address?: null | string;
+            city?: null | string;
+            countryCode?: null | string;
+            /** Format: double */
+            latitude?: null | number | string;
+            /** Format: double */
+            longitude?: null | number | string;
+            policeStation?: null | string;
+            policeReportNo?: null | string;
+            /** @default false */
+            hasInjuries: boolean;
+            description?: null | string;
+            damageDetails?: null | string;
+            insurancePolicyNo?: null | string;
+            /** @default false */
+            isClaimable: boolean;
+            /** Format: double */
+            estimatedCost?: null | number | string;
+            remarks?: null | string;
+            parties?: null | components["schemas"]["AccidentPartyInput"][];
+            rowVersion?: null | string;
         };
         SaveBinRequest: {
             binCode: string;
@@ -9205,6 +14028,56 @@ export interface components {
             remarks?: null | string;
             rowVersion?: null | string;
         };
+        SaveErpConnectionRequest: {
+            baseUrl: string;
+            companyDb: string;
+            userName: string;
+            passwordRef?: null | string;
+            /** Format: int32 */
+            defaultSeries?: null | number | string;
+            /** @default true */
+            isActive: boolean;
+            remarks?: null | string;
+            rowVersion?: null | string;
+        };
+        SaveErpMappingRequest: {
+            mapType: string;
+            geckoCode: string;
+            erpCode: string;
+            description?: null | string;
+        };
+        SaveFuelLogRequest: {
+            /** Format: uuid */
+            assetProfileId: string;
+            /** Format: date-time */
+            fuelledAt: string;
+            /** Format: double */
+            liters: number | string;
+            /** @default VENDOR */
+            fuelSource: string;
+            /** Format: uuid */
+            warehouseId?: null | string;
+            /** Format: uuid */
+            itemId?: null | string;
+            supplierPartyCode?: null | string;
+            voucherNo?: null | string;
+            /** Format: double */
+            unitPrice?: null | number | string;
+            /** Format: uuid */
+            driverId?: null | string;
+            fuelCardNo?: null | string;
+            /** Format: double */
+            meterKm?: null | number | string;
+            /** Format: double */
+            meterHours?: null | number | string;
+            /** Format: date */
+            documentDate?: null | string;
+            remarks?: null | string;
+            clientRef?: null | string;
+            /** @default false */
+            submit: boolean;
+            rowVersion?: null | string;
+        };
         SaveGoodsReceiptRequest: {
             /** Format: uuid */
             warehouseId: string;
@@ -9217,11 +14090,8 @@ export interface components {
             /** Format: date-time */
             receivedAt?: null | string;
             receivedByName?: null | string;
-            /**
-             * Format: double
-             * @default 0
-             */
-            taxRate: number | string;
+            /** Format: double */
+            taxRate?: null | number | string;
             /**
              * Format: double
              * @default 0
@@ -9259,6 +14129,31 @@ export interface components {
             /** @default true */
             isActive: boolean;
             items?: null | components["schemas"]["TemplateItemInput"][];
+            rowVersion?: null | string;
+        };
+        SaveInsuranceClaimRequest: {
+            /** Format: uuid */
+            accidentId: string;
+            insurerPartyCode?: null | string;
+            insurerName?: null | string;
+            policyNo?: null | string;
+            insurerClaimNo?: null | string;
+            contactPerson?: null | string;
+            claimedByName?: null | string;
+            /** Format: date */
+            documentDate?: null | string;
+            /**
+             * Format: double
+             * @default 0
+             */
+            discountAmount: number | string;
+            /**
+             * Format: double
+             * @default 0
+             */
+            taxRate: number | string;
+            remarks?: null | string;
+            lines?: null | components["schemas"]["InsuranceClaimLineInput"][];
             rowVersion?: null | string;
         };
         SaveItemRequest: {
@@ -9396,6 +14291,16 @@ export interface components {
             post: boolean;
             rowVersion?: null | string;
         };
+        SaveStockReservationRequest: {
+            /** Format: uuid */
+            warehouseId: string;
+            /** Format: uuid */
+            woPartId?: null | string;
+            /** Format: uuid */
+            goodsRequestLineId?: null | string;
+            /** Format: double */
+            qty?: null | number | string;
+        };
         SaveStockTransferRequest: {
             /** Format: uuid */
             fromWarehouseId: string;
@@ -9432,6 +14337,32 @@ export interface components {
             remarks?: null | string;
             skills?: null | components["schemas"]["TechnicianSkillInput"][];
             rowVersion?: null | string;
+        };
+        SaveTrafficViolationRequest: {
+            /** Format: uuid */
+            assetProfileId: string;
+            ticketNo: string;
+            /** Format: date-time */
+            occurredAt: string;
+            violationType: string;
+            /** Format: double */
+            fineAmount: number | string;
+            /** Format: uuid */
+            driverId?: null | string;
+            issuingAuthority?: null | string;
+            locationText?: null | string;
+            description?: null | string;
+            /** Format: int16 */
+            points?: null | number | string;
+            /** Format: date */
+            dueDate?: null | string;
+            /** Format: date */
+            documentDate?: null | string;
+            remarks?: null | string;
+            rowVersion?: null | string;
+        };
+        SaveTransferTargetsRequest: {
+            targetWarehouseIds: string[];
         };
         SaveTyreRequest: {
             serialNo: string;
@@ -9480,6 +14411,85 @@ export interface components {
             /** @default true */
             isActive: boolean;
             remarks?: null | string;
+            rowVersion?: null | string;
+        };
+        SaveVendorCreditNoteRequest: {
+            /** Format: uuid */
+            branchId: string;
+            supplierPartyCode: string;
+            /** Format: date */
+            creditNoteDate: string;
+            lines: components["schemas"]["VendorCreditNoteLineInput"][];
+            vendorCreditNoteNo?: null | string;
+            /** Format: uuid */
+            vendorInvoiceId?: null | string;
+            /** Format: uuid */
+            vendorReturnId?: null | string;
+            reasonCode?: null | string;
+            paymentTermCode?: null | string;
+            /** Format: date */
+            documentDate?: null | string;
+            currencyCode?: null | string;
+            /**
+             * Format: double
+             * @default 1
+             */
+            exchangeRate: number | string;
+            discountType?: null | string;
+            /**
+             * Format: double
+             * @default 0
+             */
+            discountValue: number | string;
+            taxCode?: null | string;
+            /**
+             * Format: double
+             * @default 0
+             */
+            taxRate: number | string;
+            remarks?: null | string;
+            rowVersion?: null | string;
+        };
+        SaveVendorInvoiceRequest: {
+            /** Format: uuid */
+            branchId: string;
+            supplierPartyCode: string;
+            vendorInvoiceNo: string;
+            /** Format: date */
+            invoiceDate: string;
+            lines: components["schemas"]["VendorInvoiceLineInput"][];
+            /** Format: date */
+            dueDate?: null | string;
+            paymentTermCode?: null | string;
+            /** Format: date */
+            documentDate?: null | string;
+            currencyCode?: null | string;
+            /**
+             * Format: double
+             * @default 1
+             */
+            exchangeRate: number | string;
+            discountType?: null | string;
+            /**
+             * Format: double
+             * @default 0
+             */
+            discountValue: number | string;
+            taxCode?: null | string;
+            /**
+             * Format: double
+             * @default 0
+             */
+            taxRate: number | string;
+            whtCode?: null | string;
+            /**
+             * Format: double
+             * @default 0
+             */
+            whtRate: number | string;
+            remarks?: null | string;
+            /** @default false */
+            submit: boolean;
             rowVersion?: null | string;
         };
         SaveVendorReturnRequest: {
@@ -9896,6 +14906,34 @@ export interface components {
             /** Format: int16 */
             leadTimeDays?: null | number | string;
         };
+        StockReservationDto: {
+            /** Format: uuid */
+            stockReservationId: string;
+            /** Format: uuid */
+            branchId: string;
+            /** Format: uuid */
+            itemId: string;
+            itemCode: string;
+            /** Format: uuid */
+            warehouseId: string;
+            warehouseCode: string;
+            /** Format: double */
+            qty: number | string;
+            sourceType: string;
+            /** Format: uuid */
+            woPartId: null | string;
+            /** Format: uuid */
+            workOrderId: null | string;
+            workOrderNo: null | string;
+            /** Format: uuid */
+            goodsRequestLineId: null | string;
+            goodsRequestNo: null | string;
+            status: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: uuid */
+            createdBy: null | string;
+        };
         StockTransferDto: {
             /** Format: uuid */
             stockTransferId: string;
@@ -10051,6 +15089,90 @@ export interface components {
             /** @default MINOR */
             defaultSeverity: string;
         };
+        TrafficViolationDto: {
+            /** Format: uuid */
+            trafficViolationId: string;
+            /** Format: uuid */
+            branchId: string;
+            documentNo: string;
+            /** Format: date */
+            documentDate: string;
+            status: string;
+            ticketNo: string;
+            issuingAuthority: null | string;
+            /** Format: date-time */
+            occurredAt: string;
+            locationText: null | string;
+            /** Format: uuid */
+            assetProfileId: string;
+            assetCode: string;
+            registrationNo: null | string;
+            /** Format: uuid */
+            driverId: null | string;
+            driverCode: null | string;
+            driverName: null | string;
+            driverEmployment: null | string;
+            violationType: string;
+            description: null | string;
+            /** Format: double */
+            fineAmount: number | string;
+            currencyCode: string;
+            /** Format: int16 */
+            points: null | number | string;
+            /** Format: date */
+            dueDate: null | string;
+            paidBy: null | string;
+            /** Format: date */
+            paidAt: null | string;
+            paymentRef: null | string;
+            deductionMode: null | string;
+            /** Format: double */
+            deductionAmount: null | number | string;
+            /** Format: date-time */
+            deductedAt: null | string;
+            deductionPartyCode: null | string;
+            deductionRef: null | string;
+            /** Format: date-time */
+            payrollExportedAt: null | string;
+            disputeReason: null | string;
+            cancelReason: null | string;
+            remarks: null | string;
+            /** Format: date-time */
+            createdAt: string;
+            rowVersion: string;
+        };
+        TruckingFuelRowDto: {
+            /** Format: uuid */
+            vehicleFuelTxnId: string;
+            /** Format: date-time */
+            txnAt: string;
+            /** Format: date */
+            businessDate: string;
+            txnType: string;
+            reasonCode: null | string;
+            fuelType: string;
+            /** Format: double */
+            quantity: number | string;
+            quantityUnit: string;
+            /** Format: double */
+            odometerKm: null | number | string;
+            /** Format: double */
+            unitCost: null | number | string;
+            /** Format: double */
+            amount: null | number | string;
+            currencyCode: null | string;
+            sourceDocRef: null | string;
+            source: string;
+            remarks: null | string;
+        };
+        TruckingSyncResult: {
+            assets: components["schemas"]["AssetSyncResult"];
+            drivers: components["schemas"]["DriverSyncResult"];
+            /** Format: int32 */
+            odometerReadings: number | string;
+            /** Format: int32 */
+            assetsRecalculated: number | string;
+        };
         TyreAction: {
             action: string;
             position?: null | string;
@@ -10090,6 +15212,8 @@ export interface components {
             performedByName?: null | string;
             category?: null | string;
             remarks?: null | string;
+            /** Format: date */
+            documentDate?: null | string;
         };
         TyreDocumentDto: {
             /** Format: uuid */
@@ -10194,6 +15318,11 @@ export interface components {
             isActive: boolean;
             remarks: null | string;
             rowVersion: string;
+            /** Format: date-time */
+            lastEventAt?: null | string;
+            lastEventType?: null | string;
+            lastDocumentNo?: null | string;
+            lastPartyCode?: null | string;
         };
         TyreEventDto: {
             /** Format: uuid */
@@ -10226,6 +15355,8 @@ export interface components {
             /** Format: int16 */
             lineNo: null | number | string;
             remarks: null | string;
+            documentNo?: null | string;
+            assetCode?: null | string;
         };
         TyreMaintenanceRequest: {
             /** Format: uuid */
@@ -10246,6 +15377,46 @@ export interface components {
              */
             taxRate: number | string;
             remarks?: null | string;
+            /** Format: date */
+            documentDate?: null | string;
+        };
+        UnbilledLineDto: {
+            source: string;
+            /** Format: uuid */
+            sourceLineId: string;
+            /** Format: uuid */
+            sourceDocId: string;
+            sourceDocNo: string;
+            /** Format: date */
+            documentDate: string;
+            /** Format: uuid */
+            branchId: string;
+            supplierPartyCode: string;
+            supplierName: null | string;
+            purchaseOrderNo: null | string;
+            deliveryNoteNo: null | string;
+            supplierInvoiceNo: null | string;
+            /** Format: uuid */
+            workOrderId: null | string;
+            workOrderNo: null | string;
+            /** Format: uuid */
+            assetProfileId: null | string;
+            assetCode: null | string;
+            /** Format: uuid */
+            itemId: null | string;
+            itemCode: null | string;
+            description: string;
+            uomCode: null | string;
+            /** Format: double */
+            billableQty: number | string;
+            /** Format: double */
+            unitPrice: number | string;
+            /** Format: double */
+            amount: number | string;
+            /** Format: double */
+            taxRate: number | string;
+            currencyCode: string;
+            isService: boolean;
         };
         UpdateApprovalPolicyRequest: {
             /** Format: uint8 */
@@ -10345,6 +15516,281 @@ export interface components {
             remarks: null | string;
             rowVersion: string;
         };
+        VendorCreditNoteDto: {
+            /** Format: uuid */
+            vendorCreditNoteId: string;
+            /** Format: uuid */
+            branchId: string;
+            documentNo: string;
+            /** Format: date */
+            documentDate: string;
+            status: string;
+            supplierPartyCode: string;
+            supplierName: null | string;
+            supplierAddress: null | string;
+            vendorCreditNoteNo: null | string;
+            /** Format: date */
+            creditNoteDate: string;
+            paymentTermCode: null | string;
+            /** Format: uuid */
+            vendorInvoiceId: null | string;
+            vendorInvoiceNo: null | string;
+            /** Format: uuid */
+            vendorReturnId: null | string;
+            vendorReturnNo: null | string;
+            reasonCode: null | string;
+            currencyCode: string;
+            /** Format: double */
+            exchangeRate: number | string;
+            /** Format: double */
+            subtotalAmount: number | string;
+            discountType: null | string;
+            /** Format: double */
+            discountValue: number | string;
+            /** Format: double */
+            discountAmount: number | string;
+            taxCode: null | string;
+            /** Format: double */
+            taxRate: number | string;
+            /** Format: double */
+            taxAmount: number | string;
+            /** Format: double */
+            totalAmount: number | string;
+            /** Format: date-time */
+            approvedAt: null | string;
+            /** Format: uuid */
+            approvedBy: null | string;
+            /** Format: uuid */
+            exportBatchId: null | string;
+            /** Format: date-time */
+            exportedAt: null | string;
+            erpDocNum: null | string;
+            cancelReason: null | string;
+            remarks: null | string;
+            lines: components["schemas"]["VendorCreditNoteLineDto"][];
+            /** Format: date-time */
+            createdAt: string;
+            rowVersion: string;
+            erpError?: null | string;
+        };
+        VendorCreditNoteLineDto: {
+            /** Format: uuid */
+            vendorCreditNoteLineId: string;
+            /** Format: int16 */
+            lineNo: number | string;
+            source: string;
+            /** Format: uuid */
+            sourceLineId: null | string;
+            sourceDocNo: null | string;
+            /** Format: uuid */
+            workOrderId: null | string;
+            /** Format: uuid */
+            assetProfileId: null | string;
+            assetCode: null | string;
+            /** Format: uuid */
+            itemId: null | string;
+            itemCode: null | string;
+            glCode: null | string;
+            description: string;
+            /** Format: double */
+            qty: number | string;
+            /** Format: double */
+            unitPrice: number | string;
+            /** Format: double */
+            lineAmount: number | string;
+            remarks: null | string;
+        };
+        VendorCreditNoteLineInput: {
+            /** @default MANUAL */
+            source: string;
+            /** Format: uuid */
+            sourceLineId?: null | string;
+            /** Format: double */
+            qty?: null | number | string;
+            /** Format: double */
+            unitPrice?: null | number | string;
+            /** Format: uuid */
+            itemId?: null | string;
+            description?: null | string;
+            glCode?: null | string;
+            /** Format: uuid */
+            workOrderId?: null | string;
+            remarks?: null | string;
+        };
+        VendorInvoiceDto: {
+            /** Format: uuid */
+            vendorInvoiceId: string;
+            /** Format: uuid */
+            branchId: string;
+            documentNo: string;
+            /** Format: date */
+            documentDate: string;
+            status: string;
+            supplierPartyCode: string;
+            supplierName: null | string;
+            supplierAddress: null | string;
+            vendorInvoiceNo: string;
+            /** Format: date */
+            invoiceDate: string;
+            /** Format: date */
+            dueDate: null | string;
+            paymentTermCode: null | string;
+            currencyCode: string;
+            /** Format: double */
+            exchangeRate: number | string;
+            /** Format: double */
+            subtotalAmount: number | string;
+            discountType: null | string;
+            /** Format: double */
+            discountValue: number | string;
+            /** Format: double */
+            discountAmount: number | string;
+            taxCode: null | string;
+            /** Format: double */
+            taxRate: number | string;
+            /** Format: double */
+            taxAmount: number | string;
+            /** Format: double */
+            totalAmount: number | string;
+            whtCode: null | string;
+            /** Format: double */
+            whtRate: number | string;
+            /** Format: double */
+            whtBaseAmount: number | string;
+            /** Format: double */
+            whtAmount: number | string;
+            /** Format: double */
+            netPayable: number | string;
+            matchStatus: string;
+            /** Format: double */
+            expectedAmount: number | string;
+            /** Format: double */
+            varianceAmount: number | string;
+            /** Format: double */
+            creditedAmount: number | string;
+            /** Format: double */
+            paidAmount: number | string;
+            /** Format: double */
+            outstandingAmount: number | string;
+            /** Format: date */
+            lastPaidAt: null | string;
+            /** Format: date-time */
+            submittedAt: null | string;
+            /** Format: date-time */
+            approvedAt: null | string;
+            /** Format: uuid */
+            approvedBy: null | string;
+            approvalNote: null | string;
+            /** Format: uuid */
+            exportBatchId: null | string;
+            /** Format: date-time */
+            exportedAt: null | string;
+            erpDocNum: null | string;
+            cancelReason: null | string;
+            remarks: null | string;
+            lines: components["schemas"]["VendorInvoiceLineDto"][];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: uuid */
+            createdBy: null | string;
+            rowVersion: string;
+            erpError?: null | string;
+            /**
+             * Format: double
+             * @default 0
+             */
+            pendingPaymentAmount: number | string;
+        };
+        VendorInvoiceLineDto: {
+            /** Format: uuid */
+            vendorInvoiceLineId: string;
+            /** Format: int16 */
+            lineNo: number | string;
+            source: string;
+            /** Format: uuid */
+            sourceLineId: null | string;
+            /** Format: uuid */
+            sourceDocId: null | string;
+            sourceDocNo: null | string;
+            purchaseOrderNo: null | string;
+            /** Format: uuid */
+            workOrderId: null | string;
+            /** Format: uuid */
+            assetProfileId: null | string;
+            assetCode: null | string;
+            registrationNo: null | string;
+            /** Format: uuid */
+            itemId: null | string;
+            itemCode: null | string;
+            description: string;
+            uomCode: null | string;
+            /** Format: double */
+            qty: number | string;
+            /** Format: double */
+            unitPrice: number | string;
+            /** Format: double */
+            lineAmount: number | string;
+            /** Format: double */
+            expectedQty: null | number | string;
+            /** Format: double */
+            expectedUnitPrice: null | number | string;
+            /** Format: double */
+            expectedAmount: null | number | string;
+            /** Format: double */
+            varianceAmount: null | number | string;
+            matchStatus: string;
+            isService: boolean;
+            remarks: null | string;
+        };
+        VendorInvoiceLineInput: {
+            /** @default MANUAL */
+            source: string;
+            /** Format: uuid */
+            sourceLineId?: null | string;
+            /** Format: double */
+            qty?: null | number | string;
+            /** Format: double */
+            unitPrice?: null | number | string;
+            /** Format: uuid */
+            itemId?: null | string;
+            description?: null | string;
+            uomCode?: null | string;
+            /** Format: uuid */
+            workOrderId?: null | string;
+            isService?: null | boolean;
+            remarks?: null | string;
+        };
+        VendorPaymentDto: {
+            /** Format: uuid */
+            paymentId: string;
+            /** Format: uuid */
+            vendorInvoiceId: string;
+            documentNo: string;
+            vendorInvoiceNo: string;
+            supplierPartyCode: string;
+            supplierName: null | string;
+            /** Format: date */
+            paidAt: string;
+            /** Format: double */
+            amount: number | string;
+            currencyCode: string;
+            paymentRef: null | string;
+            source: string;
+            /** Format: uuid */
+            reversesPaymentId: null | string;
+            remarks: null | string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: uuid */
+            createdBy: null | string;
+            /** @default APPROVED */
+            status: string;
+            /** Format: date-time */
+            decidedAt?: null | string;
+            /** Format: uuid */
+            decidedBy?: null | string;
+            rejectReason?: null | string;
+        };
         VendorReturnDto: {
             /** Format: uuid */
             vendorReturnId: string;
@@ -10405,6 +15851,25 @@ export interface components {
             /** Format: double */
             creditUnitPrice?: null | number | string;
             remarks?: null | string;
+        };
+        ViolationActionRequest: {
+            reason?: null | string;
+            /** @default  */
+            rowVersion: string;
+        };
+        ViolationDeductRequest: {
+            /** Format: double */
+            amount?: null | number | string;
+            /** @default  */
+            rowVersion: string;
+        };
+        ViolationPayRequest: {
+            paidBy: string;
+            /** Format: date */
+            paidAt?: null | string;
+            paymentRef?: null | string;
+            /** @default  */
+            rowVersion: string;
         };
         WarehouseDto: {
             /** Format: uuid */
@@ -10527,6 +15992,11 @@ export interface components {
             /** Format: double */
             costAmount: number | string;
             charge: components["schemas"]["ChargeDto"];
+            /**
+             * Format: double
+             * @default 0
+             */
+            issuedBaseQty: number | string;
         };
         WoPartInput: {
             /** Format: uuid */

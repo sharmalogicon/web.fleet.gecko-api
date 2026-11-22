@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 import { SearchInput } from '@/components/shared/SearchInput'
 import { useT } from '@/i18n/I18nContext'
 
-const STATUS_OPTIONS = ['ALL', 'ACTIVE', 'CANCELLED'] as const
+const STATUS_OPTIONS = ['ALL', 'DRAFT', 'PENDING_APPROVAL', 'APPROVED', 'EXPORTED', 'PAID', 'CANCELLED'] as const
 
 interface VendorInvoiceFiltersProps {
   documentNo: string
@@ -83,7 +83,7 @@ export function VendorInvoiceFilters({
         >
           {STATUS_OPTIONS.map((s) => (
             <option key={s} value={s}>
-              {s === 'ALL' ? t('common.all') : s}
+              {s === 'ALL' ? t('common.all') : t(`vinv.status.${s}`)}
             </option>
           ))}
         </select>

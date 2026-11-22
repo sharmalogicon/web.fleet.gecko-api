@@ -6,7 +6,7 @@ import { api, apiFile, apiGet, apiUpload } from '@/lib/api/client';
 import type { components } from '@/lib/api/fleet.schema';
 import { useAuth } from '@/lib/contexts/AuthContext';
 
-/** Work-order photos (prompt 10 §A). */
+/** Work-order photos (prompt 10 §A) and accident photos (prompt 14 §C): same endpoints, same rules. */
 
 export type WoAttachmentDto = components['schemas']['WoAttachmentDto'];
 export const PHOTO_STAGES = ['BEFORE', 'DURING', 'AFTER', 'INVOICE'] as const;
@@ -21,14 +21,25 @@ export function uploadError(file: Pick<File, 'type' | 'size'>): string | null {
   return null;
 }
 
-const base = (woId: string) => `/api/fleet/work-orders/${woId}/attachments`;
+/** An attachment owner: `/api/fleet/<kind>/<id>/attachments` (work orders prompt 10, accidents prompt 14 §C). */
+export type AttachmentOwner = { kind: 'work-orders' | 'accidents'; id: string };
+export type AttachmentDto = WoAttachmentDto;
+export const ACCIDENT_STAGES = ['SCENE', 'DAMAGE', 'POLICE', 'REPAIR', 'OTHER'] as const;
 
-export function useWoAttachments(woId: string | null) {
+const ownerBase = (o: AttachmentOwner) => `/api/fleet/${o.kind}/${o.id}/attachments`;
+const ownerKey = (tenant: string | undefined, o: AttachmentOwner) =>
+  o.kind === 'work-orders' ? ['fleet', 'wo-attachments', tenant, o.id] : ['fleet', `${o.kind}-attachments`, tenant, o.id];
+
+export function useAttachments(o: AttachmentOwner | null) {
   const tenant = useAuth().user?.tenantId;
-  return useQuery({ queryKey: ['fleet', 'wo-attachments', tenant, woId], queryFn: () => apiGet<WoAttachmentDto[]>(base(woId!)), enabled: !!woId });
+  return useQuery({
+    queryKey: o ? ownerKey(tenant, o) : ['fleet', 'attachments', 'none'],
+    queryFn: () => apiGet<AttachmentDto[]>(ownerBase(o!)),
+    enabled: !!o?.id,
+  });
 }
 
-export function useUploadWoAttachment(woId: string) {
+export function useUploadAttachment(o: AttachmentOwner) {
   const client = useQueryClient();
   const tenant = useAuth().user?.tenantId;
   return useMutation({
@@ -37,26 +48,33 @@ export function useUploadWoAttachment(woId: string) {
       form.append('file', file);
       form.append('stage', stage);
       if (caption.trim()) form.append('caption', caption.trim());
-      return apiUpload<WoAttachmentDto>(base(woId), form);
+      return apiUpload<AttachmentDto>(ownerBase(o), form);
     },
-    onSettled: () => client.invalidateQueries({ queryKey: ['fleet', 'wo-attachments', tenant, woId] }),
+    onSettled: () => client.invalidateQueries({ queryKey: ownerKey(tenant, o) }),
   });
 }
 
-export function useRemoveWoAttachment(woId: string) {
+export function useRemoveAttachment(o: AttachmentOwner) {
   const client = useQueryClient();
   const tenant = useAuth().user?.tenantId;
   return useMutation({
-    mutationFn: (attachmentId: string) => api<void>(`${base(woId)}/${attachmentId}`, { method: 'DELETE' }),
-    onSettled: () => client.invalidateQueries({ queryKey: ['fleet', 'wo-attachments', tenant, woId] }),
+    mutationFn: (attachmentId: string) => api<void>(`${ownerBase(o)}/${attachmentId}`, { method: 'DELETE' }),
+    onSettled: () => client.invalidateQueries({ queryKey: ownerKey(tenant, o) }),
   });
 }
 
+// Work-order names kept for the existing callers.
+export const useWoAttachments = (woId: string | null) => useAttachments(woId ? { kind: 'work-orders', id: woId } : null);
+export const useUploadWoAttachment = (woId: string) => useUploadAttachment({ kind: 'work-orders', id: woId });
+export const useRemoveWoAttachment = (woId: string) => useRemoveAttachment({ kind: 'work-orders', id: woId });
+
 /**
  * Blob URLs for the attachments (an <img src> cannot carry the bearer token). Fetched through the API client,
- * revoked when the list changes or the tab unmounts.
+ * revoked when the list changes or the tab unmounts. `owner` may be a WO id (older callers).
  */
-export function useAttachmentUrls(woId: string, items: WoAttachmentDto[] | undefined) {
+export function useAttachmentUrls(owner: string | AttachmentOwner, items: AttachmentDto[] | undefined) {
+  const o: AttachmentOwner = typeof owner === 'string' ? { kind: 'work-orders', id: owner } : owner;
+  const base = ownerBase(o);
   const [urls, setUrls] = useState<Record<string, string>>({});
   const ids = (items ?? []).map((a) => a.attachmentId).join(',');
   useEffect(() => {
@@ -66,7 +84,7 @@ export function useAttachmentUrls(woId: string, items: WoAttachmentDto[] | undef
       const next: Record<string, string> = {};
       for (const a of items ?? []) {
         try {
-          const { blob } = await apiFile(`${base(woId)}/${a.attachmentId}/content`);
+          const { blob } = await apiFile(`${base}/${a.attachmentId}/content`);
           const url = URL.createObjectURL(blob);
           made.push(url);
           next[a.attachmentId] = url;
@@ -81,6 +99,6 @@ export function useAttachmentUrls(woId: string, items: WoAttachmentDto[] | undef
       made.forEach((u) => URL.revokeObjectURL(u));
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [woId, ids]);
+  }, [base, ids]);
   return urls;
 }

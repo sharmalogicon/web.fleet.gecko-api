@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 import { SearchInput } from '@/components/shared/SearchInput'
 import { useT } from '@/i18n/I18nContext'
 
-const STATUS_OPTIONS = ['ALL', 'PENDING', 'APPROVED'] as const
+const STATUS_OPTIONS = ['ALL', 'DRAFT', 'PENDING_APPROVAL', 'APPROVED', 'REJECTED', 'CANCELLED'] as const
 
 interface FuelLogFiltersProps {
   equipmentCode: string
@@ -56,7 +56,7 @@ export function FuelLogFilters({ equipmentCode, dateFrom, dateTo, status }: Fuel
         >
           {STATUS_OPTIONS.map((s) => (
             <option key={s} value={s}>
-              {s === 'ALL' ? t('common.all') : s}
+              {s === 'ALL' ? t('common.all') : t(`fuel.status.${s}`)}
             </option>
           ))}
         </select>

@@ -1,50 +1,40 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { createColumnHelper } from '@tanstack/react-table'
-import type { FuelLog } from '@/types/fuel-log'
 import { DataTable } from '@/components/shared/DataTable'
+import { ReasonDialog } from '@/components/shared/ReasonDialog'
+import { fmtDate, money } from '@/components/docs/DocBits'
+import { FuelStatusBadge } from './FuelStatusBadge'
+import { useFuelLogAction, type FuelLogRow } from '@/lib/api/fleet/fuelLogs'
+import { useFleetAccess } from '@/lib/api/fleet/access'
+import { useAuth } from '@/lib/contexts/AuthContext'
+import { errorText } from '@/lib/api/errorText'
 import { useToastStore } from '@/lib/stores/useToastStore'
-import { upsertMockFuelLog } from '@/lib/mock/fuel-logs'
 import { useT } from '@/i18n/I18nContext'
 
-const col = createColumnHelper<FuelLog>()
+const col = createColumnHelper<FuelLogRow>()
 
-function formatDate(dateStr?: string): string {
-  if (!dateStr) return '—'
-  const d = new Date(dateStr + 'T00:00:00')
-  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
-}
-
-function formatCurrency(val?: number): string {
-  if (val == null) return '—'
-  return `฿${val.toLocaleString()}`
-}
-
-interface FuelLogApprovalClientProps {
-  initialData: FuelLog[]
-}
-
-export function FuelLogApprovalClient({ initialData }: FuelLogApprovalClientProps) {
+/** PENDING_APPROVAL logs; Approve / Reject (reason) by fleet.fuel.approve at the log's branch, never on your own entry. */
+export function FuelLogApprovalClient({ data }: { data: FuelLogRow[] }) {
   const { t } = useT()
-  const [data, setData] = useState<FuelLog[]>(initialData)
-  const { success, error } = useToastStore()
+  const toast = useToastStore()
+  const { user } = useAuth()
+  const { canAt } = useFleetAccess()
+  const act = useFuelLogAction()
+  const [rejecting, setRejecting] = useState<FuelLogRow | null>(null)
+  const [dialogError, setDialogError] = useState<string | null>(null)
 
-  const handleApprove = (fuelLog: FuelLog) => {
-    try {
-      const updated: FuelLog = {
-        ...fuelLog,
-        isApproved: true,
-        approvedBy: 'current_user',
-        approvedOn: new Date().toISOString().split('T')[0],
-      }
-      upsertMockFuelLog(updated)
-      setData((prev) => prev.filter((r) => r.fuelLogID !== fuelLog.fuelLogID))
-      success('Approved', `${fuelLog.voucherNo || `FL-${fuelLog.fuelLogID}`} has been approved.`)
-    } catch {
-      error('Approval failed', 'An error occurred. Please try again.')
-    }
-  }
+  const may = (r: FuelLogRow) => canAt('fleet.fuel.approve', r.branchId) && r.createdBy !== user?.userId
+  const run = (r: FuelLogRow, action: 'approve' | 'reject', reason?: string) =>
+    act.mutate(
+      { id: r.fuelLogID, action, body: { reason: reason?.trim() || null, rowVersion: r.rowVersion } },
+      {
+        onSuccess: () => { toast.success(t(`fuel.done.${action}`), r.documentNo); setRejecting(null) },
+        onError: (e) => { setDialogError(errorText(e, t)); if (action === 'approve') toast.error(t('common.saveFailed'), errorText(e, t)) },
+      },
+    )
 
   const columns = [
     col.display({
@@ -54,10 +44,8 @@ export function FuelLogApprovalClient({ initialData }: FuelLogApprovalClientProp
         const r = info.row.original
         return (
           <div className="flex flex-col gap-0.5">
-            <span className="text-sm font-medium font-mono text-gray-900">{r.equipmentCode}</span>
-            {r.registrationNo && (
-              <span className="text-xs text-gray-400">{r.registrationNo}</span>
-            )}
+            <Link href={`/fleet/fuel-logs/${r.fuelLogID}`} className="text-sm font-medium font-mono text-blue-600 hover:underline">{r.equipmentCode}</Link>
+            {r.registrationNo && <span className="text-xs text-gray-400">{r.registrationNo}</span>}
           </div>
         )
       },
@@ -70,7 +58,7 @@ export function FuelLogApprovalClient({ initialData }: FuelLogApprovalClientProp
         return (
           <div className="flex flex-col gap-0.5">
             <span className="text-sm font-medium text-gray-900">{r.voucherNo || '—'}</span>
-            <span className="text-xs text-gray-400">{formatDate(r.meterUpdateDate)}</span>
+            <span className="text-xs text-gray-400">{r.documentNo} · {fmtDate(r.meterUpdateDate)}</span>
           </div>
         )
       },
@@ -95,37 +83,31 @@ export function FuelLogApprovalClient({ initialData }: FuelLogApprovalClientProp
         const r = info.row.original
         return (
           <div className="flex flex-col gap-0.5">
-            <span className="text-sm font-medium text-gray-900">{r.tankMeter} L</span>
+            <span className="text-sm font-medium text-gray-900">{r.tankMeter.toLocaleString()} L</span>
             <span className="text-xs text-gray-400">
-              {r.costPerLiter != null ? `฿${r.costPerLiter}/L` : '—'}
-              {r.totalAmount != null ? ` · ${formatCurrency(r.totalAmount)}` : ''}
+              {r.costPerLiter != null ? `฿${r.costPerLiter}/L` : t(`fuel.source.${r.fuelSource}`)}
+              {r.totalAmount != null ? ` · ${money(r.totalAmount)}` : ''}
             </span>
           </div>
         )
       },
     }),
-    col.display({
-      id: 'status',
-      header: 'Status',
-      cell: () => (
-        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-700">
-          Pending
-        </span>
-      ),
-    }),
+    col.display({ id: 'status', header: 'Status', cell: (info) => <FuelStatusBadge status={info.row.original.status} /> }),
     col.display({
       id: 'actions',
       header: '',
-      size: 110,
+      size: 170,
       cell: (info) => {
         const r = info.row.original
+        if (!may(r)) return <span className="text-xs text-gray-400" title={t('fuel.ownEntryHint')}>{r.createdBy === user?.userId ? t('fuel.ownEntry') : ''}</span>
         return (
-          <div className="flex items-center justify-end">
-            <button
-              type="button"
-              onClick={() => handleApprove(r)}
-              className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors"
-            >
+          <div className="flex items-center justify-end gap-2">
+            <button type="button" disabled={act.isPending} onClick={() => { setDialogError(null); setRejecting(r) }}
+              className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg border border-red-300 text-red-600 hover:bg-red-50 disabled:opacity-50">
+              {t('fuel.action.reject')}
+            </button>
+            <button type="button" disabled={act.isPending} onClick={() => run(r, 'approve')}
+              className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50">
               {t('common.approve')}
             </button>
           </div>
@@ -143,5 +125,21 @@ export function FuelLogApprovalClient({ initialData }: FuelLogApprovalClientProp
     )
   }
 
-  return <DataTable data={data} columns={columns} pageSize={15} />
+  return (
+    <>
+      <DataTable data={data} columns={columns} pageSize={15} />
+      {rejecting && (
+        <ReasonDialog
+          title={`${t('fuel.action.reject')} · ${rejecting.documentNo}`}
+          confirmLabel={t('fuel.action.reject')}
+          reasonRequired
+          danger
+          busy={act.isPending}
+          error={dialogError}
+          onConfirm={(reason) => run(rejecting, 'reject', reason)}
+          onClose={() => setRejecting(null)}
+        />
+      )}
+    </>
+  )
 }

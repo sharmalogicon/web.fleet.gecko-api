@@ -13855,7 +13855,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Invoices carrying fleet lines, newest first (?branchId, payerPartyCode, page, pageSize) */
+        /** Invoices carrying fleet lines, newest first (?branchId, payerPartyCode, search = invoice no / payer, status, from, to, page, pageSize) */
         get: {
             parameters: {
                 query?: {
@@ -13863,6 +13863,10 @@ export interface paths {
                     payerPartyCode?: string;
                     page?: number | string;
                     pageSize?: number | string;
+                    search?: string;
+                    status?: string;
+                    from?: string;
+                    to?: string;
                 };
                 header?: never;
                 path?: never;
@@ -13953,6 +13957,296 @@ export interface paths {
         };
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/revenue/subcon-deduction-invoices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** SCT tax invoices for subcontractor deductions, newest first (?branchId, subconPartyCode, settlementNo, rechargeNo, workOrderNo, search, from, to, page, pageSize) */
+        get: {
+            parameters: {
+                query?: {
+                    branchId?: string;
+                    subconPartyCode?: string;
+                    settlementNo?: string;
+                    rechargeNo?: string;
+                    workOrderNo?: string;
+                    search?: string;
+                    from?: string;
+                    to?: string;
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PagedResultOfSubconDeductionInvoiceDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/revenue/subcon-deduction-invoices/{invoiceId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    invoiceId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SubconDeductionInvoiceDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/revenue/credit-notes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Credit notes, newest first (?source TOS|TRUCKING|FLEET, branchId, payerPartyCode, invoiceId, status, creditNoteNo, from, to, page, pageSize) */
+        get: {
+            parameters: {
+                query?: {
+                    source?: string;
+                    branchId?: string;
+                    payerPartyCode?: string;
+                    invoiceId?: string;
+                    status?: string;
+                    creditNoteNo?: string;
+                    from?: string;
+                    to?: string;
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PagedResultOfCreditNoteDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Issue a credit note against an ISSUED invoice — numbered at once */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["IssueCreditNoteRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreditNoteDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/revenue/credit-notes/{creditNoteId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    creditNoteId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreditNoteDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/revenue/credit-notes/creditable/{invoiceId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** An invoice's lines with what is still open to credit */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    invoiceId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreditableInvoiceDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/revenue/credit-notes/{creditNoteId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel a credit note (its number stays used; its amounts are open again) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    creditNoteId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CancelCreditNoteRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreditNoteDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                    };
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -24606,6 +24900,10 @@ export interface components {
             /** Format: int32 */
             waived: number | string;
         };
+        CancelCreditNoteRequest: {
+            reason: string;
+            rowVersion?: null | string;
+        };
         CancelPickupRequest: {
             reason: null | string;
         };
@@ -25452,6 +25750,104 @@ export interface components {
             email?: null | string;
             terms?: null | components["schemas"]["SupplierTermsInput"];
         };
+        CreditableInvoiceDto: {
+            /** Format: uuid */
+            invoiceId: string;
+            /** Format: uuid */
+            branchId: string;
+            invoiceNo: string;
+            source: string;
+            status: string;
+            payerPartyCode: null | string;
+            payerName: null | string;
+            currencyCode: string;
+            /** Format: double */
+            totalAmount: number | string;
+            /** Format: double */
+            creditedTotal: number | string;
+            lines: components["schemas"]["CreditableLineDto"][];
+        };
+        CreditableLineDto: {
+            /** Format: uuid */
+            invoiceLineId: string;
+            /** Format: int16 */
+            lineNo: number | string;
+            orderNo: null | string;
+            containerNo: null | string;
+            chargeCode: string;
+            chargeName: null | string;
+            /** Format: double */
+            quantity: number | string;
+            /** Format: double */
+            amount: number | string;
+            /** Format: double */
+            taxRate: number | string;
+            /** Format: double */
+            taxAmount: number | string;
+            /** Format: double */
+            credited: number | string;
+            /** Format: double */
+            remaining: number | string;
+        };
+        CreditNoteDto: {
+            /** Format: uuid */
+            creditNoteId: string;
+            /** Format: uuid */
+            branchId: string;
+            creditNoteNo: string;
+            /** Format: uuid */
+            invoiceId: string;
+            invoiceNo: string;
+            source: string;
+            status: string;
+            reason: string;
+            payerPartyCode: null | string;
+            payerName: null | string;
+            currencyCode: string;
+            /** Format: double */
+            subtotalAmount: number | string;
+            /** Format: double */
+            taxAmount: number | string;
+            /** Format: double */
+            totalAmount: number | string;
+            remarks: null | string;
+            /** Format: date-time */
+            issuedAt: string;
+            /** Format: date-time */
+            cancelledAt: null | string;
+            cancelReason: null | string;
+            rowVersion: string;
+            lines: components["schemas"]["CreditNoteLineDto"][];
+        };
+        CreditNoteLineDto: {
+            /** Format: uuid */
+            creditNoteLineId: string;
+            /** Format: int16 */
+            lineNo: number | string;
+            /** Format: uuid */
+            invoiceLineId: string;
+            /** Format: uuid */
+            chargeId: string;
+            orderNo: null | string;
+            containerNo: null | string;
+            chargeCode: string;
+            chargeName: null | string;
+            /** Format: double */
+            quantity: number | string;
+            /** Format: double */
+            amount: number | string;
+            taxCode: null | string;
+            /** Format: double */
+            taxRate: number | string;
+            /** Format: double */
+            taxAmount: number | string;
+        };
+        CreditNoteLineInput: {
+            /** Format: uuid */
+            invoiceLineId: string;
+            /** Format: double */
+            amount: number | string;
+        };
         CurrencyLookup: {
             code: string;
             name: string;
@@ -25746,6 +26142,10 @@ export interface components {
             taxAmount: number | string;
             /** Format: uuid */
             fleetChargeId: string;
+            assetCode?: null | string;
+            sourceLineType?: null | string;
+            rateCardRef?: null | string;
+            rechargeNo?: null | string;
         };
         FreeTimeItem: {
             freeTimeKind: string;
@@ -26698,6 +27098,15 @@ export interface components {
             isDangerousCapable: boolean;
             defaultCargoClass: null | string;
         };
+        IssueCreditNoteRequest: {
+            /** Format: uuid */
+            invoiceId: string;
+            reason: string;
+            lines?: null | components["schemas"]["CreditNoteLineInput"][];
+            /** Format: date */
+            creditNoteDate?: null | string;
+            remarks?: null | string;
+        };
         IssueFleetInvoiceRequest: {
             /** Format: uuid */
             branchId: string;
@@ -27207,6 +27616,19 @@ export interface components {
             hasMore?: boolean;
             nextCursor?: null | string;
         };
+        PagedResultOfCreditNoteDto: {
+            items: components["schemas"]["CreditNoteDto"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages?: number | string;
+            hasMore?: boolean;
+            nextCursor?: null | string;
+        };
         PagedResultOfEquipmentTypeResponse: {
             items: components["schemas"]["EquipmentTypeResponse"][];
             /** Format: int32 */
@@ -27495,6 +27917,19 @@ export interface components {
         };
         PagedResultOfShippingLineResponse: {
             items: components["schemas"]["ShippingLineResponse"][];
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+            /** Format: int32 */
+            totalCount: number | string;
+            /** Format: int32 */
+            totalPages?: number | string;
+            hasMore?: boolean;
+            nextCursor?: null | string;
+        };
+        PagedResultOfSubconDeductionInvoiceDto: {
+            items: components["schemas"]["SubconDeductionInvoiceDto"][];
             /** Format: int32 */
             page: number | string;
             /** Format: int32 */
@@ -29720,6 +30155,57 @@ export interface components {
             /** Format: uuid */
             gateTransactionId: null | string;
             skipReason: null | string;
+        };
+        SubconDeductionInvoiceDto: {
+            /** Format: uuid */
+            invoiceId: string;
+            /** Format: uuid */
+            branchId: string;
+            invoiceNo: string;
+            status: string;
+            subconPartyCode: string;
+            subconName: null | string;
+            /** Format: uuid */
+            subconSettlementId: string;
+            settlementNo: string;
+            /** Format: date-time */
+            settledAt: string;
+            currencyCode: string;
+            /** Format: double */
+            subtotalAmount: number | string;
+            /** Format: double */
+            taxAmount: number | string;
+            /** Format: double */
+            totalAmount: number | string;
+            remarks: null | string;
+            /** Format: date-time */
+            issuedAt: string;
+            lines: components["schemas"]["SubconDeductionInvoiceLineDto"][];
+        };
+        SubconDeductionInvoiceLineDto: {
+            /** Format: uuid */
+            invoiceLineId: string;
+            /** Format: int16 */
+            lineNo: number | string;
+            workOrderNo: string;
+            vehicleCode: null | string;
+            rechargeNo: string;
+            /** Format: uuid */
+            rechargeId: string;
+            sourceLineType: string;
+            chargeCode: string;
+            chargeName: string;
+            /** Format: double */
+            quantity: number | string;
+            /** Format: double */
+            unitRate: number | string;
+            /** Format: double */
+            amount: number | string;
+            taxCode: null | string;
+            /** Format: double */
+            taxRate: number | string;
+            /** Format: double */
+            taxAmount: number | string;
         };
         SupplierResponse: {
             /** Format: uuid */

@@ -9,6 +9,7 @@ const STATUS_OPTIONS = [
   { value: 'ALL', label: 'All Statuses' },
   { value: 'PENDING', label: 'Pending' },
   { value: 'APPROVED', label: 'Approved' },
+  { value: 'REJECTED', label: 'Rejected' },
 ] as const
 
 interface VendorPaymentFiltersProps {

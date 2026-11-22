@@ -52,7 +52,8 @@
     "priority": "Priority",
     "category": "Category",
     "saveFailed": "Save failed",
-    "view": "View"
+    "view": "View",
+    "open": "Open"
   },
   "form": {
     "header": "Header",
@@ -1400,5 +1401,361 @@
     },
     "repaired": "Repaired",
     "sentVendor": "Sent / vendor"
+  },
+  "fuel": {
+    "status": {
+      "DRAFT": "Draft",
+      "PENDING_APPROVAL": "Pending approval",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "CANCELLED": "Cancelled"
+    },
+    "source": {
+      "OWN_TANK": "Own tank",
+      "VENDOR": "Vendor"
+    },
+    "action": {
+      "submit": "Save & submit",
+      "reject": "Reject",
+      "cancel": "Cancel log"
+    },
+    "done": {
+      "approve": "Fuel log approved",
+      "reject": "Fuel log rejected"
+    },
+    "ownEntry": "Your entry",
+    "ownEntryHint": "You cannot approve a fuel log you entered",
+    "decidedOn": "Decided on",
+    "rejectReason": "Reject reason",
+    "cancelReason": "Cancel reason",
+    "meterRecorded": "Meter reading recorded",
+    "fromTrucking": "From Trucking",
+    "linkedHint": "This vehicle's fuel is recorded in Trucking. Its Trucking fuel records are shown read-only.",
+    "noTruckingRows": "No fuel records in Trucking yet.",
+    "meterHint": "Becomes a meter reading when approved",
+    "store": "Fuel store",
+    "item": "Fuel item",
+    "itemHint": "Kept in litres (LTR) or with a litre conversion",
+    "ownTankPriceHint": "Costed at the store's average price on approval",
+    "onApproval": "On approval",
+    "fromPrevious": "From the previous approved log",
+    "rule": {
+      "asset": "Pick an equipment code from the list",
+      "date": "Date is required",
+      "future": "The date cannot be in the future",
+      "liters": "Litres must be more than 0",
+      "store": "Pick the fuel store",
+      "item": "Pick the fuel item",
+      "price": "Enter the price per litre"
+    }
+  },
+  "accident": {
+    "status": {
+      "OPEN": "Open",
+      "UNDER_REPAIR": "Under repair",
+      "CLOSED": "Closed",
+      "CANCELLED": "Cancelled"
+    },
+    "action": {
+      "workRequest": "Raise work request",
+      "close": "Close accident",
+      "cancel": "Cancel accident"
+    },
+    "done": {
+      "workRequest": "Work request raised"
+    },
+    "workRequestHint": "One work request per accident; it converts to a work order the usual way.",
+    "problem": "Problem",
+    "billTo": "Bill to (party code)",
+    "billToHint": "e.g. the third party, if recharged",
+    "closeBlocked": "A repair work order is still open",
+    "driverFreeHint": "Name, when the driver is not on file",
+    "thirdParty": "Third party",
+    "tp": {
+      "name": "Name",
+      "partyCode": "Party code",
+      "partyCodeHint": "If on file",
+      "plate": "Vehicle plate",
+      "vehicle": "Vehicle",
+      "insurer": "Insurer",
+      "insurerPolicy": "Insurer policy no.",
+      "contact": "Contact",
+      "phone": "Phone",
+      "statement": "Statement"
+    },
+    "repairs": "Repairs",
+    "workRequest": "Work request",
+    "noWorkRequest": "No work request raised yet.",
+    "photosAfterSave": "Save the accident first, then add photos.",
+    "photo": {
+      "stage": {
+        "SCENE": "Scene",
+        "DAMAGE": "Damage",
+        "POLICE": "Police",
+        "REPAIR": "Repair",
+        "OTHER": "Other"
+      }
+    },
+    "rule": {
+      "asset": "Pick an equipment code from the list",
+      "date": "Accident date is required",
+      "type": "Pick the accident type",
+      "country": "Use the 2-letter country code (e.g. TH)",
+      "tpName": "Enter the third party's name"
+    }
+  },
+  "claim": {
+    "status": {
+      "DRAFT": "Draft",
+      "SUBMITTED": "Submitted",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "SETTLED": "Settled",
+      "CANCELLED": "Cancelled",
+      "REVISED": "Revised"
+    },
+    "kind": {
+      "LABOR": "Labour",
+      "PART": "Part",
+      "SUBLET": "Sublet",
+      "OTHER": "Other"
+    },
+    "action": {
+      "copy": "Copy from work orders",
+      "submit": "Submit",
+      "approve": "Record approval",
+      "reject": "Record rejection",
+      "settle": "Settle",
+      "revise": "Revise",
+      "cancel": "Cancel claim"
+    },
+    "done": {
+      "copy": "Work order lines added",
+      "submit": "Claim submitted"
+    },
+    "addLine": "Add line",
+    "removeLine": "Remove line",
+    "fromWo": "From",
+    "approved": "Approved",
+    "approvedAmount": "Approved amount",
+    "deductible": "Deductible",
+    "settledAmount": "Settled amount",
+    "settledAt": "Settled on",
+    "settlementRef": "Settlement reference",
+    "decisionNote": "Note",
+    "decisionReason": "Decision reason",
+    "fromAccident": "From the accident",
+    "insurer": "insurer",
+    "policyNo": "Policy no.",
+    "previewHint": "preview, saved by the API",
+    "reviseHint": "Makes a new draft claim from this one; this one becomes Revised.",
+    "rule": {
+      "accident": "Pick an accident no. from the list",
+      "lineDescription": "Enter a description",
+      "qty": "Qty must be more than 0",
+      "price": "Price cannot be negative",
+      "discount": "Discount cannot be negative",
+      "vat": "VAT % must be 0–100"
+    }
+  },
+  "violation": {
+    "status": {
+      "OPEN": "Open",
+      "PAID": "Paid",
+      "DEDUCTED": "Deducted",
+      "DISPUTED": "Disputed",
+      "CANCELLED": "Cancelled"
+    },
+    "action": {
+      "pay": "Pay",
+      "deduct": "Deduct from driver",
+      "takeBack": "Take back deduction",
+      "refresh": "Refresh deduction",
+      "dispute": "Dispute",
+      "reopen": "Reopen",
+      "cancel": "Cancel violation"
+    },
+    "paymentBlock": "Payment + deduction",
+    "paidBy": "Paid by",
+    "paidByOpt": {
+      "COMPANY": "Company",
+      "DRIVER": "Driver"
+    },
+    "paidAt": "Paid on",
+    "paymentRef": "Payment reference",
+    "deductionMode": "Deduction",
+    "mode": {
+      "PAYROLL": "Payroll",
+      "SUBCON": "Subcontractor statement"
+    },
+    "deductionAmount": "Deduction amount",
+    "deductionParty": "Deducted from (party)",
+    "deductionRef": "Deduction reference",
+    "deductedAt": "Deducted on",
+    "payrollExportedAt": "Exported to payroll",
+    "employment": "Driver employment",
+    "disputeReason": "Dispute reason",
+    "driverFromId": "From the driver ID",
+    "deductPayrollHint": "Own driver: a payroll deduction line is made.",
+    "deductSubconHint": "Subcontractor driver: a deduction request goes on the subcontractor's Trucking statement.",
+    "payroll": {
+      "button": "Payroll deductions",
+      "title": "Payroll deductions not yet exported",
+      "hint": "Pick rows (or none for all), then mark them exported; a CSV downloads.",
+      "mark": "Mark exported",
+      "markAll": "Mark all exported",
+      "none": "Nothing waiting for payroll.",
+      "exported": "Marked exported",
+      "doneTitle": "Exported to payroll",
+      "doneHint": "These rows are marked exported. Download the CSV again if needed.",
+      "csv": "Download CSV"
+    },
+    "rule": {
+      "ticket": "Ticket no. is required",
+      "date": "Violation date is required",
+      "asset": "Pick an equipment code from the list",
+      "type": "Pick the violation type",
+      "amount": "Amount must be 0 or more"
+    }
+  },
+  "vinv": {
+    "status": {
+      "DRAFT": "Draft",
+      "PENDING_APPROVAL": "Pending approval",
+      "APPROVED": "Approved",
+      "EXPORTED": "Exported",
+      "PAID": "Paid",
+      "CANCELLED": "Cancelled"
+    },
+    "match": {
+      "MATCHED": "Matched",
+      "EXCEPTION": "Exception",
+      "UNMATCHED": "Unmatched"
+    },
+    "source": {
+      "GRN_LINE": "Goods receipt",
+      "WO_SUBLET": "WO sublet",
+      "TYRE_EVENT": "Tyre service",
+      "MANUAL": "Other charge"
+    },
+    "lines": "lines",
+    "action": {
+      "submit": "Save & submit",
+      "approve": "Approve",
+      "sendBack": "Send back",
+      "cancel": "Cancel invoice"
+    },
+    "approvalNote": "Approval note",
+    "supplierName": "Supplier name",
+    "addressHint": "From the supplier record",
+    "invoiceDate": "Supplier invoice date",
+    "dueDate": "Due date",
+    "branch": "Branch",
+    "whtBase": "WHT base (services)",
+    "wht": "Withholding tax",
+    "netPayable": "net payable",
+    "expected": "Expected",
+    "variance": "Variance",
+    "credited": "Credited",
+    "paid": "Paid",
+    "pendingPayment": "Payments awaiting approval",
+    "outstanding": "Outstanding",
+    "addLines": "Add lines",
+    "otherCharge": "Other charge",
+    "noLines": "No line items yet.",
+    "noUnbilled": "Nothing left to invoice for this supplier and branch.",
+    "export": {
+      "button": "Export",
+      "title": "Export to accounting",
+      "tab": {
+        "pending": "Ready to export",
+        "history": "Earlier exports"
+      },
+      "hint": "Tick documents (none = all), then export.",
+      "none": "No approved documents waiting.",
+      "run": "Export",
+      "runAll": "Export all",
+      "done": "Export batch created",
+      "csv": "Download CSV",
+      "invoices": "Invoices",
+      "creditNotes": "Credit notes",
+      "docType": {
+        "INVOICE": "Invoice",
+        "CREDIT_NOTE": "Credit note"
+      }
+    },
+    "rule": {
+      "qty": "Qty must be more than 0",
+      "price": "Price cannot be negative",
+      "description": "Enter a description",
+      "branch": "Pick the branch",
+      "supplier": "Pick the supplier",
+      "vendorInvoiceNo": "The supplier's invoice no. is required",
+      "invoiceDate": "The supplier's invoice date is required",
+      "discount": "Discount cannot be negative",
+      "vat": "VAT % must be 0–100",
+      "lines": "Add at least one line"
+    }
+  },
+  "vcn": {
+    "status": {
+      "DRAFT": "Draft",
+      "APPROVED": "Approved",
+      "EXPORTED": "Exported",
+      "CANCELLED": "Cancelled"
+    },
+    "source": {
+      "RTV_LINE": "Vendor return",
+      "INVOICE_LINE": "Price correction",
+      "MANUAL": "Other"
+    },
+    "reasonOpt": {
+      "RETURN": "Return",
+      "PRICE": "Price",
+      "DAMAGE": "Damage",
+      "OTHER": "Other"
+    },
+    "action": {
+      "approve": "Approve",
+      "cancel": "Cancel credit note"
+    },
+    "supplierNo": "Supplier's credit note no.",
+    "invoice": "Against invoice",
+    "return": "Vendor return",
+    "reason": "Reason",
+    "addReturn": "Add from a return",
+    "addInvoiceLine": "Price correction on invoice line",
+    "pickInvoiceFirst": "Pick the invoice on the header first",
+    "invoiceLineHint": "Enter the credit price per unit on the line after adding it; never more than the line.",
+    "noReturns": "No posted returns left to credit.",
+    "default": "default",
+    "rule": {
+      "date": "Credit note date is required"
+    }
+  },
+  "vpay": {
+    "status": {
+      "PENDING_APPROVAL": "Pending",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected"
+    },
+    "record": "Record payment",
+    "recordHint": "Recorded on an approved invoice; a negative amount reverses an earlier payment.",
+    "recorded": "Payment recorded",
+    "invoice": "Invoice",
+    "reverses": "Reverses payment",
+    "notReversal": "— (a new payment)",
+    "reversal": "Reversal",
+    "reversalOf": "Reverses an earlier payment",
+    "refHint": "Transfer / cheque ref",
+    "reject": "Reject",
+    "decidedAt": "Decided on",
+    "source": "Source",
+    "notFound": "Payment not found.",
+    "rule": {
+      "amount": "Enter an amount more than 0",
+      "reversal": "A reversal is a negative amount",
+      "tooMuch": "More than is still owed on the invoice"
+    }
   }
 }
