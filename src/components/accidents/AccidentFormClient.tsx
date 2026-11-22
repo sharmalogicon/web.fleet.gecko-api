@@ -28,7 +28,7 @@ export function AccidentFormClient({ accident, accidentID, isNew }: Props) {
   const { success, error } = useToastStore()
 
   const form = useForm<AccidentReportFormValues>({
-    resolver: zodResolver(accidentReportSchema) as any,
+    resolver: zodResolver(accidentReportSchema),
     defaultValues: accident,
   })
 

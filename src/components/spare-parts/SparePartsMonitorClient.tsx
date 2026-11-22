@@ -32,7 +32,7 @@ function StatusBadge({ status }: { status: SparePartsMonitorStatus }) {
   )
 }
 
-const columns: import('@tanstack/react-table').ColumnDef<SparePartsMonitor, any>[] = [
+const columns = [
   col.display({
     id: 'woEquipment',
     header: 'WO / Equipment',

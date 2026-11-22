@@ -7,11 +7,15 @@ import { cn } from '@/lib/utils/cn';
 import { NavItem } from '@/components/navigation/NavItem';
 import { UserMenu } from '@/components/navigation/UserMenu';
 import { useUIStore } from '@/lib/stores/useUIStore';
-import { NAVIGATION } from '@/lib/navigation';
+import { NAVIGATION, visibleNavigation } from '@/lib/navigation';
+import { useFleetAccess } from '@/lib/api/fleet/access';
 
 export function Sidebar() {
   const pathname = usePathname();
   const { sidebarCollapsed, toggleSidebar } = useUIStore();
+  const { canAnywhere, isFleetUser, isSuccess } = useFleetAccess();
+  // Links the user cannot open are hidden (UX only; the API still decides).
+  const navigation = isSuccess ? visibleNavigation(NAVIGATION, canAnywhere, isFleetUser) : [];
 
   return (
     <aside
@@ -50,7 +54,7 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-3 px-2 scrollbar-thin">
-        {NAVIGATION.map((item) => (
+        {navigation.map((item) => (
           <NavItem
             key={item.title}
             item={item}

@@ -66,12 +66,6 @@ export function CustomerRateFilters({
         placeholder="Search by customer…"
         className="w-44"
       />
-      <SearchInput
-        value={agentCode}
-        onChange={(v) => push({ agentCode: v })}
-        placeholder="Search by agent code…"
-        className="w-36"
-      />
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-gray-500">{t('common.status')}</label>
         <select
@@ -80,8 +74,11 @@ export function CustomerRateFilters({
           className="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">{t('common.all')}</option>
-          <option value="draft">Draft</option>
-          <option value="approved">Approved</option>
+          <option value="DRAFT">DRAFT</option>
+          <option value="PENDING">PENDING</option>
+          <option value="APPROVED">APPROVED</option>
+          <option value="REJECTED">REJECTED</option>
+          <option value="WITHDRAWN">WITHDRAWN</option>
         </select>
       </div>
       <div className="flex flex-col gap-1">

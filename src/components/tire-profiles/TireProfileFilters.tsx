@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 import { SearchInput } from '@/components/shared/SearchInput'
 import { useT } from '@/i18n/I18nContext'
 
-const STATUS_OPTIONS = ['ALL', 'NEW', 'USED', 'RECAP', 'SCRAP'] as const
+const STATUS_OPTIONS = ['ALL', 'NEW', 'USED', 'RECAP', 'SCRAP', 'IN_STOCK', 'FITTED', 'AWAITING_REPAIR', 'AT_RECAP', 'SCRAPPED'] as const
 const ACTIVE_OPTIONS = [
   { value: 'ALL', label: 'All' },
   { value: 'ACTIVE', label: 'Active' },

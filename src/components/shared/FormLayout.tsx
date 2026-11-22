@@ -14,15 +14,17 @@ interface FormLayoutProps {
   tabs: Tab[]
   actions?: ReactNode
   isNew?: boolean
+  /** A small badge next to the title (e.g. "From Trucking"). */
+  titleBadge?: ReactNode
 }
 
-export function FormLayout({ title, subtitle, tabs, actions, isNew }: FormLayoutProps) {
+export function FormLayout({ title, subtitle, tabs, actions, isNew, titleBadge }: FormLayoutProps) {
   return (
     <div className="flex flex-col gap-0 min-h-full">
       {/* Page header */}
       <div className="flex items-start justify-between gap-4 pb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">{title}{titleBadge}</h1>
           {subtitle && <p className="mt-1 text-sm text-gray-500">{subtitle}</p>}
         </div>
         {actions && <div className="flex items-center gap-2 flex-shrink-0">{actions}</div>}

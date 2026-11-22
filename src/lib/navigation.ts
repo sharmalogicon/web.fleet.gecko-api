@@ -18,6 +18,7 @@ import {
   Settings,
   type LucideIcon,
 } from 'lucide-react';
+import { canOpen } from '@/lib/access/routeGuard';
 
 export interface NavSubItem {
   title: string;
@@ -47,11 +48,14 @@ export const NAVIGATION: NavItem[] = [
     icon: Settings,
     items: [
       { title: 'Drivers', titleKey: 'nav.drivers', href: '/master/drivers' },
+      { title: 'Technicians', titleKey: 'nav.technicians', href: '/master/technicians' },
       { title: 'Equipment', titleKey: 'nav.equipment', href: '/master/equipment' },
       { title: 'Equipment Types', titleKey: 'nav.equipmentTypes', href: '/master/equipment-types' },
       { title: 'Stock Profiles', titleKey: 'nav.stock', href: '/master/stock' },
+      { title: 'Stores', titleKey: 'nav.stores', href: '/master/stores' },
       { title: 'Stock & Labor Prices', titleKey: 'nav.stockLaborPrices', href: '/master/stock-labor-prices' },
       { title: 'Transporters', titleKey: 'nav.transporters', href: '/master/transporters' },
+      { title: 'Fleet Setup', titleKey: 'nav.fleetSetup', href: '/master/fleet-setup' },
     ],
   },
   {
@@ -60,9 +64,14 @@ export const NAVIGATION: NavItem[] = [
     icon: Wrench,
     items: [
       { title: 'Work Requests', titleKey: 'nav.workRequests', href: '/fleet/work-requests' },
+      { title: 'Inspections', titleKey: 'nav.inspections', href: '/fleet/inspections' },
+      { title: 'Defects', titleKey: 'nav.defects', href: '/fleet/defects' },
+      { title: 'Inspection Checklists', titleKey: 'nav.checklists', href: '/fleet/inspections/checklists' },
       { title: 'Work Orders', titleKey: 'nav.workOrders', href: '/fleet/work-orders' },
       { title: 'WO Monitoring', titleKey: 'nav.woMonitoring', href: '/fleet/work-orders/monitoring' },
+      { title: 'Recharges', titleKey: 'nav.recharges', href: '/fleet/recharges' },
       { title: 'PM Scheduler', titleKey: 'nav.pmScheduler', href: '/fleet/pm-scheduler' },
+      { title: 'PM Due', titleKey: 'nav.pmDue', href: '/fleet/pm-due' },
       { title: 'Service Types', titleKey: 'nav.serviceTypes', href: '/fleet/service-types' },
     ],
   },
@@ -87,6 +96,7 @@ export const NAVIGATION: NavItem[] = [
       { title: 'Purchase Orders', titleKey: 'nav.purchaseOrders', href: '/fleet/purchase-orders' },
       { title: 'Goods Receipts', titleKey: 'nav.goodsReceipts', href: '/fleet/goods-receipts' },
       { title: 'Goods Adjustments', titleKey: 'nav.goodsAdjustments', href: '/fleet/goods-adjustments' },
+      { title: 'Stock Counts', titleKey: 'nav.stockCounts', href: '/fleet/stock-counts' },
       { title: 'Return to Vendor', titleKey: 'nav.returnToVendor', href: '/fleet/return-to-vendor' },
       { title: 'Spare Parts', titleKey: 'nav.spareParts', href: '/fleet/spare-parts/monitoring' },
     ],
@@ -157,3 +167,25 @@ export const NAVIGATION: NavItem[] = [
     ],
   },
 ];
+
+/**
+ * The menu without the links the user cannot open (route-guard map in
+ * src/lib/access/routeGuard.ts); a group with no visible link is dropped.
+ */
+export function visibleNavigation(
+  items: NavItem[],
+  can: (permission: string) => boolean,
+  isFleetUser: boolean,
+): NavItem[] {
+  const opens = (href: string) => canOpen(href, can, isFleetUser);
+  const result: NavItem[] = [];
+  for (const item of items) {
+    if (item.items) {
+      const visible = item.items.filter((sub) => opens(sub.href));
+      if (visible.length) result.push({ ...item, items: visible });
+    } else if (!item.href || opens(item.href)) {
+      result.push(item);
+    }
+  }
+  return result;
+}

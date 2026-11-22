@@ -8,6 +8,8 @@ import { useT } from '@/i18n/I18nContext'
 
 interface LicenseSectionProps {
   form: UseFormReturn<DriverFormValues>
+  /** Read-only inputs (Trucking-owned, personal data, hidden rates). */
+  locked?: ReadonlySet<string>
 }
 
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
@@ -21,12 +23,13 @@ function Field({ label, error, children }: { label: string; error?: string; chil
 }
 
 function inputClass(hasError?: boolean) {
-  return `w-full px-3 py-2 text-sm border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+  return `w-full px-3 py-2 text-sm border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed ${
     hasError ? 'border-red-400' : 'border-gray-300'
   }`
 }
 
-export function LicenseSection({ form }: LicenseSectionProps) {
+export function LicenseSection({ form, locked }: LicenseSectionProps) {
+  const lock = (field: string) => !!locked?.has(field)
   const { t } = useT()
   const { register, watch } = form
   const expiryValue = watch('licenseExpiryDate')
@@ -35,11 +38,11 @@ export function LicenseSection({ form }: LicenseSectionProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <Field label={t('form.licenseNo')}>
-        <input {...register('licenseNo')} className={inputClass()} placeholder="License number" />
+        <input {...register('licenseNo')} disabled={lock('licenseNo')} className={inputClass()} placeholder="License number" />
       </Field>
 
       <Field label={t('form.licenseExpiry')}>
-        <input type="date" {...register('licenseExpiryDate')} className={inputClass()} />
+        <input type="date" {...register('licenseExpiryDate')} disabled={lock('licenseExpiryDate')} className={inputClass()} />
       </Field>
 
       {expiryValue && (

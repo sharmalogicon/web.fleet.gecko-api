@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { optNum } from '@/lib/utils/zod'
 
 export type DriverStatus = 'ACTIVE' | 'INACTIVE' | 'ON LEAVE' | 'TERMINATED'
 
@@ -26,8 +27,8 @@ export const driverSchema = z.object({
   status: z.enum(['ACTIVE', 'INACTIVE', 'ON LEAVE', 'TERMINATED']),
   dateHire: z.string().optional(),
   dateRelease: z.string().optional(),
-  standardRate: z.coerce.number().optional(),
-  overtimeRate: z.coerce.number().optional(),
+  standardRate: optNum,
+  overtimeRate: optNum,
   fuelCard: z.string().optional(),
   licenseNo: z.string().optional(),
   licenseExpiryDate: z.string().optional(),
@@ -39,13 +40,14 @@ export const driverSchema = z.object({
   postCode: z.string().optional(),
   phoneNumber: z.string().optional(),
   faxNumber: z.string().optional(),
-  emailID: z.union([z.string().email(), z.literal('')]).optional(),
+  // Personal data is read-only (held in Trucking) and may read "On file in Trucking": not validated here.
+  emailID: z.string().optional(),
   contactPerson: z.string().optional(),
   mobilePhoneNumber: z.string().optional(),
 }).refine(
   (data) => {
     if (data.dateHire && data.dateRelease) {
-      return new Date(data.dateRelease) > new Date(data.dateHire)
+      return new Date(data.dateRelease) >= new Date(data.dateHire)
     }
     return true
   },

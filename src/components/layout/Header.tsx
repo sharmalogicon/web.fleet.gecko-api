@@ -2,6 +2,7 @@
 
 import { Search, Bell } from 'lucide-react';
 import { Breadcrumbs } from './Breadcrumbs';
+import { BranchSwitcher } from './BranchSwitcher';
 
 export function Header() {
   return (
@@ -10,6 +11,8 @@ export function Header() {
         <Breadcrumbs />
 
         <div className="flex items-center gap-3">
+          <BranchSwitcher />
+
           {/* Search */}
           <button className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
             <Search size={16} />

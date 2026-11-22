@@ -1,20 +1,17 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createColumnHelper } from '@tanstack/react-table'
-import type { MeterLog } from '@/types/meter-log'
 import { DataTable } from '@/components/shared/DataTable'
-import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
-import { useToastStore } from '@/lib/stores/useToastStore'
-import { removeMockMeterLog } from '@/lib/mock/meter-logs'
+import { MeterReadingActions, MeterStatusBadge } from '@/components/meters/MeterBits'
+import type { MeterReadingView } from '@/lib/api/fleet/meters'
 import { useT } from '@/i18n/I18nContext'
 
-const col = createColumnHelper<MeterLog>()
+const col = createColumnHelper<MeterReadingView>()
 
 function formatDate(dateStr?: string): string {
   if (!dateStr) return '—'
-  const d = new Date(dateStr + 'T00:00:00')
+  const d = new Date(dateStr)
   return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
@@ -25,15 +22,14 @@ const METER_TYPE_COLORS: Record<string, string> = {
 }
 
 interface MeterLogListClientProps {
-  initialData: MeterLog[]
+  data: MeterReadingView[]
 }
 
-export function MeterLogListClient({ initialData }: MeterLogListClientProps) {
-  const [data, setData] = useState<MeterLog[]>(initialData)
-  const [deleteTarget, setDeleteTarget] = useState<MeterLog | null>(null)
+/** Same columns; rows = meter readings (API). Status badge in the value cell; no edit / delete (a reading is reversed). */
+export function MeterLogListClient({ data }: MeterLogListClientProps) {
   const router = useRouter()
-  const { success, error } = useToastStore()
   const { t } = useT()
+  const open = (r: MeterReadingView) => router.push(`/fleet/meter-logs/${r.id}`)
 
   const columns = [
     col.display({
@@ -43,16 +39,10 @@ export function MeterLogListClient({ initialData }: MeterLogListClientProps) {
         const r = info.row.original
         return (
           <div className="flex flex-col gap-0.5">
-            <button
-              type="button"
-              onClick={() => router.push(`/fleet/meter-logs/${r.meterLogID}`)}
-              className="text-blue-600 hover:underline text-left text-sm font-medium font-mono"
-            >
+            <button type="button" onClick={() => open(r)} className="text-blue-600 hover:underline text-left text-sm font-medium font-mono">
               {r.equipmentCode}
             </button>
-            {r.registrationNo && (
-              <span className="text-xs text-gray-400">{r.registrationNo}</span>
-            )}
+            {r.registrationNo && <span className="text-xs text-gray-400">{r.registrationNo}</span>}
           </div>
         )
       },
@@ -65,11 +55,7 @@ export function MeterLogListClient({ initialData }: MeterLogListClientProps) {
         return (
           <div className="flex flex-col gap-0.5">
             <span className="text-sm font-medium text-gray-900">{formatDate(r.meterUpdateDate)}</span>
-            <span
-              className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium w-fit ${
-                METER_TYPE_COLORS[r.meterType] ?? 'bg-gray-100 text-gray-600'
-              }`}
-            >
+            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium w-fit ${METER_TYPE_COLORS[r.meterType] ?? 'bg-gray-100 text-gray-600'}`}>
               {r.meterType}
             </span>
           </div>
@@ -84,13 +70,10 @@ export function MeterLogListClient({ initialData }: MeterLogListClientProps) {
         return (
           <div className="flex flex-col gap-0.5">
             <span className="text-sm font-medium text-gray-900">
-              {r.meterRead.toLocaleString()} km
+              {r.meterType === 'KM' ? `${r.value.toLocaleString()} km` : `${r.value.toLocaleString()} hrs`}
             </span>
-            {r.hourMeter != null ? (
-              <span className="text-xs text-gray-400">{r.hourMeter.toLocaleString()} hrs</span>
-            ) : (
-              <span className="text-xs text-gray-300">— hrs</span>
-            )}
+            <span className="text-xs text-gray-400">{r.sinceLast != null ? `+${r.sinceLast.toLocaleString()}` : '—'}</span>
+            <MeterStatusBadge status={r.status} reason={r.suspectReason} />
           </div>
         )
       },
@@ -98,71 +81,25 @@ export function MeterLogListClient({ initialData }: MeterLogListClientProps) {
     col.display({
       id: 'driver',
       header: () => t('common.driver'),
-      cell: (info) => {
-        const r = info.row.original
-        return (
-          <span className="text-sm text-gray-900">{r.driverName || '—'}</span>
-        )
-      },
+      cell: (info) => <span className="text-sm text-gray-900">{info.row.original.driverName || '—'}</span>,
     }),
     col.display({
       id: 'actions',
       header: '',
-      size: 100,
+      size: 140,
       cell: (info) => {
         const r = info.row.original
         return (
           <div className="flex items-center gap-2 justify-end">
-            <button
-              type="button"
-              onClick={() => router.push(`/fleet/meter-logs/${r.meterLogID}`)}
-              className="text-xs text-blue-600 hover:underline"
-            >
-              {t('common.edit')}
+            <button type="button" onClick={() => open(r)} className="text-xs text-blue-600 hover:underline">
+              {t('common.view')}
             </button>
-            <button
-              type="button"
-              onClick={() => setDeleteTarget(r)}
-              className="text-xs text-red-500 hover:underline"
-            >
-              {t('common.delete')}
-            </button>
+            <MeterReadingActions reading={r} />
           </div>
         )
       },
     }),
   ]
 
-  const handleDelete = async () => {
-    if (!deleteTarget) return
-    const label = `ML-${deleteTarget.meterLogID}`
-    try {
-      removeMockMeterLog(deleteTarget.meterLogID)
-      setData((prev) => prev.filter((r) => r.meterLogID !== deleteTarget.meterLogID))
-      success('Meter log deleted', `${label} has been removed.`)
-    } catch {
-      error('Delete failed', 'An error occurred. Please try again.')
-    } finally {
-      setDeleteTarget(null)
-    }
-  }
-
-  return (
-    <>
-      <DataTable data={data} columns={columns} pageSize={15} />
-      <ConfirmDialog
-        open={deleteTarget !== null}
-        title="Delete Meter Log"
-        message={
-          deleteTarget
-            ? `Are you sure you want to delete meter log for "${deleteTarget.equipmentCode}"? This action cannot be undone.`
-            : ''
-        }
-        confirmLabel={t('common.delete')}
-        onConfirm={handleDelete}
-        onCancel={() => setDeleteTarget(null)}
-        destructive
-      />
-    </>
-  )
+  return <DataTable data={data} columns={columns} pageSize={15} />
 }

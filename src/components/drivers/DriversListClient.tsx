@@ -1,37 +1,23 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createColumnHelper } from '@tanstack/react-table'
-import type { Driver } from '@/types/driver'
+import type { DriverView } from '@/lib/api/fleet/drivers'
 import { DataTable } from '@/components/shared/DataTable'
 import { StatusBadge } from '@/components/shared/StatusBadge'
-import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
-import { useToastStore } from '@/lib/stores/useToastStore'
-import { removeMockDriver } from '@/lib/mock/drivers'
 import { formatDate, isDateExpired } from '@/lib/utils/driver'
 import { useT } from '@/i18n/I18nContext'
 
-const col = createColumnHelper<Driver>()
+const col = createColumnHelper<DriverView>()
 
-const STRINGS = {
-  deleteTitle: 'Delete Driver',
-  deleteMessage: (name: string) => `Are you sure you want to delete "${name}"? This action cannot be undone.`,
-  deleteSuccess: 'Driver deleted',
-  deleteSuccessMsg: (name: string) => `${name} has been removed.`,
-  deleteFailed: 'Delete failed',
-  deleteFailedMsg: 'An error occurred. Please try again.',
-} as const
 
 interface DriversListClientProps {
-  initialData: Driver[]
+  data: DriverView[]
 }
 
-export function DriversListClient({ initialData }: DriversListClientProps) {
-  const [data, setData] = useState<Driver[]>(initialData)
-  const [deleteTarget, setDeleteTarget] = useState<Driver | null>(null)
+/** Same columns as before; rows from the Fleet API. Personal data (licence no., phone) is never read for the list. */
+export function DriversListClient({ data }: DriversListClientProps) {
   const router = useRouter()
-  const { success, error } = useToastStore()
   const { t } = useT()
 
   const columns = [
@@ -44,12 +30,17 @@ export function DriversListClient({ initialData }: DriversListClientProps) {
           <div className="flex flex-col gap-0.5">
             <button
               type="button"
-              onClick={() => router.push(`/master/drivers/${d.driverID}`)}
+              onClick={() => router.push(`/master/drivers/${d.id}`)}
               className="text-blue-600 hover:underline text-left font-medium"
             >
               {d.driverName}
             </button>
-            <span className="text-xs text-gray-400 font-mono">{d.driverCode}</span>
+            <span className="text-xs text-gray-400 font-mono flex items-center gap-1.5">
+              {d.driverCode}
+              <span className={`px-1.5 py-0 rounded border text-[10px] font-sans font-medium ${d.isTrucking ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-gray-200 bg-gray-50 text-gray-600'}`}>
+                {d.isTrucking ? t('driver.sourceTrucking') : t('driver.sourceFleet')}
+              </span>
+            </span>
           </div>
         )
       },
@@ -58,7 +49,9 @@ export function DriversListClient({ initialData }: DriversListClientProps) {
       id: 'license',
       header: 'License',
       cell: (info) => {
-        const { licenseNo, licenseExpiryDate } = info.row.original
+        // The licence number is personal data (read only on the form): the list shows the class.
+        const { licenseExpiryDate } = info.row.original
+        const licenseNo = info.row.original.dto.licenceClass
         const expired = isDateExpired(licenseExpiryDate)
         return (
           <div className="flex flex-col gap-0.5">
@@ -74,8 +67,8 @@ export function DriversListClient({ initialData }: DriversListClientProps) {
       id: 'contact',
       header: 'Contact',
       cell: (info) => {
-        const { mobilePhoneNumber, phoneNumber } = info.row.original
-        const phone = mobilePhoneNumber || phoneNumber
+        // Phone numbers are personal data (never read for the list).
+        const phone = undefined as string | undefined
         return (
           <div className="flex flex-col gap-0.5">
             <span className="text-sm">{phone || '—'}</span>
@@ -97,49 +90,16 @@ export function DriversListClient({ initialData }: DriversListClientProps) {
         <div className="flex items-center gap-2 justify-end">
           <button
             type="button"
-            onClick={() => router.push(`/master/drivers/${info.row.original.driverID}`)}
+            onClick={() => router.push(`/master/drivers/${info.row.original.id}`)}
             className="text-xs text-blue-600 hover:underline"
           >
             {t('common.edit')}
           </button>
-          <button
-            type="button"
-            onClick={() => setDeleteTarget(info.row.original)}
-            className="text-xs text-red-500 hover:underline"
-          >
-            {t('common.delete')}
-          </button>
+          {/* No delete in the API: a driver who leaves is set Inactive (prompt 05). */}
         </div>
       ),
     }),
   ]
 
-  const handleDelete = async () => {
-    if (!deleteTarget) return
-    const name = deleteTarget.driverName
-    try {
-      removeMockDriver(deleteTarget.driverID)
-      setData((prev) => prev.filter((d) => d.driverID !== deleteTarget.driverID))
-      success(STRINGS.deleteSuccess, STRINGS.deleteSuccessMsg(name))
-    } catch {
-      error(STRINGS.deleteFailed, STRINGS.deleteFailedMsg)
-    } finally {
-      setDeleteTarget(null)
-    }
-  }
-
-  return (
-    <>
-      <DataTable data={data} columns={columns} pageSize={15} />
-      <ConfirmDialog
-        open={deleteTarget !== null}
-        title={STRINGS.deleteTitle}
-        message={deleteTarget ? STRINGS.deleteMessage(deleteTarget.driverName) : ''}
-        confirmLabel={t('common.delete')}
-        onConfirm={handleDelete}
-        onCancel={() => setDeleteTarget(null)}
-        destructive
-      />
-    </>
-  )
+  return <DataTable data={data} columns={columns} pageSize={15} />
 }

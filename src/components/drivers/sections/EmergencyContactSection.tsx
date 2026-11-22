@@ -6,6 +6,8 @@ import { useT } from '@/i18n/I18nContext'
 
 interface EmergencyContactSectionProps {
   form: UseFormReturn<DriverFormValues>
+  /** Read-only inputs (Trucking-owned, personal data, hidden rates). */
+  locked?: ReadonlySet<string>
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -18,21 +20,22 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 function inputClass() {
-  return 'w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500'
+  return 'w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed'
 }
 
-export function EmergencyContactSection({ form }: EmergencyContactSectionProps) {
+export function EmergencyContactSection({ form, locked }: EmergencyContactSectionProps) {
+  const lock = (field: string) => !!locked?.has(field)
   const { t } = useT()
   const { register } = form
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <Field label={t('form.contactPerson')}>
-        <input {...register('contactPerson')} className={inputClass()} placeholder="Emergency contact name" />
+        <input {...register('contactPerson')} disabled={lock('contactPerson')} className={inputClass()} placeholder="Emergency contact name" />
       </Field>
 
       <Field label={t('form.mobile')}>
-        <input {...register('mobilePhoneNumber')} className={inputClass()} placeholder="+66 xx xxx xxxx" />
+        <input {...register('mobilePhoneNumber')} disabled={lock('mobilePhoneNumber')} className={inputClass()} placeholder="+66 xx xxx xxxx" />
       </Field>
     </div>
   )

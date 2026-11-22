@@ -1,33 +1,18 @@
 'use client'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import type { MeterHrLog, MeterHrLogFormValues } from '@/types/meter-hr-log'
-import { meterHrLogSchema } from '@/types/meter-hr-log'
-import { useMeterHrLog } from '@/lib/hooks/useMeterHrLog'
-import { useToastStore } from '@/lib/stores/useToastStore'
 import { FormLayout } from '@/components/shared/FormLayout'
-import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
+import { AssetCodeInput, DriverCodeInput, MeterReadingActions, MeterStatusBadge } from '@/components/meters/MeterBits'
+import { useMeterEntry } from '@/components/meters/useMeterEntry'
+import { useAssetMeters, type MeterReadingView } from '@/lib/api/fleet/meters'
+import { useFleetAccess } from '@/lib/api/fleet/access'
 import { useT } from '@/i18n/I18nContext'
 
-const METER_TYPE_OPTIONS = ['KM', 'HOUR', 'BOTH'] as const
-
 interface Props {
-  meterHrLog: MeterHrLog | MeterHrLogFormValues
-  meterHrLogID: string
-  isNew: boolean
+  /** A saved reading (opened from the list): read-only. Absent = record a new one. */
+  reading?: MeterReadingView | null
 }
 
-function Field({
-  label,
-  error,
-  children,
-}: {
-  label: string
-  error?: string
-  children: React.ReactNode
-}) {
+function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1">
       <label className="text-xs font-medium text-gray-600">{label}</label>
@@ -39,228 +24,115 @@ function Field({
 
 function ic(ro?: boolean) {
   return `w-full px-3 py-2 text-sm border rounded-lg focus:outline-none ${
-    ro
-      ? 'bg-gray-50 text-gray-500 border-gray-200'
-      : 'bg-white border-gray-300 focus:ring-2 focus:ring-blue-500'
+    ro ? 'bg-gray-50 text-gray-500 border-gray-200' : 'bg-white border-gray-300 focus:ring-2 focus:ring-blue-500'
   }`
 }
 
-export function MeterHrLogFormClient({ meterHrLog, meterHrLogID, isNew }: Props) {
+const fmtDateTime = (iso: string) => new Date(iso).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+
+/**
+ * Meter HR Logs (HOUR). Same two sections. New: "Meter Reading (km)" takes the km, "Total Hours" (cumulative hrs) the
+ * hour-meter value; Distance Travel / Total Working Hours / Total Distance are worked out by the API (read-only).
+ */
+export function MeterHrLogFormClient({ reading }: Props) {
   const { t } = useT()
-  const [showDelete, setShowDelete] = useState(false)
   const router = useRouter()
-  const { isSaving, isDeleting, save, remove } = useMeterHrLog(meterHrLogID)
-  const { success, error } = useToastStore()
+  const isNew = !reading
+  const e = useMeterEntry('HOUR', '/fleet/meter-hr-logs')
+  const meters = useAssetMeters(isNew ? e.asset?.id ?? null : null)
+  const canRecord = useFleetAccess().canAnywhere('fleet.meter.record')
+  const kmOff = isNew && e.meterType === 'HOUR'
+  const hoursOff = isNew && e.meterType === 'KM'
+  const title = isNew ? `${t('common.new')} ${t('nav.meterHrLogs')}` : reading.equipmentCode
+  const isKm = reading?.meterType === 'KM'
 
-  const form = useForm<MeterHrLogFormValues>({
-    resolver: zodResolver(meterHrLogSchema) as any,
-    defaultValues: meterHrLog,
-  })
+  const readingTab = isNew ? (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {e.banner && <div role="alert" className="sm:col-span-2 lg:col-span-3 p-3 rounded-lg border border-red-200 bg-red-50 text-sm text-red-700">{e.banner}</div>}
+      <Field label="Equipment Code *" error={e.fieldErrors.equipmentCode ?? (e.equipmentCode && !e.asset ? t('meter.rule.asset') : undefined)}>
+        <AssetCodeInput value={e.equipmentCode} onChange={e.setEquipmentCode} onResolve={e.setAsset} className={ic()} placeholder="e.g. EQ-001" id="hr-asset-codes" />
+      </Field>
+      <Field label="Meter Update Date *" error={e.fieldErrors.meterUpdateDate}>
+        <input type="datetime-local" value={e.readingAt} onChange={(x) => e.setReadingAt(x.target.value)} className={ic()} />
+      </Field>
+      <Field label="Meter Type *">
+        <select value={e.meterType} onChange={(x) => e.setMeterType(x.target.value as typeof e.meterType)} className={ic()}>
+          {e.allowed.map((m) => <option key={m} value={m}>{m}</option>)}
+        </select>
+      </Field>
+      <Field label="Driver Name" error={e.fieldErrors.driverName}>
+        <DriverCodeInput value={e.driverText} onChange={e.setDriverText} onResolve={e.setDriver} className={ic()} placeholder="Driver full name" id="hr-driver-codes" />
+      </Field>
+      <Field label="Sequence No.">
+        <input readOnly value="" placeholder={t('meter.seqIsTime')} className={ic(true)} />
+      </Field>
+    </div>
+  ) : (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="sm:col-span-2 lg:col-span-3 flex items-center gap-2 text-xs text-gray-500">
+        <MeterStatusBadge status={reading.status} reason={reading.suspectReason} />
+        <span>{reading.suspectReason ?? t('meter.readOnlyHint')}</span>
+      </div>
+      <Field label="Equipment Code *"><input readOnly value={`${reading.equipmentCode}${reading.registrationNo ? ` · ${reading.registrationNo}` : ''}`} className={ic(true)} /></Field>
+      <Field label="Meter Update Date *"><input readOnly value={fmtDateTime(reading.meterUpdateDate)} className={ic(true)} /></Field>
+      <Field label="Meter Type *"><input readOnly value={reading.meterType} className={ic(true)} /></Field>
+      <Field label="Driver Name"><input readOnly value={reading.driverName ?? '—'} className={ic(true)} /></Field>
+      <Field label="Sequence No."><input readOnly value={fmtDateTime(reading.meterUpdateDate)} className={ic(true)} /></Field>
+    </div>
+  )
 
-  const {
-    handleSubmit,
-    register,
-    watch,
-    formState: { errors, isDirty },
-  } = form
-
-  const sequenceNo = watch('sequenceNo')
-  const equipmentCode = watch('equipmentCode')
-  const title = isNew
-    ? `${t('common.new')} ${t('nav.meterHrLogs')}`
-    : sequenceNo || equipmentCode || t('nav.meterHrLogs')
-
-  const handleSave = handleSubmit(async (values) => {
-    try {
-      const saved = await save(values)
-      success(
-        'Meter hour log saved',
-        `${saved.sequenceNo || saved.equipmentCode} has been saved.`,
-      )
-      form.reset(saved)
-      if (isNew) router.push(`/fleet/meter-hr-logs/${saved.meterHrLogID}`)
-    } catch {
-      error('Save failed', 'An error occurred.')
-    }
-  })
-
-  const handleDelete = async () => {
-    const rec = meterHrLog as MeterHrLog
-    const label = rec.meterHrLogID
-      ? rec.sequenceNo || `MH-${rec.meterHrLogID}`
-      : 'this meter hour log'
-    try {
-      await remove()
-      success('Deleted', `${label} has been removed.`)
-      router.push('/fleet/meter-hr-logs')
-    } catch {
-      error('Delete failed', 'An error occurred.')
-    } finally {
-      setShowDelete(false)
-    }
-  }
-
-  const tabs = [
-    {
-      id: 'reading',
-      label: t('form.reading'),
-      content: (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Field label="Equipment Code *" error={errors.equipmentCode?.message}>
-            <input
-              {...register('equipmentCode')}
-              className={ic()}
-              placeholder="e.g. EQ-001"
-            />
-          </Field>
-
-          <Field label="Meter Update Date *" error={errors.meterUpdateDate?.message}>
-            <input type="date" {...register('meterUpdateDate')} className={ic()} />
-          </Field>
-
-          <Field label="Meter Type *" error={errors.meterType?.message}>
-            <select {...register('meterType')} className={ic()}>
-              {METER_TYPE_OPTIONS.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-          </Field>
-
-          <Field label="Driver Name">
-            <input {...register('driverName')} className={ic()} placeholder="Driver full name" />
-          </Field>
-
-          <Field label="Sequence No.">
-            <input
-              {...register('sequenceNo')}
-              className={ic()}
-              placeholder="e.g. MH-2024-001"
-            />
-          </Field>
-        </div>
-      ),
-    },
-    {
-      id: 'meters',
-      label: t('form.meters'),
-      content: (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Field label="Meter Reading (km) *" error={errors.meterRead?.message}>
-            <input
-              type="number"
-              step="1"
-              min="0"
-              {...register('meterRead')}
-              className={ic()}
-              placeholder="odometer km"
-            />
-          </Field>
-
-          <Field label="Distance Travel (km)">
-            <input
-              type="number"
-              step="1"
-              min="0"
-              {...register('distanceTravel')}
-              className={ic()}
-              placeholder="km this trip"
-            />
-          </Field>
-
-          <Field label="Total Working Hours">
-            <input
-              type="number"
-              step="0.5"
-              min="0"
-              {...register('totalWorkingHr')}
-              className={ic()}
-              placeholder="hours worked"
-            />
-          </Field>
-
-          <Field label="Total Distance (km)">
-            <input
-              type="number"
-              step="1"
-              min="0"
-              {...register('totalDistance')}
-              className={ic()}
-              placeholder="cumulative km"
-            />
-          </Field>
-
-          <Field label="Total Hours">
-            <input
-              type="number"
-              step="0.5"
-              min="0"
-              {...register('totalHours')}
-              className={ic()}
-              placeholder="cumulative hrs"
-            />
-          </Field>
-
-          <Field label="Remarks">
-            <textarea
-              {...register('remarks')}
-              rows={3}
-              className={`${ic()} resize-none`}
-              placeholder="Optional notes…"
-            />
-          </Field>
-        </div>
-      ),
-    },
-  ]
+  const metersTab = isNew ? (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <Field label="Meter Reading (km) *" error={e.fieldErrors.meterRead}>
+        <input type="number" step="1" min="0" value={e.km} onChange={(x) => e.setKm(x.target.value)} disabled={kmOff} className={ic(kmOff)} placeholder="odometer km" />
+      </Field>
+      <Field label="Distance Travel (km)"><input readOnly value="" placeholder={t('meter.afterSave')} className={ic(true)} /></Field>
+      <Field label="Total Working Hours"><input readOnly value="" placeholder={t('meter.afterSave')} className={ic(true)} /></Field>
+      <Field label="Total Distance (km)">
+        <input readOnly value={meters.data?.currentKm != null ? Number(meters.data.currentKm).toLocaleString() : ''} placeholder="cumulative km" className={ic(true)} />
+      </Field>
+      <Field label="Total Hours" error={e.fieldErrors.hourMeter}>
+        <input type="number" step="0.1" min="0" value={e.hours} onChange={(x) => e.setHours(x.target.value)} disabled={hoursOff} className={ic(hoursOff)}
+          placeholder={meters.data?.currentHours != null ? `${t('meter.current')} ${Number(meters.data.currentHours).toLocaleString()}` : 'cumulative hrs'} />
+      </Field>
+      <Field label="Remarks">
+        <textarea value={e.remarks} onChange={(x) => e.setRemarks(x.target.value)} rows={3} className={`${ic()} resize-none`} placeholder="Optional notes…" />
+      </Field>
+    </div>
+  ) : (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <Field label="Meter Reading (km) *"><input readOnly value={isKm ? reading.value.toLocaleString() : '—'} className={ic(true)} /></Field>
+      <Field label="Distance Travel (km)"><input readOnly value={isKm && reading.sinceLast != null ? reading.sinceLast.toLocaleString() : '—'} className={ic(true)} /></Field>
+      <Field label="Total Working Hours"><input readOnly value={!isKm && reading.sinceLast != null ? reading.sinceLast.toLocaleString() : '—'} className={ic(true)} /></Field>
+      <Field label="Total Distance (km)"><input readOnly value={isKm ? Number(reading.dto.lifetimeValue).toLocaleString() : '—'} className={ic(true)} /></Field>
+      <Field label="Total Hours"><input readOnly value={!isKm ? Number(reading.dto.lifetimeValue).toLocaleString() : '—'} className={ic(true)} /></Field>
+      <Field label="Remarks"><textarea readOnly value={reading.remarks ?? ''} rows={3} className={`${ic(true)} resize-none`} /></Field>
+    </div>
+  )
 
   return (
-    <>
-      <FormLayout
-        title={title}
-        subtitle={isNew ? 'Create a new meter hour log entry' : meterHrLogID}
-        tabs={tabs}
-        isNew={isNew}
-        actions={
-          <div className="flex items-center gap-2">
-            {!isNew && (
-              <button
-                type="button"
-                onClick={() => setShowDelete(true)}
-                disabled={isDeleting}
-                className="px-4 py-2 text-sm font-medium rounded-lg border border-red-300 text-red-600 hover:bg-red-50 disabled:opacity-50"
-              >
-                {isDeleting ? t('common.loading') : t('common.delete')}
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-            >
-              {t('common.cancel')}
+    <FormLayout
+      title={title}
+      subtitle={isNew ? 'Create a new meter hour log entry' : `${reading.source} · ${fmtDateTime(reading.meterUpdateDate)}`}
+      tabs={[
+        { id: 'reading', label: t('form.reading'), content: readingTab },
+        { id: 'meters', label: t('form.meters'), content: metersTab },
+      ]}
+      isNew={isNew}
+      actions={
+        <div className="flex items-center gap-2">
+          {!isNew && <MeterReadingActions reading={reading} variant="button" />}
+          <button type="button" onClick={() => router.back()} className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">
+            {isNew ? t('common.cancel') : t('common.close')}
+          </button>
+          {isNew && (
+            <button type="button" onClick={e.submit} disabled={e.saving || !e.dirty || !canRecord}
+              className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+              {e.saving ? t('common.loading') : t('common.save')}
             </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={isSaving || !isDirty}
-              className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSaving ? t('common.loading') : t('common.save')}
-            </button>
-          </div>
-        }
-      />
-      <ConfirmDialog
-        open={showDelete}
-        title="Delete Meter Hour Log"
-        message="Delete this meter hour log? This cannot be undone."
-        confirmLabel="Delete"
-        onConfirm={handleDelete}
-        onCancel={() => setShowDelete(false)}
-        destructive
-      />
-    </>
+          )}
+        </div>
+      }
+    />
   )
 }

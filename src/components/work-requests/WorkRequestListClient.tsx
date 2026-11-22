@@ -1,14 +1,35 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createColumnHelper } from '@tanstack/react-table'
-import type { WorkRequest } from '@/types/work-request'
 import { DataTable } from '@/components/shared/DataTable'
-import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
-import { useToastStore } from '@/lib/stores/useToastStore'
-import { removeMockWorkRequest } from '@/lib/mock/work-requests'
+import { viewWrStatus, type WorkRequestDto } from '@/lib/api/fleet/workRequests'
 import { useT } from '@/i18n/I18nContext'
+
+/** The old row shape, from a work request (API). */
+interface WorkRequest {
+  wrID: string
+  documentNo: string
+  orderDate: string
+  equipmentCode: string
+  billingCustomerName?: string
+  vendorName?: string
+  priorityType: string
+  description: string
+  status: string
+  approved: boolean
+  rejectReason: string | null
+  workOrderNo: string | null
+}
+
+const toRow = (d: WorkRequestDto): WorkRequest => {
+  const v = viewWrStatus(d)
+  return {
+    wrID: d.workRequestId, documentNo: d.documentNo, orderDate: d.documentDate, equipmentCode: d.assetCode,
+    billingCustomerName: d.billToPartyCode ?? undefined, vendorName: d.vendorPartyCode ?? undefined, priorityType: d.priority,
+    description: d.problem, status: v.status, approved: v.approved, rejectReason: v.rejected ? d.rejectReason : null, workOrderNo: d.workOrderNo,
+  }
+}
 
 const col = createColumnHelper<WorkRequest>()
 
@@ -33,15 +54,14 @@ function formatDate(dateStr?: string): string {
 }
 
 interface WorkRequestListClientProps {
-  initialData: WorkRequest[]
+  data: WorkRequestDto[]
 }
 
-export function WorkRequestListClient({ initialData }: WorkRequestListClientProps) {
-  const [data, setData] = useState<WorkRequest[]>(initialData)
-  const [deleteTarget, setDeleteTarget] = useState<WorkRequest | null>(null)
+/** Same columns; rows = work requests (API). Status is the API's; no delete (Cancel on the form). */
+export function WorkRequestListClient({ data }: WorkRequestListClientProps) {
   const router = useRouter()
-  const { success, error } = useToastStore()
   const { t } = useT()
+  const rows = data.map(toRow)
 
   const columns = [
     col.display({
@@ -104,14 +124,20 @@ export function WorkRequestListClient({ initialData }: WorkRequestListClientProp
       id: 'status',
       header: () => t('common.status'),
       cell: (info) => {
-        const { status } = info.row.original
+        const { status, approved, rejectReason, workOrderNo } = info.row.original
         const cls = WR_BADGE[status] ?? 'bg-gray-100 text-gray-600'
         return (
-          <span
-            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${cls}`}
-          >
-            {status}
-          </span>
+          <div className="flex flex-col gap-0.5 items-start">
+            <span
+              title={rejectReason ?? undefined}
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${cls}`}
+            >
+              {status}
+            </span>
+            {approved && status === 'SUBMITTED' && <span className="text-[10px] text-green-700">{t('wr.approved')}</span>}
+            {rejectReason && <span className="text-[10px] text-red-600">{t('wr.rejected')}</span>}
+            {workOrderNo && <span className="text-[10px] text-gray-400 font-mono">{workOrderNo}</span>}
+          </div>
         )
       },
     }),
@@ -130,49 +156,12 @@ export function WorkRequestListClient({ initialData }: WorkRequestListClientProp
             >
               {t('common.edit')}
             </button>
-            <button
-              type="button"
-              onClick={() => setDeleteTarget(r)}
-              className="text-xs text-red-500 hover:underline"
-            >
-              {t('common.delete')}
-            </button>
+            {/* No delete: Cancel on the form (prompt 09). */}
           </div>
         )
       },
     }),
   ]
 
-  const handleDelete = async () => {
-    if (!deleteTarget) return
-    const label = deleteTarget.documentNo || `WR-${deleteTarget.wrID}`
-    try {
-      removeMockWorkRequest(deleteTarget.wrID)
-      setData((prev) => prev.filter((r) => r.wrID !== deleteTarget.wrID))
-      success('Work request deleted', `${label} has been removed.`)
-    } catch {
-      error('Delete failed', 'An error occurred. Please try again.')
-    } finally {
-      setDeleteTarget(null)
-    }
-  }
-
-  return (
-    <>
-      <DataTable data={data} columns={columns} pageSize={15} />
-      <ConfirmDialog
-        open={deleteTarget !== null}
-        title="Delete Work Request"
-        message={
-          deleteTarget
-            ? `Are you sure you want to delete "${deleteTarget.documentNo || `WR-${deleteTarget.wrID}`}"? This action cannot be undone.`
-            : ''
-        }
-        confirmLabel={t('common.delete')}
-        onConfirm={handleDelete}
-        onCancel={() => setDeleteTarget(null)}
-        destructive
-      />
-    </>
-  )
+  return <DataTable data={rows} columns={columns} pageSize={15} />
 }

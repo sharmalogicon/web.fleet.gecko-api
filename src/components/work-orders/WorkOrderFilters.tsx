@@ -15,15 +15,8 @@ const WO_STATUSES = [
   'INVOICED',
 ] as const
 
-const WO_CATEGORIES = [
-  'ALL',
-  'ENGINE',
-  'BRAKE',
-  'TYRE',
-  'ELECTRICAL',
-  'PM',
-  'INSPECTION',
-] as const
+/** The work-order types (API `woType`). */
+const WO_CATEGORIES = ['ALL', 'CORRECTIVE', 'BREAKDOWN', 'PM', 'ACCIDENT', 'TYRE', 'INSPECTION', 'CAMPAIGN'] as const
 
 interface WorkOrderFiltersProps {
   documentNo: string

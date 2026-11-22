@@ -20,9 +20,41 @@ export interface VehicleConfig {
   id: string
   /** i18n key under tireMap.configs */
   labelKey: string
+  /** Layout name from the API (shown instead of the i18n label when set). */
+  label?: string
   body: BodyStyle
   axles: AxleDef[]
   spares: number
+  /** Wheel placement from GET /assets/{id}/axle-map (prompt 13): used instead of recomputing when present. */
+  geometry2D?: MapGeometry2D
+  geometry3D?: MapGeometry3D
+}
+
+export interface MapGeometry2D {
+  viewBoxWidth: number
+  viewBoxHeight: number
+  centreX: number
+  railOffsetX: number
+  frameTopY: number
+  frameBottomY: number
+  axleY: number[]
+  wheels: Record<string, { x: number; y: number; width: number; height: number; rotationDeg: number }>
+}
+
+export interface MapGeometry3D {
+  wheelRadius: number
+  wheelWidth: number
+  frameHeight: number
+  railOffsetX: number
+  lengthZ: number
+  axleZ: number[]
+  wheels: Record<string, { x: number; y: number; z: number; radius: number; width: number; flat: boolean }>
+}
+
+export interface TreadThresholds {
+  treadWarningMm: number
+  treadCriticalMm: number
+  pressureTolerancePct: number
 }
 
 export type TireType = 'new' | 'recap'
@@ -42,6 +74,13 @@ export interface Tire {
   km: number
   cost: number
   installedOn?: string
+  /** API tyre id (UUID); absent on mock tyres. */
+  id?: string
+  /** Computed by the API from the tenant thresholds (wins over the local rule). */
+  health?: TireHealth
+  pressureAlert?: boolean
+  costPerKm?: number | null
+  thresholds?: TreadThresholds
 }
 
 export interface Vehicle {
@@ -99,17 +138,25 @@ export const PRESSURE_TOLERANCE = 0.1
 
 export type TireHealth = 'good' | 'warning' | 'critical'
 
+/** The API's `health` when given, else the rule with the tyre's thresholds (or the defaults above). */
 export function tireHealth(t: Tire): TireHealth {
-  if (t.treadMM < TREAD_CRITICAL_MM) return 'critical'
-  if (t.treadMM < TREAD_WARNING_MM) return 'warning'
+  if (t.health) return t.health
+  const critical = t.thresholds?.treadCriticalMm ?? TREAD_CRITICAL_MM
+  const warning = t.thresholds?.treadWarningMm ?? TREAD_WARNING_MM
+  if (t.treadMM < critical) return 'critical'
+  if (t.treadMM < warning) return 'warning'
   return 'good'
 }
 
 export function pressureAlert(t: Tire): boolean {
-  return Math.abs(t.pressurePsi - t.targetPsi) / t.targetPsi > PRESSURE_TOLERANCE
+  if (t.pressureAlert !== undefined) return t.pressureAlert
+  if (!t.targetPsi) return false
+  const tol = t.thresholds ? t.thresholds.pressureTolerancePct / 100 : PRESSURE_TOLERANCE
+  return Math.abs(t.pressurePsi - t.targetPsi) / t.targetPsi > tol
 }
 
 export function costPerKm(t: Tire): number | null {
+  if (t.costPerKm !== undefined) return t.costPerKm
   return t.km > 0 ? t.cost / t.km : null
 }
 

@@ -1,12 +1,13 @@
 import { z } from 'zod'
+import { optNum } from '@/lib/utils/zod'
 
 export const serviceTypeSchema = z.object({
   code: z.string().min(1, 'Code is required'),
   description: z.string().min(1, 'Description is required'),
   serviceCategory: z.string().min(1, 'Category is required'),
-  estimationDuration: z.coerce.number().min(0).optional(),
-  advanceNotifyDay: z.coerce.number().min(0).optional(),
-  advanceNotifyKM: z.coerce.number().min(0).optional(),
+  estimationDuration: optNum.refine((v) => v === undefined || v >= 0, '0 or more'),
+  advanceNotifyDay: optNum.refine((v) => v === undefined || v >= 0, '0 or more'),
+  advanceNotifyKM: optNum.refine((v) => v === undefined || v >= 0, '0 or more'),
   isActive: z.boolean().default(true),
 })
 

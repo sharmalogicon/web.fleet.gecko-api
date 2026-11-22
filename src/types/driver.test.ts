@@ -22,9 +22,9 @@ describe('driverSchema', () => {
     expect(result.success).toBe(false)
   })
 
-  it('rejects invalid email', () => {
-    const result = driverSchema.safeParse({ driverCode: 'DRV-001', driverName: 'John', status: 'ACTIVE', emailID: 'not-an-email' })
-    expect(result.success).toBe(false)
+  it('does not validate the e-mail (read-only personal data from Trucking, may read "On file in Trucking")', () => {
+    const result = driverSchema.safeParse({ driverCode: 'DRV-001', driverName: 'John', status: 'ACTIVE', emailID: 'On file in Trucking' })
+    expect(result.success).toBe(true)
   })
 
   it('accepts empty string email', () => {

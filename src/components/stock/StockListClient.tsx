@@ -1,19 +1,15 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createColumnHelper } from '@tanstack/react-table'
-import type { StockProfile } from '@/types/stock'
+import type { StockView } from '@/lib/api/fleet/items'
 import { DataTable } from '@/components/shared/DataTable'
-import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
-import { useToastStore } from '@/lib/stores/useToastStore'
-import { removeMockStock } from '@/lib/mock/stock'
 import { useT } from '@/i18n/I18nContext'
 
-const col = createColumnHelper<StockProfile>()
+const col = createColumnHelper<StockView>()
 
 interface StockListClientProps {
-  initialData: StockProfile[]
+  data: StockView[]
 }
 
 function fmt(value: number | undefined): string {
@@ -21,11 +17,9 @@ function fmt(value: number | undefined): string {
   return value.toLocaleString('th-TH', { minimumFractionDigits: 0, maximumFractionDigits: 2 })
 }
 
-export function StockListClient({ initialData }: StockListClientProps) {
-  const [data, setData] = useState<StockProfile[]>(initialData)
-  const [deleteTarget, setDeleteTarget] = useState<StockProfile | null>(null)
+/** Same columns; rows = Fleet items. Qty / cost arrive with the stock ledger (P4). No delete: inactive. */
+export function StockListClient({ data }: StockListClientProps) {
   const router = useRouter()
-  const { success, error } = useToastStore()
   const { t } = useT()
 
   const columns = [
@@ -38,7 +32,7 @@ export function StockListClient({ initialData }: StockListClientProps) {
           <div className="flex flex-col gap-0.5">
             <button
               type="button"
-              onClick={() => router.push(`/master/stock/${s.stockID}`)}
+              onClick={() => router.push(`/master/stock/${s.id}`)}
               className="text-blue-600 hover:underline text-left text-sm font-medium font-mono"
             >
               {s.code}
@@ -68,12 +62,12 @@ export function StockListClient({ initialData }: StockListClientProps) {
       header: 'Qty / Reorder',
       cell: (info) => {
         const { totalQtyOnHand, reOrderLevel, minQty, maxQty } = info.row.original
-        const qty = totalQtyOnHand ?? 0
-        const isLow = reOrderLevel != null && qty <= reOrderLevel
+        const qty = totalQtyOnHand
+        const isLow = qty != null && reOrderLevel != null && qty <= reOrderLevel
         return (
           <div className="flex flex-col gap-0.5">
             <span className={`text-sm font-bold ${isLow ? 'text-orange-500' : 'text-gray-800'}`}>
-              {fmt(qty)}
+              {qty != null ? fmt(qty) : '—'}
             </span>
             <span className="text-xs text-gray-400">
               Min: {minQty ?? '—'} / Max: {maxQty ?? '—'}
@@ -118,54 +112,17 @@ export function StockListClient({ initialData }: StockListClientProps) {
             </span>
             <button
               type="button"
-              onClick={() => router.push(`/master/stock/${s.stockID}`)}
+              onClick={() => router.push(`/master/stock/${s.id}`)}
               className="text-xs text-blue-600 hover:underline"
             >
               {t('common.edit')}
             </button>
-            <button
-              type="button"
-              onClick={() => setDeleteTarget(s)}
-              className="text-xs text-red-500 hover:underline"
-            >
-              {t('common.delete')}
-            </button>
+            {/* No delete in the API: switch the item off instead (prompt 07). */}
           </div>
         )
       },
     }),
   ]
 
-  const handleDelete = async () => {
-    if (!deleteTarget) return
-    const name = deleteTarget.code
-    try {
-      removeMockStock(deleteTarget.stockID)
-      setData((prev) => prev.filter((r) => r.stockID !== deleteTarget.stockID))
-      success('Stock deleted', `${name} has been removed.`)
-    } catch {
-      error('Delete failed', 'An error occurred. Please try again.')
-    } finally {
-      setDeleteTarget(null)
-    }
-  }
-
-  return (
-    <>
-      <DataTable data={data} columns={columns} pageSize={15} />
-      <ConfirmDialog
-        open={deleteTarget !== null}
-        title="Delete Stock Item"
-        message={
-          deleteTarget
-            ? `Are you sure you want to delete "${deleteTarget.code}"? This action cannot be undone.`
-            : ''
-        }
-        confirmLabel={t('common.delete')}
-        onConfirm={handleDelete}
-        onCancel={() => setDeleteTarget(null)}
-        destructive
-      />
-    </>
-  )
+  return <DataTable data={data} columns={columns} pageSize={15} />
 }

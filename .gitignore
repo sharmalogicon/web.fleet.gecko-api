@@ -35,3 +35,6 @@ next-env.d.ts
 # OS
 .DS_Store
 Thumbs.db
+
+# local https certificate for `npm run dev` (localhost.pem + localhost-key.pem)
+certificates/

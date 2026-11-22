@@ -1,27 +1,20 @@
 'use client'
 
 import { useState } from 'react'
-import { getMockEquipment } from '@/lib/mock/equipment'
-import type { Equipment } from '@/types/equipment'
+import { useAssets, type AssetView } from '@/lib/api/fleet/assets'
 
 interface AddEquipmentModalProps {
   open: boolean
   onClose: () => void
-  onAdd: (equipment: Equipment) => void
+  onAdd: (equipment: AssetView) => void
   alreadyAddedCodes: string[]
 }
 
+/** Same modal; the list is the asset register (GET /assets?search=, active assets only). */
 export function AddEquipmentModal({ open, onClose, onAdd, alreadyAddedCodes }: AddEquipmentModalProps) {
   const [query, setQuery] = useState('')
-  const allEquipment = getMockEquipment()
-  const filtered = allEquipment
-    .filter((e) => !alreadyAddedCodes.includes(e.code))
-    .filter(
-      (e) =>
-        query === '' ||
-        e.code.toLowerCase().includes(query.toLowerCase()) ||
-        (e.registrationNo ?? '').toLowerCase().includes(query.toLowerCase()),
-    )
+  const assets = useAssets({ search: query.trim() || undefined, status: 'ACTIVE' })
+  const filtered = (assets.data?.rows ?? []).filter((e) => !alreadyAddedCodes.includes(e.code))
 
   if (!open) return null
 
@@ -53,11 +46,12 @@ export function AddEquipmentModal({ open, onClose, onAdd, alreadyAddedCodes }: A
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3"
           />
           <div className="max-h-64 overflow-y-auto divide-y divide-gray-100">
-            {filtered.length === 0 && (
+            {assets.isLoading && <p className="py-4 text-center text-sm text-gray-400">…</p>}
+            {!assets.isLoading && filtered.length === 0 && (
               <p className="py-4 text-center text-sm text-gray-400">No equipment available</p>
             )}
             {filtered.map((e) => (
-              <div key={e.equipmentID} className="flex items-center justify-between py-2">
+              <div key={e.id} className="flex items-center justify-between py-2">
                 <div>
                   <p className="text-sm font-medium text-gray-900">{e.code}</p>
                   <p className="text-xs text-gray-400">

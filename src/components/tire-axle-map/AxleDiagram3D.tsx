@@ -38,15 +38,20 @@ interface Layout3D {
   frontZ: number
   endZ: number
   spareZ: number
+  /** Shift from API z (front axle = 0) to the scene's centred z. */
+  mid: number
 }
 
 function layoutFor(config: VehicleConfig): Layout3D {
-  const raw: number[] = []
+  // API geometry (prompt 13): front axle z = 0, towards the rear; else the local spacing.
+  const raw: number[] = config.geometry3D?.axleZ.length ? [...config.geometry3D.axleZ] : []
   let z = 0
-  config.axles.forEach((a, i) => {
-    if (i > 0) z += config.axles[i - 1].kind === 'steer' && a.kind !== 'steer' ? 2.2 : 1.3
-    raw.push(z)
-  })
+  if (!raw.length) {
+    config.axles.forEach((a, i) => {
+      if (i > 0) z += config.axles[i - 1].kind === 'steer' && a.kind !== 'steer' ? 2.2 : 1.3
+      raw.push(z)
+    })
+  }
   const front = config.body === 'trailer' ? -2.6 : -0.9
   const end = raw[raw.length - 1] + 0.9
   const mid = (front + end + (config.spares ? 1.4 : 0)) / 2
@@ -55,6 +60,7 @@ function layoutFor(config: VehicleConfig): Layout3D {
     frontZ: front - mid,
     endZ: end - mid,
     spareZ: end + 1.0 - mid,
+    mid,
   }
 }
 
@@ -65,6 +71,8 @@ interface Placed {
 }
 
 function place(slot: PositionSlot, config: VehicleConfig, l: Layout3D): Placed {
+  const w = config.geometry3D?.wheels[slot.code]
+  if (w) return { slot, pos: [w.x, w.y, w.z - l.mid], spare: w.flat }
   if (slot.axleIndex < 0) {
     const n = Number(slot.code.slice(2))
     const gap = 1.25

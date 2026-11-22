@@ -1,58 +1,13 @@
-import { Suspense } from 'react'
-import Link from 'next/link'
-import { getTireMaintenanceList } from '@/lib/data/tire-maintenance'
-import { TireMaintenanceListClient } from '@/components/tire-maintenance/TireMaintenanceListClient'
-import { TireMaintenanceFilters } from '@/components/tire-maintenance/TireMaintenanceFilters'
-import { ListPage } from '@/components/shared/ListPage'
-import { getT } from '@/i18n/server'
+import { TyreDocumentsListView } from '@/components/tire-changes/TyreDocumentViews'
 
-export const metadata = { title: 'Tire Maintenance | Fleet' }
+export const metadata = { title: 'Tyre maintenance | Fleet' }
 
 interface PageProps {
-  searchParams: Promise<{
-    documentNo?: string
-    equipmentCode?: string
-    vendorName?: string
-    dateFrom?: string
-    dateTo?: string
-  }>
+  searchParams: Promise<{ documentNo?: string; vendorName?: string; dateFrom?: string; dateTo?: string }>
 }
 
-export default async function TireMaintenancePage({ searchParams }: PageProps) {
-  const params = await searchParams
-  const { t } = await getT()
-  const records = await getTireMaintenanceList({
-    documentNo: params.documentNo,
-    equipmentCode: params.equipmentCode,
-    vendorName: params.vendorName,
-    dateFrom: params.dateFrom,
-    dateTo: params.dateTo,
-  })
-
-  return (
-    <ListPage
-      title={t('nav.tireMaintenance')}
-      subtitle={`${records.length} record${records.length !== 1 ? 's' : ''} found`}
-      actions={
-        <Link
-          href="/fleet/tires/maintenance/new"
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700"
-        >
-          + {t('nav.tireMaintenance')}
-        </Link>
-      }
-      filters={
-        <TireMaintenanceFilters
-          documentNo={params.documentNo ?? ''}
-          vendorName={params.vendorName ?? ''}
-          dateFrom={params.dateFrom ?? ''}
-          dateTo={params.dateTo ?? ''}
-        />
-      }
-    >
-      <Suspense fallback={null}>
-        <TireMaintenanceListClient initialData={records} />
-      </Suspense>
-    </ListPage>
-  )
+/** Tyre documents kind=MAINTENANCE on `/api/fleet/tyre-documents` (prompt 13 §C). */
+export default async function Page({ searchParams }: PageProps) {
+  const p = await searchParams
+  return <TyreDocumentsListView kind="MAINTENANCE" documentNo={p.documentNo ?? ''} party={p.vendorName ?? ''} dateFrom={p.dateFrom ?? ''} dateTo={p.dateTo ?? ''} />
 }

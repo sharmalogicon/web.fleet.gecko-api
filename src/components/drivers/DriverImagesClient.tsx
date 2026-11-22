@@ -1,6 +1,7 @@
 'use client'
 
-import type { Driver } from '@/types/driver'
+import { Loader2 } from 'lucide-react'
+import { useDriver } from '@/lib/api/fleet/drivers'
 import { ImageGallery } from '@/components/shared/ImageGallery'
 import { ListPage } from '@/components/shared/ListPage'
 
@@ -11,6 +12,7 @@ interface DriverImage {
   uploadedAt: string
 }
 
+/** Still mock (prompt 05: no image API yet); keyed by the old numeric ids, so API drivers show none. */
 function getMockDriverImages(driverID: number): DriverImage[] {
   if (driverID === 1) return [
     { imageID: 1, filename: 'profile_drv001.jpg', url: '/placeholder.jpg', uploadedAt: '2024-03-15' },
@@ -25,15 +27,19 @@ function getMockDriverImages(driverID: number): DriverImage[] {
 }
 
 interface Props {
-  driver: Driver
+  /** The driver's UUID (Fleet API). */
+  driverId: string
 }
 
-export function DriverImagesClient({ driver }: Props) {
-  const images = getMockDriverImages(driver.driverID)
+export function DriverImagesClient({ driverId }: Props) {
+  const driver = useDriver(driverId)
+  if (driver.isLoading) return <div className="flex justify-center py-16 text-gray-400"><Loader2 size={22} className="animate-spin" /></div>
+  if (!driver.data) return <p className="text-sm text-red-600">Driver not found.</p>
+  const images = getMockDriverImages(Number(driverId))
   return (
     <ListPage
-      title={`${driver.driverName} — Photos`}
-      subtitle={`Driver Code: ${driver.driverCode}`}
+      title={`${driver.data.driverName} — Photos`}
+      subtitle={`Driver Code: ${driver.data.driverCode}`}
     >
       <div className="p-6">
         <ImageGallery

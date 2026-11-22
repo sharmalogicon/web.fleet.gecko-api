@@ -1,13 +1,19 @@
 'use client'
 
 import { useCallback, useMemo, useState } from 'react'
+import Link from 'next/link'
 import dynamic from 'next/dynamic'
-import { Undo2, Send, Truck, Gauge, AlertTriangle, CircleDot, Coins } from 'lucide-react'
-import type { RemovedTire, Tire, TireTransaction, Vehicle } from '@/types/tire-axle-map'
+import { Truck, Gauge, AlertTriangle, CircleDot, Coins, Loader2 } from 'lucide-react'
+import type { RemovedTire, Tire, TireTransaction } from '@/types/tire-axle-map'
 import { costPerKm, positionsFor, pressureAlert, tireHealth } from '@/types/tire-axle-map'
-import { VEHICLE_CONFIGS, buildMockInventory, buildMockVehicles } from '@/lib/mock/tire-axle-map'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { useT } from '@/i18n/I18nContext'
+import { useAssets } from '@/lib/api/fleet/assets'
+import { useFleetAccess } from '@/lib/api/fleet/access'
+import { useWarehouses } from '@/lib/api/fleet/warehouses'
+import { axleMapToVehicle, registerTyreToTire, tyreLines, useAxleMap, useTyreMutations, useTyres, type TyreAction } from '@/lib/api/fleet/tyres'
+import { ApiError } from '@/lib/api/problem'
+import { errorText } from '@/lib/api/errorText'
 import { AxleDiagram } from './AxleDiagram'
 import { AxleDiagramBay } from './AxleDiagramBay'
 
@@ -22,46 +28,54 @@ import { TireActionDialog, type ActionRequest, type ActionValues } from './TireA
 import { useTireDrag, type DragPayload } from './useTireDrag'
 import { HEALTH_COLOR } from './colors'
 
-interface BoardState {
-  vehicles: Vehicle[]
-  inventory: Tire[]
-  removed: RemovedTire[]
-  transactions: TireTransaction[]
-}
-
-let txSeq = 0
-const txId = () => `TX-${Date.now().toString(36)}-${++txSeq}`
-
+/**
+ * Axle map on the API (prompt 13 §A): GET /assets/{id}/axle-map (2D page + bay = format 2d, 3D page = 3d). Every action
+ * is posted at once as a one-line tyre-change document, then the map is fetched again. The log lists this session's
+ * posted actions.
+ */
 export function TireAxleMapClient({ variant = 'classic' }: { variant?: 'classic' | 'bay' | '3d' }) {
   const { t } = useT()
   const toast = useToastStore()
+  const { canAnywhere } = useFleetAccess()
+  const canManage = canAnywhere('fleet.tyre.manage')
+  const assets = useAssets({ status: 'ACTIVE' })
+  const withLayout = useMemo(() => (assets.data?.rows ?? []).filter((a) => a.axleLayoutId), [assets.data])
+  const [pickedAsset, setAssetId] = useState<string | null>(null)
+  const assetId = pickedAsset ?? withLayout[0]?.id ?? null
+  const assetBranchId = withLayout.find((a) => a.id === assetId)?.branchId ?? null
+  const branchStores = useWarehouses({ branchId: assetBranchId, active: true }, !!assetBranchId)
+  const storeOptions = useMemo(
+    () => (branchStores.data ?? []).map((w) => ({ warehouseId: w.warehouseId, label: `${w.warehouseCode} · ${w.nameEn}`, isDefault: w.isDefault })),
+    [branchStores.data],
+  )
 
-  const [state, setState] = useState<BoardState>(() => ({
-    vehicles: buildMockVehicles(),
-    inventory: buildMockInventory(),
-    removed: [],
-    transactions: [],
-  }))
-  const [history, setHistory] = useState<BoardState[]>([])
-  const [vehicleCode, setVehicleCode] = useState(state.vehicles[0].code)
+  const map = useAxleMap(assetId, variant === '3d' ? '3d' : '2d')
+  const built = useMemo(() => (map.data ? axleMapToVehicle(map.data) : null), [map.data])
+  const stock = useTyres({ status: 'IN_STOCK' })
+  const inventory = useMemo(() => (stock.data ?? []).map((x) => registerTyreToTire(x, built?.thresholds)), [stock.data, built])
+  const { change } = useTyreMutations()
+
+  const [transactions, setTransactions] = useState<TireTransaction[]>([])
+  const [removed, setRemoved] = useState<RemovedTire[]>([])
   const [selected, setSelected] = useState<string | null>(null)
   const [armedSerial, setArmedSerial] = useState<string | null>(null)
   const [request, setRequest] = useState<ActionRequest | null>(null)
 
-  const vehicle = state.vehicles.find((v) => v.code === vehicleCode)!
-  const config = VEHICLE_CONFIGS.find((c) => c.id === vehicle.configId)!
-  const slots = useMemo(() => positionsFor(config), [config])
+  const config = built?.config
+  const vehicle = built?.vehicle
+  const fitment = useMemo(() => vehicle?.fitment ?? {}, [vehicle])
+  const slots = useMemo(() => (config ? positionsFor(config) : []), [config])
   const slotByCode = useMemo(() => Object.fromEntries(slots.map((s) => [s.code, s])), [slots])
-  const vehicleSizes = useMemo(() => [...new Set(config.axles.map((a) => a.tireSize))], [config])
-  const armedTire = state.inventory.find((x) => x.serialNo === armedSerial)
+  const vehicleSizes = useMemo(() => [...new Set((config?.axles ?? []).map((a) => a.tireSize).filter(Boolean))], [config])
+  const armedTire = inventory.find((x) => x.serialNo === armedSerial)
 
   // ── fitment rules → non-blocking warnings ─────────────────────────────
   const warningsFor = useCallback(
     (tire: Tire, code: string): string[] => {
       const slot = slotByCode[code]
       const w: string[] = []
-      const size = slot?.axle?.tireSize ?? vehicleSizes[0]
-      if (tire.size !== size) w.push(t('tireMap.warn.size').replace('{size}', tire.size).replace('{expected}', size))
+      const size = slot?.axle?.tireSize || vehicleSizes[0]
+      if (size && tire.size && tire.size !== size) w.push(t('tireMap.warn.size').replace('{size}', tire.size).replace('{expected}', size))
       if (slot?.axle?.kind === 'steer' && tire.type === 'recap') w.push(t('tireMap.warn.recapSteer'))
       if (tireHealth(tire) === 'critical') w.push(t('tireMap.warn.lowTread'))
       return w
@@ -70,11 +84,11 @@ export function TireAxleMapClient({ variant = 'classic' }: { variant?: 'classic'
   )
 
   const dualMismatch = useCallback(
-    (code: string, tire: Tire, fitment: Record<string, Tire>): string[] => {
+    (code: string, tire: Tire, fit: Record<string, Tire>): string[] => {
       // Dual partners should be within ~3 mm of each other to share load evenly.
       const m = code.match(/^(\d+)([LR])([IO])$/)
       if (!m) return []
-      const partner = fitment[`${m[1]}${m[2]}${m[3] === 'I' ? 'O' : 'I'}`]
+      const partner = fit[`${m[1]}${m[2]}${m[3] === 'I' ? 'O' : 'I'}`]
       if (partner && Math.abs(partner.treadMM - tire.treadMM) > 3) return [t('tireMap.warn.dualMatch')]
       return []
     },
@@ -84,113 +98,72 @@ export function TireAxleMapClient({ variant = 'classic' }: { variant?: 'classic'
   // ── drag & drop routing ───────────────────────────────────────────────
   const handleDrop = useCallback(
     (payload: DragPayload, target: string) => {
-      const fit = vehicle.fitment
+      if (!canManage) return
       if (payload.source === 'inventory') {
         if (!slotByCode[target]) return
-        const tire = state.inventory.find((x) => x.serialNo === payload.serialNo)
+        const tire = inventory.find((x) => x.serialNo === payload.serialNo)
         if (!tire) return
         setSelected(target)
-        setRequest({
-          mode: 'install',
-          position: target,
-          tire,
-          replacing: fit[target],
-          warnings: [...warningsFor(tire, target), ...dualMismatch(target, tire, fit)],
-        })
+        setRequest({ mode: 'install', position: target, tire, replacing: fitment[target], warnings: [...warningsFor(tire, target), ...dualMismatch(target, tire, fitment)] })
       } else if (target === 'inventory') {
-        const tire = fit[payload.code]
+        const tire = fitment[payload.code]
         if (tire) setRequest({ mode: 'remove', position: payload.code, tire, warnings: [] })
       } else if (slotByCode[target] && target !== payload.code) {
-        const tireA = fit[payload.code]
+        const tireA = fitment[payload.code]
         if (!tireA) return
         setSelected(target)
-        setRequest({ mode: 'rotate', from: payload.code, to: target, tireA, tireB: fit[target], warnings: warningsFor(tireA, target) })
+        setRequest({ mode: 'rotate', from: payload.code, to: target, tireA, tireB: fitment[target], warnings: warningsFor(tireA, target) })
       }
     },
-    [vehicle, state.inventory, slotByCode, warningsFor, dualMismatch],
+    [canManage, fitment, inventory, slotByCode, warningsFor, dualMismatch],
   )
 
   const { drag, startDrag, consumedByDrag } = useTireDrag(handleDrop)
 
-  // ── commit a transaction (snapshot for undo) ──────────────────────────
-  const commit = (mutate: (draft: BoardState, fitment: Record<string, Tire>) => void) => {
-    setHistory((h) => [...h, state])
-    const draft: BoardState = {
-      vehicles: state.vehicles.map((v) => (v.code === vehicle.code ? { ...v, fitment: { ...v.fitment } } : v)),
-      inventory: [...state.inventory],
-      removed: [...state.removed],
-      transactions: [...state.transactions],
-    }
-    const target = draft.vehicles.find((v) => v.code === vehicle.code)!
-    mutate(draft, target.fitment)
-    setState(draft)
-  }
+  /** A removed tyre going to STOCK goes to the picked store ('' = the branch default); owner-approved finding A2. */
+  const storeFor = (v: ActionValues) => (v.destination === 'stock' && v.warehouseId ? v.warehouseId : null)
 
-  const retire = (draft: BoardState, tire: Tire, from: string, v: ActionValues) => {
-    const out = { ...tire, treadMM: v.removedTreadMM, installedOn: undefined }
-    if (v.destination === 'stock') draft.inventory.unshift(out)
-    else draft.removed.unshift({ tire: out, fromPosition: from, reason: v.reason, destination: v.destination })
+  /** The request + dialog values → ONE tyre-change line. */
+  const toLine = (r: ActionRequest, v: ActionValues): TyreAction | null => {
+    if (r.mode === 'install') {
+      if (!r.tire.id) return null
+      return r.replacing
+        ? tyreLines.replace(r.position, r.tire.id, v.reason, v.destination, v.removedTreadMM, v.treadMM, v.pressurePsi, storeFor(v))
+        : tyreLines.install(r.position, r.tire.id, v.treadMM, v.pressurePsi)
+    }
+    if (r.mode === 'remove') return tyreLines.remove(r.position, v.reason, v.destination, v.removedTreadMM, storeFor(v))
+    if (r.mode === 'rotate') return tyreLines.rotate(r.from, r.to)
+    return tyreLines.inspect(r.position, v.treadMM, v.pressurePsi)
   }
 
   const handleConfirm = (v: ActionValues) => {
     const r = request
-    if (!r) return
-    const base = { id: txId(), odometerKm: v.odometerKm, date: v.date }
-    commit((draft, fit) => {
-      if (r.mode === 'install') {
-        if (r.replacing) retire(draft, r.replacing, r.position, v)
-        fit[r.position] = { ...r.tire, treadMM: v.treadMM, pressurePsi: v.pressurePsi, installedOn: v.date }
-        draft.inventory = draft.inventory.filter((x) => x.serialNo !== r.tire.serialNo)
-        draft.transactions.unshift({
-          ...base,
-          type: r.replacing ? 'replace' : 'install',
-          position: r.position,
-          serialIn: r.tire.serialNo,
-          serialOut: r.replacing?.serialNo,
-          reason: r.replacing ? v.reason : undefined,
-          destination: r.replacing ? v.destination : undefined,
-          treadMM: v.treadMM,
-          pressurePsi: v.pressurePsi,
-        })
-      } else if (r.mode === 'remove') {
-        retire(draft, r.tire, r.position, v)
-        delete fit[r.position]
-        draft.transactions.unshift({ ...base, type: 'remove', position: r.position, serialOut: r.tire.serialNo, reason: v.reason, destination: v.destination })
-      } else if (r.mode === 'rotate') {
-        const a = fit[r.from]
-        const b = fit[r.to]
-        fit[r.to] = a
-        if (b) fit[r.from] = b
-        else delete fit[r.from]
-        draft.transactions.unshift({ ...base, type: 'rotate', position: r.from, toPosition: r.to, serialIn: a.serialNo, serialOut: b?.serialNo, reason: 'rotation' })
-      } else if (r.mode === 'inspect') {
-        fit[r.position] = { ...fit[r.position], treadMM: v.treadMM, pressurePsi: v.pressurePsi }
-        draft.transactions.unshift({ ...base, type: 'inspect', position: r.position, serialIn: r.tire.serialNo, treadMM: v.treadMM, pressurePsi: v.pressurePsi })
-      }
+    if (!r || !assetId) return
+    const line = toLine(r, v)
+    if (!line) return
+    change.mutate({ assetProfileId: assetId, lines: [line], meterKm: v.odometerKm || null, documentDate: v.date || null }, {
+      onSuccess: (doc) => {
+        const base = { id: doc.tyreDocumentId, odometerKm: v.odometerKm, date: doc.documentDate.slice(0, 10) }
+        const tx: TireTransaction =
+          r.mode === 'install' ? { ...base, type: r.replacing ? 'replace' : 'install', position: r.position, serialIn: r.tire.serialNo, serialOut: r.replacing?.serialNo, reason: r.replacing ? v.reason : undefined, destination: r.replacing ? v.destination : undefined, treadMM: v.treadMM, pressurePsi: v.pressurePsi }
+          : r.mode === 'remove' ? { ...base, type: 'remove', position: r.position, serialOut: r.tire.serialNo, reason: v.reason, destination: v.destination }
+          : r.mode === 'rotate' ? { ...base, type: 'rotate', position: r.from, toPosition: r.to, serialIn: r.tireA.serialNo, serialOut: r.tireB?.serialNo, reason: 'rotation' }
+          : { ...base, type: 'inspect', position: r.position, serialIn: r.tire.serialNo, treadMM: v.treadMM, pressurePsi: v.pressurePsi }
+        setTransactions((x) => [tx, ...x])
+        const out = r.mode === 'remove' ? r.tire : r.mode === 'install' ? r.replacing : undefined
+        if (out && v.destination !== 'stock') setRemoved((x) => [{ tire: { ...out, treadMM: v.removedTreadMM }, fromPosition: r.mode === 'install' || r.mode === 'remove' ? r.position : '', reason: v.reason, destination: v.destination }, ...x])
+        toast.success(t('tireMap.posted'), doc.documentNo)
+        if (r.mode === 'install') setArmedSerial(null)
+        if (r.mode === 'remove') setSelected(null)
+        setRequest(null)
+      },
+      onError: (e) => toast.error(t('common.saveFailed'), errorText(e, t)),
     })
-    if (r.mode === 'install') setArmedSerial(null)
-    if (r.mode === 'remove') setSelected(null)
-    setRequest(null)
-  }
-
-  const undo = () => {
-    const prev = history[history.length - 1]
-    if (!prev) return
-    setState(prev)
-    setHistory((h) => h.slice(0, -1))
-    toast.info(t('tireMap.undone'))
-  }
-
-  const post = () => {
-    const n = state.transactions.length
-    setState((s) => ({ ...s, transactions: [] }))
-    setHistory([])
-    toast.success(t('tireMap.posted'), t('tireMap.postedMsg').replace('{n}', String(n)))
   }
 
   // Selecting a position with an armed tire = click-to-install (keyboard/touch friendly).
   const onSelectPosition = (code: string) => {
-    if (armedTire && !vehicle.fitment[code]) {
+    if (armedTire && !fitment[code]) {
       handleDrop({ source: 'inventory', serialNo: armedTire.serialNo }, code)
       return
     }
@@ -199,7 +172,7 @@ export function TireAxleMapClient({ variant = 'classic' }: { variant?: 'classic'
 
   // ── KPIs ───────────────────────────────────────────────────────────────
   const kpi = useMemo(() => {
-    const fitted = slots.filter((s) => s.axleIndex >= 0).map((s) => vehicle.fitment[s.code]).filter(Boolean) as Tire[]
+    const fitted = slots.filter((s) => s.axleIndex >= 0).map((s) => fitment[s.code]).filter(Boolean) as Tire[]
     const axlePositions = slots.filter((s) => s.axleIndex >= 0).length
     const avg = fitted.length ? fitted.reduce((a, x) => a + x.treadMM, 0) / fitted.length : 0
     const attention = fitted.filter((x) => tireHealth(x) !== 'good').length
@@ -207,19 +180,33 @@ export function TireAxleMapClient({ variant = 'classic' }: { variant?: 'classic'
     const cpks = fitted.map(costPerKm).filter((x): x is number => x !== null)
     const cpk = cpks.length ? cpks.reduce((a, b) => a + b, 0) / cpks.length : null
     return { fitted: fitted.length, axlePositions, avg, attention, pressure, cpk }
-  }, [slots, vehicle])
+  }, [slots, fitment])
 
   const selectedSlot = selected ? slotByCode[selected] ?? null : null
-  const diagramProps = {
-    config,
-    fitment: vehicle.fitment,
-    selected,
-    drag,
-    armed: !!armedTire,
-    onSelect: onSelectPosition,
-    onStartDrag: startDrag,
-    consumedByDrag,
-  }
+  const noLayout = map.error instanceof ApiError && map.error.status === 409
+
+  const board = !assetId ? (
+    <p className="py-16 text-center text-sm text-gray-500">{assets.isLoading ? t('common.loading') : t('tireMap.noAssets')}</p>
+  ) : map.isLoading ? (
+    <div className="flex justify-center py-16 text-gray-400"><Loader2 className="h-5 w-5 animate-spin" /></div>
+  ) : noLayout ? (
+    <div className="py-12 text-center text-sm text-gray-600">
+      {t('tireMap.noLayout')} <Link href={`/master/equipment/${assetId}`} className="text-blue-600 hover:underline">{t('tireMap.openAsset')}</Link>
+    </div>
+  ) : map.error || !config || !vehicle ? (
+    <p role="alert" className="py-12 text-center text-sm text-red-600">{errorText(map.error, t)}</p>
+  ) : (
+    (() => {
+      const diagramProps = { config, fitment, selected, drag, armed: !!armedTire, onSelect: onSelectPosition, onStartDrag: startDrag, consumedByDrag }
+      return variant === 'bay' ? (
+        <div className="overflow-hidden rounded-lg bg-[#272b2f]"><AxleDiagramBay {...diagramProps} /></div>
+      ) : variant === '3d' ? (
+        <AxleDiagram3D {...diagramProps} />
+      ) : (
+        <AxleDiagram {...diagramProps} />
+      )
+    })()
+  )
 
   return (
     <div className="flex flex-col gap-5">
@@ -229,29 +216,7 @@ export function TireAxleMapClient({ variant = 'classic' }: { variant?: 'classic'
           <h1 className="text-2xl font-bold text-gray-900">{t(variant === 'bay' ? 'tireMap.bayTitle' : variant === '3d' ? 'tireMap.title3d' : 'tireMap.title')}</h1>
           <p className="mt-1 text-sm text-gray-500">{t('tireMap.subtitle')}</p>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={undo}
-            disabled={history.length === 0}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <Undo2 className="h-4 w-4" aria-hidden />
-            {t('tireMap.undo')}
-          </button>
-          <button
-            type="button"
-            onClick={post}
-            disabled={state.transactions.length === 0}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <Send className="h-4 w-4" aria-hidden />
-            {t('tireMap.post')}
-            {state.transactions.length > 0 && (
-              <span className="rounded-full bg-white/25 px-1.5 text-xs tabular-nums">{state.transactions.length}</span>
-            )}
-          </button>
-        </div>
+        {change.isPending && <span className="inline-flex items-center gap-1.5 text-sm text-gray-500"><Loader2 className="h-4 w-4 animate-spin" />{t('common.loading')}</span>}
       </div>
 
       {/* Vehicle bar + KPIs */}
@@ -261,49 +226,40 @@ export function TireAxleMapClient({ variant = 'classic' }: { variant?: 'classic'
             <Truck className="h-5 w-5" aria-hidden />
           </span>
           <div className="min-w-0 flex-1">
-            <label htmlFor="vehicle" className="sr-only">
-              {t('tireMap.vehicle')}
-            </label>
+            <label htmlFor="vehicle" className="sr-only">{t('tireMap.vehicle')}</label>
             <select
               id="vehicle"
-              value={vehicleCode}
+              value={assetId ?? ''}
               onChange={(e) => {
-                setVehicleCode(e.target.value)
+                setAssetId(e.target.value || null)
                 setSelected(null)
                 setArmedSerial(null)
               }}
               className="w-full rounded-md border-0 bg-transparent p-0 text-sm font-semibold text-gray-900 focus:ring-0"
             >
-              {state.vehicles.map((v) => (
-                <option key={v.code} value={v.code}>
-                  {v.registrationNo} — {v.code}
-                </option>
+              {withLayout.map((v) => (
+                <option key={v.id} value={v.id}>{v.registrationNo || '—'} — {v.code}</option>
               ))}
             </select>
             <p className="truncate text-xs text-gray-500">
-              {t(`tireMap.configs.${config.labelKey}`)} · {vehicle.odometerKm.toLocaleString('en-US')} km · {vehicle.driverName}
+              {config ? config.label ?? t(`tireMap.configs.${config.labelKey}`) : '—'} · {(vehicle?.odometerKm ?? 0).toLocaleString('en-US')} km{vehicle?.driverName ? ` · ${vehicle.driverName}` : ''}
             </p>
           </div>
         </div>
         <Kpi icon={<CircleDot className="h-4 w-4" />} label={t('tireMap.kpi.fitted')} value={`${kpi.fitted} / ${kpi.axlePositions}`} />
         <Kpi icon={<Gauge className="h-4 w-4" />} label={t('tireMap.kpi.avgTread')} value={`${kpi.avg.toFixed(1)} mm`} />
-        <Kpi
-          icon={<AlertTriangle className="h-4 w-4" />}
-          label={t('tireMap.kpi.attention')}
-          value={`${kpi.attention} · ${kpi.pressure}`}
-          tone={kpi.attention + kpi.pressure > 0 ? 'warn' : 'ok'}
-        />
+        <Kpi icon={<AlertTriangle className="h-4 w-4" />} label={t('tireMap.kpi.attention')} value={`${kpi.attention} · ${kpi.pressure}`} tone={kpi.attention + kpi.pressure > 0 ? 'warn' : 'ok'} />
         <Kpi icon={<Coins className="h-4 w-4" />} label={t('tireMap.kpi.cpk')} value={kpi.cpk === null ? '—' : `฿${kpi.cpk.toFixed(3)}`} />
       </div>
 
       {/* Board */}
       <div className="grid items-start gap-5 xl:grid-cols-[300px_minmax(0,1fr)_320px]">
         <TireInventoryPanel
-          inventory={state.inventory}
+          inventory={inventory}
           vehicleSizes={vehicleSizes}
           armedSerial={armedSerial}
           drag={drag}
-          onArm={setArmedSerial}
+          onArm={canManage ? setArmedSerial : () => undefined}
           onStartDrag={startDrag}
           consumedByDrag={consumedByDrag}
         />
@@ -312,36 +268,26 @@ export function TireAxleMapClient({ variant = 'classic' }: { variant?: 'classic'
           {armedTire && (
             <div className="mb-3 flex items-center justify-between gap-2 rounded-lg bg-blue-50 px-3 py-2 text-xs text-blue-800">
               <span>{t('tireMap.armedHint').replace('{serial}', armedTire.serialNo)}</span>
-              <button type="button" onClick={() => setArmedSerial(null)} className="font-semibold hover:underline">
-                {t('common.cancel')}
-              </button>
+              <button type="button" onClick={() => setArmedSerial(null)} className="font-semibold hover:underline">{t('common.cancel')}</button>
             </div>
           )}
-          {variant === 'bay' ? (
-            <div className="overflow-hidden rounded-lg bg-[#272b2f]">
-              <AxleDiagramBay {...diagramProps} />
-            </div>
-          ) : variant === '3d' ? (
-            <AxleDiagram3D {...diagramProps} />
-          ) : (
-            <AxleDiagram {...diagramProps} />
-          )}
+          {board}
           <Legend />
         </section>
 
         <TireDetailPanel
           slot={selectedSlot}
-          tire={selected ? vehicle.fitment[selected] : undefined}
+          tire={selected ? fitment[selected] : undefined}
           allSlots={slots}
           armedTire={armedTire}
           onInstallArmed={() => armedTire && selected && handleDrop({ source: 'inventory', serialNo: armedTire.serialNo }, selected)}
           onRemove={() => {
-            const tire = selected ? vehicle.fitment[selected] : undefined
-            if (selected && tire) setRequest({ mode: 'remove', position: selected, tire, warnings: [] })
+            const tire = selected ? fitment[selected] : undefined
+            if (canManage && selected && tire) setRequest({ mode: 'remove', position: selected, tire, warnings: [] })
           }}
           onInspect={() => {
-            const tire = selected ? vehicle.fitment[selected] : undefined
-            if (selected && tire) setRequest({ mode: 'inspect', position: selected, tire, warnings: [] })
+            const tire = selected ? fitment[selected] : undefined
+            if (canManage && selected && tire) setRequest({ mode: 'inspect', position: selected, tire, warnings: [] })
           }}
           onRotateTo={(to) => selected && handleDrop({ source: 'position', code: selected }, to)}
         />
@@ -349,11 +295,11 @@ export function TireAxleMapClient({ variant = 'classic' }: { variant?: 'classic'
 
       {/* Session log */}
       <div className="grid gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-        <TransactionLog transactions={state.transactions} />
-        <RemovedList removed={state.removed} />
+        <TransactionLog transactions={transactions} />
+        <RemovedList removed={removed} />
       </div>
 
-      <TireActionDialog request={request} odometerKm={vehicle.odometerKm} onConfirm={handleConfirm} onCancel={() => setRequest(null)} />
+      <TireActionDialog request={request} odometerKm={vehicle?.odometerKm ?? 0} stores={storeOptions} onConfirm={handleConfirm} onCancel={() => setRequest(null)} />
 
       {/* drag ghost */}
       {drag && (

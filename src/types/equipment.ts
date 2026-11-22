@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { optNum } from '@/lib/utils/zod'
 
 export type EquipmentStatus = 'ACTIVE' | 'INACTIVE' | 'UNDER REPAIR' | 'DISPOSED'
 
@@ -22,25 +23,26 @@ export const equipmentSchema = z.object({
   chassisNo: z.string().optional(),
   licenseNo: z.string().optional(),
   meterType: z.string().optional(),
-  currentMeter: z.coerce.number().optional(),
-  yearOfManufacture: z.coerce.number().optional(),
+  currentMeter: optNum,
+  yearOfManufacture: optNum,
   purchaseDate: z.string().optional(),
-  purchasePrice: z.coerce.number().optional(),
+  purchasePrice: optNum,
   customerName: z.string().optional(),
   driverName: z.string().optional(),
-  driverID: z.coerce.number().optional(),
+  driverID: optNum,
   remarks: z.string().optional(),
+  axleLayoutId: z.string().optional(),
   // Spec tab
-  grossWeight: z.coerce.number().optional(),
-  netWeight: z.coerce.number().optional(),
-  length: z.coerce.number().optional(),
-  width: z.coerce.number().optional(),
-  height: z.coerce.number().optional(),
-  engineCapacity: z.coerce.number().optional(),
-  horsePower: z.coerce.number().optional(),
+  grossWeight: optNum,
+  netWeight: optNum,
+  length: optNum,
+  width: optNum,
+  height: optNum,
+  engineCapacity: optNum,
+  horsePower: optNum,
   fuelType: z.string().optional(),
-  fuelCapacity: z.coerce.number().optional(),
-  payload: z.coerce.number().optional(),
+  fuelCapacity: optNum,
+  payload: optNum,
 })
 
 export type EquipmentFormValues = z.infer<typeof equipmentSchema>

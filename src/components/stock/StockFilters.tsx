@@ -4,9 +4,12 @@ import { SearchInput } from '@/components/shared/SearchInput'
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { useT } from '@/i18n/I18nContext'
+import { useCodeList } from '@/lib/api/fleet/setup'
+import { ITEM_CATEGORY_LIST } from '@/lib/api/fleet/items'
 
 const STATUSES = ['ALL', 'ACTIVE', 'INACTIVE'] as const
-const CATEGORIES = ['ALL', 'PARTS', 'LUBRICANT', 'CONSUMABLE', 'TYRE'] as const
+/** Used until the tenant's FLEET_ITEM_CATEGORY list has values. */
+const FALLBACK_CATEGORIES = ['PARTS', 'LUBRICANT', 'CONSUMABLE', 'TYRE']
 
 interface StockFiltersProps {
   search: string
@@ -17,6 +20,9 @@ interface StockFiltersProps {
 export function StockFilters({ search, status, category }: StockFiltersProps) {
   const router = useRouter()
   const { t } = useT()
+  const categoryList = useCodeList(ITEM_CATEGORY_LIST)
+  const listed = categoryList.data?.filter((c) => c.isActive).map((c) => c.code) ?? []
+  const CATEGORIES = ['ALL', ...(listed.length ? listed : FALLBACK_CATEGORIES)]
 
   const push = useCallback(
     (params: { search?: string; status?: string; category?: string }) => {

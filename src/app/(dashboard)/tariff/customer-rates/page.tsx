@@ -1,66 +1,15 @@
-import { Suspense } from 'react'
-import Link from 'next/link'
-import { getCustomerRates } from '@/lib/data/customer-rates'
-import { CustomerRateListClient } from '@/components/customer-rates/CustomerRateListClient'
-import { CustomerRateFilters } from '@/components/customer-rates/CustomerRateFilters'
-import { ListPage } from '@/components/shared/ListPage'
-import { getT } from '@/i18n/server'
+import { RepairTariffListView } from '@/components/tariff/RepairTariffViews'
 
 export const metadata = { title: 'Customer Rates | Tariff' }
 
 interface PageProps {
-  searchParams: Promise<{
-    quotationNo?: string
-    customerName?: string
-    agentCode?: string
-    status?: string
-    dateFrom?: string
-    dateTo?: string
-  }>
+  searchParams: Promise<{ quotationNo?: string; customerName?: string; status?: string; dateFrom?: string; dateTo?: string }>
 }
 
+/** Per-customer repair tariff cards (`standard=false`, prompt 12 §A). */
 export default async function CustomerRatesPage({ searchParams }: PageProps) {
-  const params = await searchParams
-  const { t } = await getT()
-
-  const isApproved =
-    params.status === 'approved' ? true : params.status === 'draft' ? false : 'all'
-
-  const rates = await getCustomerRates({
-    quotationNo: params.quotationNo,
-    customerName: params.customerName,
-    agentCode: params.agentCode,
-    dateFrom: params.dateFrom,
-    dateTo: params.dateTo,
-    isApproved,
-  })
-
+  const p = await searchParams
   return (
-    <ListPage
-      title={t('nav.customerRates')}
-      subtitle={`${rates.length} record${rates.length !== 1 ? 's' : ''} found`}
-      actions={
-        <Link
-          href="/tariff/customer-rates/new"
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700"
-        >
-          + {t('nav.customerRates')}
-        </Link>
-      }
-      filters={
-        <CustomerRateFilters
-          quotationNo={params.quotationNo ?? ''}
-          customerName={params.customerName ?? ''}
-          agentCode={params.agentCode ?? ''}
-          status={params.status ?? ''}
-          dateFrom={params.dateFrom ?? ''}
-          dateTo={params.dateTo ?? ''}
-        />
-      }
-    >
-      <Suspense fallback={null}>
-        <CustomerRateListClient initialData={rates} />
-      </Suspense>
-    </ListPage>
+    <RepairTariffListView variant="customer" code={p.quotationNo ?? ''} party={p.customerName ?? ''} description="" status={p.status ?? ''} dateFrom={p.dateFrom ?? ''} dateTo={p.dateTo ?? ''} />
   )
 }

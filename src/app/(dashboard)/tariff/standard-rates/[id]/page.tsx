@@ -1,53 +1,15 @@
-import { notFound } from 'next/navigation'
-import { getStandardRate } from '@/lib/data/standard-rates'
-import { StandardRateFormClient } from '@/components/standard-rates/StandardRateFormClient'
-import { NEW_STANDARD_RATE_DEFAULTS } from '@/types/standard-rate'
-import type { StandardRate } from '@/types/standard-rate'
+import { RepairTariffView } from '@/components/tariff/RepairTariffViews'
+
+export const metadata = { title: 'Repair Tariff | Tariff' }
 
 interface PageProps {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ copyFrom?: string }>
 }
 
-export async function generateMetadata({ params }: PageProps) {
+/** A repair tariff card (prompt 12 §A); `new?copyFrom=` = "Copy to new card". */
+export default async function Page({ params, searchParams }: PageProps) {
   const { id } = await params
-  if (id === 'new') return { title: 'New Standard Rate | Tariff' }
-  const record = await getStandardRate(parseInt(id, 10))
-  return {
-    title: record ? `${record.rateCode} | Tariff` : 'Standard Rate | Tariff',
-  }
-}
-
-const NEW_RECORD: StandardRate = {
-  ...NEW_STANDARD_RATE_DEFAULTS,
-  standardRateID: 0,
-  isApproved: false,
-  lines: [],
-}
-
-export default async function StandardRateDetailPage({ params }: PageProps) {
-  const { id } = await params
-
-  if (id === 'new') {
-    return (
-      <StandardRateFormClient
-        rate={NEW_RECORD}
-        rateID="new"
-        isNew={true}
-      />
-    )
-  }
-
-  const standardRateID = parseInt(id, 10)
-  if (isNaN(standardRateID)) notFound()
-
-  const record = await getStandardRate(standardRateID)
-  if (!record) notFound()
-
-  return (
-    <StandardRateFormClient
-      rate={record}
-      rateID={id}
-      isNew={false}
-    />
-  )
+  const { copyFrom } = await searchParams
+  return <RepairTariffView variant="standard" id={id} copyFrom={copyFrom} />
 }

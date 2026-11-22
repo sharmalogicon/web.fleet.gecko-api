@@ -4,9 +4,12 @@ import { SearchInput } from '@/components/shared/SearchInput'
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { useT } from '@/i18n/I18nContext'
+import { useCodeList } from '@/lib/api/fleet/setup'
 
 const STATUSES = ['ALL', 'ACTIVE', 'INACTIVE', 'UNDER REPAIR', 'DISPOSED'] as const
-const CATEGORIES = ['ALL', 'TRUCK', 'TRAILER', 'FORKLIFT', 'PICKUP'] as const
+/** Used until the tenant's FLEET_ASSET_CATEGORY code list has values. */
+const FALLBACK_CATEGORIES = ['TRUCK', 'TRAILER', 'FORKLIFT', 'PICKUP']
+export const ASSET_CATEGORY_LIST = 'FLEET_ASSET_CATEGORY'
 
 interface EquipmentFiltersProps {
   code: string
@@ -17,6 +20,9 @@ interface EquipmentFiltersProps {
 export function EquipmentFilters({ code, status, category }: EquipmentFiltersProps) {
   const router = useRouter()
   const { t } = useT()
+  const categoryList = useCodeList(ASSET_CATEGORY_LIST)
+  const listed = categoryList.data?.filter((c) => c.isActive).map((c) => c.code) ?? []
+  const CATEGORIES = ['ALL', ...(listed.length ? listed : FALLBACK_CATEGORIES)]
 
   const push = useCallback(
     (params: { code?: string; status?: string; category?: string }) => {

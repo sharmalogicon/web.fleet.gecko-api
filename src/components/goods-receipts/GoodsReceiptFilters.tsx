@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 import { SearchInput } from '@/components/shared/SearchInput'
 import { useT } from '@/i18n/I18nContext'
 
-const STATUS_OPTIONS = ['ALL', 'RECEIVED', 'CANCELLED'] as const
+const STATUS_OPTIONS = ['ALL', 'DRAFT', 'RECEIVED', 'CANCELLED'] as const
 
 interface GoodsReceiptFiltersProps {
   documentNo: string

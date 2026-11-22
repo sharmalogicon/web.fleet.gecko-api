@@ -1,28 +1,23 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createColumnHelper } from '@tanstack/react-table'
-import type { Transporter } from '@/types/transporter'
+import type { TransporterView } from '@/lib/api/platform/suppliers'
 import { DataTable } from '@/components/shared/DataTable'
-import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
-import { useToastStore } from '@/lib/stores/useToastStore'
-import { removeMockTransporter } from '@/lib/mock/transporters'
 import { useT } from '@/i18n/I18nContext'
 
-const col = createColumnHelper<Transporter>()
+const col = createColumnHelper<TransporterView>()
 
 interface TransporterListClientProps {
-  initialData: Transporter[]
+  data: TransporterView[]
 }
 
-export function TransporterListClient({ initialData }: TransporterListClientProps) {
-  const [data, setData] = useState<Transporter[]>(initialData)
-  const [deleteTarget, setDeleteTarget] = useState<Transporter | null>(null)
+/** Same columns; rows = suppliers in category TRANSPORT. No delete (a party is deleted on the party screen). */
+export function TransporterListClient({ data }: TransporterListClientProps) {
   const router = useRouter()
-  const { success, error } = useToastStore()
   const { t } = useT()
+  const href = (tr: TransporterView) => `/master/transporters/${encodeURIComponent(tr.partyCode)}`
 
   const columns = [
     col.display({
@@ -33,7 +28,7 @@ export function TransporterListClient({ initialData }: TransporterListClientProp
         return (
           <div className="flex flex-col gap-0.5">
             <Link
-              href={`/master/transporters/${tr.transporterID}`}
+              href={href(tr)}
               className="text-blue-600 hover:underline text-sm font-medium"
             >
               {tr.transporterName}
@@ -83,54 +78,17 @@ export function TransporterListClient({ initialData }: TransporterListClientProp
           <div className="flex items-center gap-2 justify-end">
             <button
               type="button"
-              onClick={() => router.push(`/master/transporters/${tr.transporterID}`)}
+              onClick={() => router.push(href(tr))}
               className="text-xs text-blue-600 hover:underline"
             >
               {t('common.edit')}
             </button>
-            <button
-              type="button"
-              onClick={() => setDeleteTarget(tr)}
-              className="text-xs text-red-500 hover:underline"
-            >
-              {t('common.delete')}
-            </button>
+            {/* No delete here: set the transporter inactive (prompt 06). */}
           </div>
         )
       },
     }),
   ]
 
-  const handleDelete = async () => {
-    if (!deleteTarget) return
-    const name = deleteTarget.transporterName
-    try {
-      removeMockTransporter(deleteTarget.transporterID)
-      setData((prev) => prev.filter((r) => r.transporterID !== deleteTarget.transporterID))
-      success('Transporter deleted', `${name} has been removed.`)
-    } catch {
-      error('Delete failed', 'An error occurred. Please try again.')
-    } finally {
-      setDeleteTarget(null)
-    }
-  }
-
-  return (
-    <>
-      <DataTable data={data} columns={columns} pageSize={15} />
-      <ConfirmDialog
-        open={deleteTarget !== null}
-        title="Delete Transporter"
-        message={
-          deleteTarget
-            ? `Are you sure you want to delete "${deleteTarget.transporterName}"? This action cannot be undone.`
-            : ''
-        }
-        confirmLabel={t('common.delete')}
-        onConfirm={handleDelete}
-        onCancel={() => setDeleteTarget(null)}
-        destructive
-      />
-    </>
-  )
+  return <DataTable data={data} columns={columns} pageSize={15} />
 }

@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { User, Settings, LogOut, ChevronUp, ChevronRight, Languages } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 import { useT } from '@/i18n/I18nContext';
+import { useQueryClient } from '@tanstack/react-query';
+import { displayName, initialsOf, roleLabel, useAuth } from '@/lib/contexts/AuthContext';
 
 interface UserMenuProps {
   collapsed: boolean;
@@ -14,7 +16,13 @@ export function UserMenu({ collapsed }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { lang, setLang } = useT();
+  const { lang, setLang, t } = useT();
+  const { user, logout } = useAuth();
+  const queryClient = useQueryClient();
+  const name = displayName(user);
+  const initials = initialsOf(user);
+  const email = user?.email ?? user?.userName ?? '';
+  const role = user?.roles[0] ? roleLabel(user.roles[0]) : '';
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -43,13 +51,13 @@ export function UserMenu({ collapsed }: UserMenuProps) {
         )}
       >
         <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center shrink-0 text-white text-sm font-bold select-none">
-          S
+          {initials}
         </div>
         {!collapsed && (
           <>
             <div className="flex-1 text-left min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">Super Admin</p>
-              <p className="text-xs text-gray-500 truncate">sa@veera.com</p>
+              <p className="text-sm font-medium text-gray-900 truncate">{name}</p>
+              <p className="text-xs text-gray-500 truncate">{email}</p>
             </div>
             <ChevronUp
               size={16}
@@ -73,11 +81,11 @@ export function UserMenu({ collapsed }: UserMenuProps) {
           <div className="px-4 pb-2 border-b border-gray-100 mb-1">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 bg-primary-600 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0">
-                S
+                {initials}
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-gray-900">Super Admin</p>
-                <p className="text-xs text-gray-500">User</p>
+                <p className="text-sm font-semibold text-gray-900">{name}</p>
+                <p className="text-xs text-gray-500">{role}</p>
               </div>
             </div>
           </div>
@@ -132,16 +140,16 @@ export function UserMenu({ collapsed }: UserMenuProps) {
 
           <hr className="my-1 border-gray-100" />
 
-          <div className="px-4 py-1.5 text-xs text-gray-400">sa@veera.com</div>
+          <div className="px-4 py-1.5 text-xs text-gray-400">{email}</div>
 
           <hr className="my-1 border-gray-100" />
 
           <button
             className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-            onClick={() => setIsOpen(false)}
+            onClick={() => { setIsOpen(false); queryClient.clear(); void logout(); }}
           >
             <LogOut size={16} className="text-gray-500" />
-            Sign out
+            {t('auth.signOut')}
           </button>
         </div>
       )}

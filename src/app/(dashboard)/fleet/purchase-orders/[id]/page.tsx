@@ -1,54 +1,15 @@
-import { notFound } from 'next/navigation'
-import { getPurchaseOrder } from '@/lib/data/purchase-orders'
-import { POFormClient } from '@/components/purchase-orders/POFormClient'
-import { NEW_PO_DEFAULTS } from '@/types/purchase-order'
-import type { PurchaseOrder } from '@/types/purchase-order'
+import { PurchaseOrderView } from '@/components/purchase-orders/PurchaseOrderViews'
+
+export const metadata = { title: 'Purchase Order | Fleet' }
 
 interface PageProps {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ goodsRequestId?: string }>
 }
 
-export async function generateMetadata({ params }: PageProps) {
+/** `new?goodsRequestId=` opens a PO prefilled from the request's open lines (prompt 11 §B). */
+export default async function PurchaseOrderDetailPage({ params, searchParams }: PageProps) {
   const { id } = await params
-  if (id === 'new') return { title: 'New Purchase Order | Fleet' }
-  const record = await getPurchaseOrder(parseInt(id, 10))
-  return {
-    title: record ? `${record.documentNo} | Fleet` : 'Purchase Order | Fleet',
-  }
-}
-
-const NEW_RECORD: PurchaseOrder = {
-  ...NEW_PO_DEFAULTS,
-  purchaseOrderID: 0,
-  isApproved: false,
-  isCancel: false,
-  lines: [],
-}
-
-export default async function PurchaseOrderDetailPage({ params }: PageProps) {
-  const { id } = await params
-
-  if (id === 'new') {
-    return (
-      <POFormClient
-        purchaseOrder={NEW_RECORD}
-        purchaseOrderID="new"
-        isNew={true}
-      />
-    )
-  }
-
-  const purchaseOrderID = parseInt(id, 10)
-  if (isNaN(purchaseOrderID)) notFound()
-
-  const record = await getPurchaseOrder(purchaseOrderID)
-  if (!record) notFound()
-
-  return (
-    <POFormClient
-      purchaseOrder={record}
-      purchaseOrderID={id}
-      isNew={false}
-    />
-  )
+  const { goodsRequestId } = await searchParams
+  return <PurchaseOrderView id={id} goodsRequestId={goodsRequestId} />
 }

@@ -1,7 +1,4 @@
-import { notFound } from 'next/navigation'
-import { getDriver } from '@/lib/data/drivers'
-import { DriverProfileClient } from '@/components/drivers/DriverProfileClient'
-import { NEW_DRIVER_DEFAULTS } from '@/types/driver'
+import { DriverProfileView } from '@/components/drivers/DriverProfileView'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -9,35 +6,11 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps) {
   const { id } = await params
-  if (id === 'new') return { title: 'New Driver | Fleet' }
-  const driver = await getDriver(parseInt(id, 10))
-  return { title: driver ? `${driver.driverName} | Fleet` : 'Driver | Fleet' }
+  return { title: id === 'new' ? 'New Driver | Fleet' : 'Driver | Fleet' }
 }
 
+/** `id` is the driver's UUID or "new"; the record is read in the browser. */
 export default async function DriverProfilePage({ params }: PageProps) {
   const { id } = await params
-
-  if (id === 'new') {
-    return (
-      <DriverProfileClient
-        driver={NEW_DRIVER_DEFAULTS}
-        driverID="new"
-        isNew={true}
-      />
-    )
-  }
-
-  const driverID = parseInt(id, 10)
-  if (isNaN(driverID)) notFound()
-
-  const driver = await getDriver(driverID)
-  if (!driver) notFound()
-
-  return (
-    <DriverProfileClient
-      driver={driver}
-      driverID={id}
-      isNew={false}
-    />
-  )
+  return <DriverProfileView id={id} />
 }

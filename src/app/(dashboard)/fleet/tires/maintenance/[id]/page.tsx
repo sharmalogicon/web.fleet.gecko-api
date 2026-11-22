@@ -1,52 +1,9 @@
-import { notFound } from 'next/navigation'
-import { getTireMaintenance } from '@/lib/data/tire-maintenance'
-import { TireMaintenanceFormClient } from '@/components/tire-maintenance/TireMaintenanceFormClient'
-import { NEW_TIRE_MAINTENANCE_DEFAULTS } from '@/types/tire-maintenance'
-import type { TireMaintenance } from '@/types/tire-maintenance'
+import { TyreDocumentView } from '@/components/tire-changes/TyreDocumentViews'
 
-interface PageProps {
-  params: Promise<{ id: string }>
-}
+export const metadata = { title: 'Tyre maintenance | Fleet' }
 
-export async function generateMetadata({ params }: PageProps) {
+/** Posted at once: a saved document is read-only; `new` opens the entry form. */
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  if (id === 'new') return { title: 'New Tire Maintenance | Fleet' }
-  const record = await getTireMaintenance(parseInt(id, 10))
-  return {
-    title: record ? `${record.documentNo} | Fleet` : 'Tire Maintenance | Fleet',
-  }
-}
-
-const NEW_RECORD: TireMaintenance = {
-  ...NEW_TIRE_MAINTENANCE_DEFAULTS,
-  maintenanceID: 0,
-  lines: [],
-}
-
-export default async function TireMaintenanceDetailPage({ params }: PageProps) {
-  const { id } = await params
-
-  if (id === 'new') {
-    return (
-      <TireMaintenanceFormClient
-        tireMaintenance={NEW_RECORD}
-        maintenanceID="new"
-        isNew={true}
-      />
-    )
-  }
-
-  const maintenanceID = parseInt(id, 10)
-  if (isNaN(maintenanceID)) notFound()
-
-  const record = await getTireMaintenance(maintenanceID)
-  if (!record) notFound()
-
-  return (
-    <TireMaintenanceFormClient
-      tireMaintenance={record}
-      maintenanceID={id}
-      isNew={false}
-    />
-  )
+  return <TyreDocumentView kind="MAINTENANCE" id={id} />
 }

@@ -1,26 +1,20 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createColumnHelper } from '@tanstack/react-table'
-import type { ServiceType } from '@/types/service-type'
+import type { ServiceTypeView } from '@/lib/api/fleet/serviceTasks'
 import { DataTable } from '@/components/shared/DataTable'
-import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
-import { useToastStore } from '@/lib/stores/useToastStore'
-import { removeMockServiceType } from '@/lib/mock/service-types'
 import { useT } from '@/i18n/I18nContext'
 
-const col = createColumnHelper<ServiceType>()
+const col = createColumnHelper<ServiceTypeView>()
 
 interface ServiceTypeListClientProps {
-  initialData: ServiceType[]
+  data: ServiceTypeView[]
 }
 
-export function ServiceTypeListClient({ initialData }: ServiceTypeListClientProps) {
-  const [data, setData] = useState<ServiceType[]>(initialData)
-  const [deleteTarget, setDeleteTarget] = useState<ServiceType | null>(null)
+/** Same columns; rows = Fleet service tasks. No delete: a task is switched off (Active unticked). */
+export function ServiceTypeListClient({ data }: ServiceTypeListClientProps) {
   const router = useRouter()
-  const { success, error } = useToastStore()
   const { t } = useT()
 
   const columns = [
@@ -33,7 +27,7 @@ export function ServiceTypeListClient({ initialData }: ServiceTypeListClientProp
           <div className="flex flex-col gap-0.5">
             <button
               type="button"
-              onClick={() => router.push(`/fleet/service-types/${s.serviceTypeID}`)}
+              onClick={() => router.push(`/fleet/service-types/${s.id}`)}
               className="text-blue-600 hover:underline text-left text-sm font-medium font-mono"
             >
               {s.code}
@@ -92,54 +86,17 @@ export function ServiceTypeListClient({ initialData }: ServiceTypeListClientProp
           <div className="flex items-center gap-2 justify-end">
             <button
               type="button"
-              onClick={() => router.push(`/fleet/service-types/${s.serviceTypeID}`)}
+              onClick={() => router.push(`/fleet/service-types/${s.id}`)}
               className="text-xs text-blue-600 hover:underline"
             >
               {t('common.edit')}
             </button>
-            <button
-              type="button"
-              onClick={() => setDeleteTarget(s)}
-              className="text-xs text-red-500 hover:underline"
-            >
-              {t('common.delete')}
-            </button>
+            {/* No delete in the API: untick Active instead (prompt 07). */}
           </div>
         )
       },
     }),
   ]
 
-  const handleDelete = async () => {
-    if (!deleteTarget) return
-    const name = deleteTarget.code
-    try {
-      removeMockServiceType(deleteTarget.serviceTypeID)
-      setData((prev) => prev.filter((r) => r.serviceTypeID !== deleteTarget.serviceTypeID))
-      success('Service type deleted', `${name} has been removed.`)
-    } catch {
-      error('Delete failed', 'An error occurred. Please try again.')
-    } finally {
-      setDeleteTarget(null)
-    }
-  }
-
-  return (
-    <>
-      <DataTable data={data} columns={columns} pageSize={15} />
-      <ConfirmDialog
-        open={deleteTarget !== null}
-        title="Delete Service Type"
-        message={
-          deleteTarget
-            ? `Are you sure you want to delete "${deleteTarget.code}"? This action cannot be undone.`
-            : ''
-        }
-        confirmLabel={t('common.delete')}
-        onConfirm={handleDelete}
-        onCancel={() => setDeleteTarget(null)}
-        destructive
-      />
-    </>
-  )
+  return <DataTable data={data} columns={columns} pageSize={15} />
 }

@@ -25,6 +25,13 @@ interface Layout {
 }
 
 function layoutFor(config: VehicleConfig): Layout {
+  const g = config.geometry2D
+  if (g) {
+    // API geometry (prompt 13): same units and constants, placed by the server.
+    const spares = Object.entries(g.wheels).filter(([code]) => code.startsWith('SP')).map(([, w]) => w.y)
+    const frameEnd = g.frameBottomY
+    return { axleY: g.axleY, frameTop: g.frameTopY, frameEnd, spareY: spares.length ? spares[0] : frameEnd + 48, height: g.viewBoxHeight }
+  }
   const axleY: number[] = []
   let y = config.body === 'trailer' ? 250 : 78
   config.axles.forEach((a, i) => {
@@ -43,6 +50,8 @@ function layoutFor(config: VehicleConfig): Layout {
 }
 
 function slotCenter(slot: PositionSlot, config: VehicleConfig, l: Layout): { x: number; y: number; horizontal: boolean } {
+  const w = config.geometry2D?.wheels[slot.code]
+  if (w) return { x: w.x, y: w.y, horizontal: w.rotationDeg === 90 || w.rotationDeg === 270 }
   if (slot.axleIndex < 0) {
     const n = Number(slot.code.slice(2))
     const gap = TH + 16

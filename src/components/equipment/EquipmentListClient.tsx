@@ -1,27 +1,21 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createColumnHelper } from '@tanstack/react-table'
-import type { Equipment } from '@/types/equipment'
+import type { AssetView } from '@/lib/api/fleet/assets'
 import { DataTable } from '@/components/shared/DataTable'
 import { StatusBadge } from '@/components/shared/StatusBadge'
-import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
-import { useToastStore } from '@/lib/stores/useToastStore'
-import { removeMockEquipment } from '@/lib/mock/equipment'
 import { useT } from '@/i18n/I18nContext'
 
-const col = createColumnHelper<Equipment>()
+const col = createColumnHelper<AssetView>()
 
 interface EquipmentListClientProps {
-  initialData: Equipment[]
+  data: AssetView[]
 }
 
-export function EquipmentListClient({ initialData }: EquipmentListClientProps) {
-  const [data, setData] = useState<Equipment[]>(initialData)
-  const [deleteTarget, setDeleteTarget] = useState<Equipment | null>(null)
+/** Same columns as before; rows come from the Fleet API (EquipmentListView). */
+export function EquipmentListClient({ data }: EquipmentListClientProps) {
   const router = useRouter()
-  const { success, error } = useToastStore()
   const { t } = useT()
 
   const columns = [
@@ -34,7 +28,7 @@ export function EquipmentListClient({ initialData }: EquipmentListClientProps) {
           <div className="flex flex-col gap-0.5">
             <button
               type="button"
-              onClick={() => router.push(`/master/equipment/${e.equipmentID}`)}
+              onClick={() => router.push(`/master/equipment/${e.id}`)}
               className="text-blue-600 hover:underline text-left font-medium font-mono"
             >
               {e.code}
@@ -87,15 +81,17 @@ export function EquipmentListClient({ initialData }: EquipmentListClientProps) {
         <div className="flex items-center gap-2 justify-end">
           <button
             type="button"
-            onClick={() => router.push(`/master/equipment/${info.row.original.equipmentID}`)}
+            onClick={() => router.push(`/master/equipment/${info.row.original.id}`)}
             className="text-xs text-blue-600 hover:underline"
           >
             {t('common.edit')}
           </button>
+          {/* The asset register has no delete: an asset is switched off (Inactive / Disposed) instead. */}
           <button
             type="button"
-            onClick={() => setDeleteTarget(info.row.original)}
-            className="text-xs text-red-500 hover:underline"
+            disabled
+            title={t('equipment.noDelete')}
+            className="text-xs text-red-500 opacity-40 cursor-not-allowed"
           >
             {t('common.delete')}
           </button>
@@ -104,36 +100,5 @@ export function EquipmentListClient({ initialData }: EquipmentListClientProps) {
     }),
   ]
 
-  const handleDelete = async () => {
-    if (!deleteTarget) return
-    const name = deleteTarget.code
-    try {
-      removeMockEquipment(deleteTarget.equipmentID)
-      setData((prev) => prev.filter((e) => e.equipmentID !== deleteTarget.equipmentID))
-      success('Equipment deleted', `${name} has been removed.`)
-    } catch {
-      error('Delete failed', 'An error occurred. Please try again.')
-    } finally {
-      setDeleteTarget(null)
-    }
-  }
-
-  return (
-    <>
-      <DataTable data={data} columns={columns} pageSize={15} />
-      <ConfirmDialog
-        open={deleteTarget !== null}
-        title="Delete Equipment"
-        message={
-          deleteTarget
-            ? `Are you sure you want to delete "${deleteTarget.code}"? This action cannot be undone.`
-            : ''
-        }
-        confirmLabel={t('common.delete')}
-        onConfirm={handleDelete}
-        onCancel={() => setDeleteTarget(null)}
-        destructive
-      />
-    </>
-  )
+  return <DataTable data={data} columns={columns} pageSize={15} />
 }

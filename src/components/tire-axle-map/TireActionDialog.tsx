@@ -19,6 +19,14 @@ export interface ActionValues {
   removedTreadMM: number
   reason: RemovalReason
   destination: RemovalDestination
+  /** Store for a tyre removed to STOCK ('' = the branch default store); owner-approved finding A2. */
+  warehouseId: string
+}
+
+export interface StoreOption {
+  warehouseId: string
+  label: string
+  isDefault: boolean
 }
 
 const REASONS: RemovalReason[] = ['wornOut', 'puncture', 'sidewall', 'irregularWear', 'separation', 'rotation', 'recap', 'other']
@@ -39,11 +47,13 @@ const DEFAULT_DEST: Record<RemovalReason, RemovalDestination> = {
 interface Props {
   request: ActionRequest | null
   odometerKm: number
+  /** Stores of the vehicle's branch, for a tyre removed to STOCK. */
+  stores?: StoreOption[]
   onConfirm: (values: ActionValues) => void
   onCancel: () => void
 }
 
-export function TireActionDialog({ request, odometerKm, onConfirm, onCancel }: Props) {
+export function TireActionDialog({ request, odometerKm, stores, onConfirm, onCancel }: Props) {
   const ref = useRef<HTMLDialogElement>(null)
   const { t } = useT()
 
@@ -68,6 +78,7 @@ export function TireActionDialog({ request, odometerKm, onConfirm, onCancel }: P
           key={JSON.stringify([request.mode, 'position' in request ? request.position : request.from])}
           request={request}
           odometerKm={odometerKm}
+          stores={stores}
           onConfirm={onConfirm}
           onCancel={onCancel}
           t={t}
@@ -77,7 +88,7 @@ export function TireActionDialog({ request, odometerKm, onConfirm, onCancel }: P
   )
 }
 
-function DialogBody({ request, odometerKm, onConfirm, onCancel, t }: Props & { request: ActionRequest; t: (k: string) => string }) {
+function DialogBody({ request, odometerKm, stores = [], onConfirm, onCancel, t }: Props & { request: ActionRequest; t: (k: string) => string }) {
   const subject = request.mode === 'rotate' ? request.tireA : request.tire
   const outgoing =
     request.mode === 'remove' ? request.tire : request.mode === 'install' ? request.replacing : undefined
@@ -90,6 +101,7 @@ function DialogBody({ request, odometerKm, onConfirm, onCancel, t }: Props & { r
     removedTreadMM: outgoing?.treadMM ?? 0,
     reason: outgoing && outgoing.treadMM < 4 ? 'wornOut' : 'rotation',
     destination: outgoing && outgoing.treadMM < 4 ? 'recap' : 'stock',
+    warehouseId: stores.find((s) => s.isDefault)?.warehouseId ?? '',
   })
   const set = <K extends keyof ActionValues>(k: K, val: ActionValues[K]) => setV((p) => ({ ...p, [k]: val }))
 
@@ -184,6 +196,21 @@ function DialogBody({ request, odometerKm, onConfirm, onCancel, t }: Props & { r
                 </select>
               </Field>
             </div>
+            {v.destination === 'stock' && (
+              <Field label={t('tireMap.dlg.store')}>
+                <select value={v.warehouseId} onChange={(e) => set('warehouseId', e.target.value)} className={inputCls}>
+                  <option value="">{t('tireMap.dlg.branchDefaultStore')}</option>
+                  {stores.map((s) => (
+                    <option key={s.warehouseId} value={s.warehouseId}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            )}
+            {v.destination === 'stock' && !v.warehouseId && !stores.some((s) => s.isDefault) && (
+              <p className="text-xs text-amber-700">{t('tireMap.dlg.noDefaultStore')}</p>
+            )}
           </fieldset>
         )}
       </div>

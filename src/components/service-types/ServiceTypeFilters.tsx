@@ -3,7 +3,8 @@
 import { SearchInput } from '@/components/shared/SearchInput'
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
-import { SERVICE_CATEGORIES } from '@/types/service-type'
+import { useCodeList } from '@/lib/api/fleet/setup'
+import { SERVICE_CATEGORY_LIST } from '@/lib/api/fleet/serviceTasks'
 import { useT } from '@/i18n/I18nContext'
 
 interface ServiceTypeFiltersProps {
@@ -14,6 +15,8 @@ interface ServiceTypeFiltersProps {
 export function ServiceTypeFilters({ search, category }: ServiceTypeFiltersProps) {
   const router = useRouter()
   const { t } = useT()
+  // Options from the Platform code list (FLEET_SERVICE_CATEGORY), not a constant.
+  const categories = useCodeList(SERVICE_CATEGORY_LIST)
 
   const push = useCallback(
     (params: { search?: string; category?: string }) => {
@@ -43,9 +46,9 @@ export function ServiceTypeFilters({ search, category }: ServiceTypeFiltersProps
           className="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="ALL">All Categories</option>
-          {SERVICE_CATEGORIES.map((c) => (
-            <option key={c} value={c}>
-              {c}
+          {categories.data?.filter((c) => c.isActive).map((c) => (
+            <option key={c.code} value={c.code}>
+              {c.code}
             </option>
           ))}
         </select>

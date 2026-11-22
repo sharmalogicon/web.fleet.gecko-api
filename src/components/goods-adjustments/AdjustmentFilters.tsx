@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 import { SearchInput } from '@/components/shared/SearchInput'
 import { useT } from '@/i18n/I18nContext'
 
-const TYPE_OPTIONS = ['ALL', 'INCREASE', 'DECREASE', 'TRANSFER', 'WRITE_OFF'] as const
+const TYPE_OPTIONS = ['ALL', 'INCREASE', 'DECREASE', 'TRANSFER', 'WRITE_OFF', 'COUNT'] as const
 
 interface AdjustmentFiltersProps {
   documentNo: string

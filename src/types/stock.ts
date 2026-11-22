@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { optNum } from '@/lib/utils/zod'
 
 export const stockSchema = z.object({
   code: z.string().min(1, 'Stock code is required'),
@@ -9,23 +10,23 @@ export const stockSchema = z.object({
   brand: z.string().optional(),
   uom: z.string().optional(),
   location: z.string().optional(),
-  leadTime: z.coerce.number().optional(),
-  reOrderLevel: z.coerce.number().optional(),
-  minQty: z.coerce.number().optional(),
-  maxQty: z.coerce.number().optional(),
-  reOrderQty: z.coerce.number().optional(),
-  warrantyValue: z.coerce.number().optional(),
+  leadTime: optNum,
+  reOrderLevel: optNum,
+  minQty: optNum,
+  maxQty: optNum,
+  reOrderQty: optNum,
+  warrantyValue: optNum,
   warrantyPeriod: z.string().optional(),
   isOriginalPart: z.boolean().default(false),
-  sellingPrice: z.coerce.number().optional(),
-  markupClaim: z.coerce.number().optional(),
+  sellingPrice: optNum,
+  markupClaim: optNum,
   remarks: z.string().optional(),
   // Read-only inventory fields (populated from API)
-  totalQtyOnHand: z.coerce.number().optional(),
-  avgCostPerUnit: z.coerce.number().optional(),
-  lowestCostPerUnit: z.coerce.number().optional(),
-  highestCostPerUnit: z.coerce.number().optional(),
-  pendingQty: z.coerce.number().optional(),
+  totalQtyOnHand: optNum,
+  avgCostPerUnit: optNum,
+  lowestCostPerUnit: optNum,
+  highestCostPerUnit: optNum,
+  pendingQty: optNum,
 })
 
 export type StockFormValues = z.infer<typeof stockSchema>

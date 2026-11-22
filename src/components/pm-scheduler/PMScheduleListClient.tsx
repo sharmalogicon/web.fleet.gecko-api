@@ -1,27 +1,43 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createColumnHelper } from '@tanstack/react-table'
-import type { PMSchedule } from '@/types/pm-scheduler'
 import { DataTable } from '@/components/shared/DataTable'
-import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
-import { useToastStore } from '@/lib/stores/useToastStore'
-import { removeMockPMSchedule } from '@/lib/mock/pm-scheduler'
+import { activeAssignments, type PmProgramDto } from '@/lib/api/fleet/pm'
 import { useT } from '@/i18n/I18nContext'
 
-const col = createColumnHelper<PMSchedule>()
-
-interface PMScheduleListClientProps {
-  initialData: PMSchedule[]
+/** The old row shape, from a PM program. */
+interface PMRow {
+  pmID: string
+  scheduleNo: string
+  scheduleDate?: string
+  serviceTypeDescription: string
+  meterKm?: number
+  isActive: boolean
+  equipment: unknown[]
 }
 
-export function PMScheduleListClient({ initialData }: PMScheduleListClientProps) {
-  const [data, setData] = useState<PMSchedule[]>(initialData)
-  const [deleteTarget, setDeleteTarget] = useState<PMSchedule | null>(null)
+const toRow = (d: PmProgramDto): PMRow => ({
+  pmID: d.pmProgramId,
+  scheduleNo: d.programCode,
+  scheduleDate: d.effectiveDate ?? undefined,
+  serviceTypeDescription: d.nameEn,
+  meterKm: d.defaultIntervalKm == null ? undefined : Number(d.defaultIntervalKm),
+  isActive: d.isActive,
+  equipment: activeAssignments(d),
+})
+
+const col = createColumnHelper<PMRow>()
+
+interface PMScheduleListClientProps {
+  data: PmProgramDto[]
+}
+
+/** Same columns; rows = PM programs (API). No delete: untick Active. */
+export function PMScheduleListClient({ data }: PMScheduleListClientProps) {
   const router = useRouter()
-  const { success, error } = useToastStore()
   const { t } = useT()
+  const rows = data.map(toRow)
 
   const columns = [
     col.display({
@@ -97,49 +113,12 @@ export function PMScheduleListClient({ initialData }: PMScheduleListClientProps)
             >
               {t('common.edit')}
             </button>
-            <button
-              type="button"
-              onClick={() => setDeleteTarget(r)}
-              className="text-xs text-red-500 hover:underline"
-            >
-              {t('common.delete')}
-            </button>
+            {/* No delete in the API (prompt 08). */}
           </div>
         )
       },
     }),
   ]
 
-  const handleDelete = async () => {
-    if (!deleteTarget) return
-    const label = deleteTarget.scheduleNo || `PM-${deleteTarget.pmID}`
-    try {
-      removeMockPMSchedule(deleteTarget.pmID)
-      setData((prev) => prev.filter((r) => r.pmID !== deleteTarget.pmID))
-      success('PM Schedule deleted', `${label} has been removed.`)
-    } catch {
-      error('Delete failed', 'An error occurred. Please try again.')
-    } finally {
-      setDeleteTarget(null)
-    }
-  }
-
-  return (
-    <>
-      <DataTable data={data} columns={columns} pageSize={15} />
-      <ConfirmDialog
-        open={deleteTarget !== null}
-        title="Delete PM Schedule"
-        message={
-          deleteTarget
-            ? `Are you sure you want to delete "${deleteTarget.scheduleNo || `PM-${deleteTarget.pmID}`}"? This action cannot be undone.`
-            : ''
-        }
-        confirmLabel={t('common.delete')}
-        onConfirm={handleDelete}
-        onCancel={() => setDeleteTarget(null)}
-        destructive
-      />
-    </>
-  )
+  return <DataTable data={rows} columns={columns} pageSize={15} />
 }

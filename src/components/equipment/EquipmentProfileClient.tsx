@@ -4,115 +4,123 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import type { Equipment, EquipmentFormValues } from '@/types/equipment'
+import type { EquipmentFormValues } from '@/types/equipment'
 import { equipmentSchema } from '@/types/equipment'
-import { useEquipment } from '@/lib/hooks/useEquipment'
+import { mapFieldErrors, useSaveAsset, type AssetView } from '@/lib/api/fleet/assets'
+import { useBranchContext } from '@/lib/api/platform/branches'
+import { ApiError } from '@/lib/api/problem'
+import { errorText } from '@/lib/api/errorText'
 import { useToastStore } from '@/lib/stores/useToastStore'
 import { FormLayout } from '@/components/shared/FormLayout'
-import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { GeneralSection } from '@/components/equipment/sections/GeneralSection'
 import { SpecSection } from '@/components/equipment/sections/SpecSection'
 import { useT } from '@/i18n/I18nContext'
 
 interface Props {
-  equipment: Equipment | EquipmentFormValues
-  equipmentID: string
+  equipment: EquipmentFormValues
+  /** The loaded record (absent for "new"). */
+  current?: AssetView
   isNew: boolean
 }
 
-export function EquipmentProfileClient({ equipment, equipmentID, isNew }: Props) {
+export function EquipmentProfileClient({ equipment, current, isNew }: Props) {
   const { t } = useT()
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const router = useRouter()
-  const { isSaving, isDeleting, save, remove } = useEquipment(equipmentID)
-  const { success, error } = useToastStore()
+  const { currentBranchId } = useBranchContext()
+  const saveAsset = useSaveAsset()
+  const { success, error, warning } = useToastStore()
+  const [banner, setBanner] = useState<string | null>(null)
 
   const form = useForm<EquipmentFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(equipmentSchema) as any,
-    defaultValues: equipment as EquipmentFormValues,
+    defaultValues: equipment,
   })
 
   const { handleSubmit, formState: { isDirty } } = form
+  const isSaving = saveAsset.isPending
 
   const handleSave = handleSubmit(async (values) => {
+    setBanner(null)
     try {
-      const saved = await save(values)
+      const saved = await saveAsset.mutateAsync({ values, current, branchId: currentBranchId })
       success('Equipment saved', `${saved.code} has been saved.`)
-      form.reset(saved)
-      if (isNew) router.push(`/master/equipment/${saved.equipmentID}`)
-    } catch {
-      error('Save failed', 'An error occurred. Please try again.')
+      if (isNew) router.push(`/master/equipment/${saved.id}`)
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 409) {
+        // The record is refetched (useSaveAsset) and the form remounts with the latest version.
+        warning(t('equipment.conflict'), errorText(err, t))
+        return
+      }
+      if (err instanceof ApiError && err.status === 400) {
+        const { fields, other } = mapFieldErrors(err.fieldMap)
+        for (const [name, message] of Object.entries(fields)) form.setError(name as keyof EquipmentFormValues, { message })
+        if (other.length) setBanner(other.join(' '))
+        else if (!Object.keys(fields).length) setBanner(errorText(err, t))
+        error('Save failed', t('equipment.checkFields'))
+        return
+      }
+      setBanner(errorText(err, t))
+      error('Save failed', errorText(err, t))
     }
   })
 
-  const handleDelete = async () => {
-    const code = form.getValues('code')
-    try {
-      await remove()
-      success('Equipment deleted', `${code} has been removed.`)
-      router.push('/master/equipment')
-    } catch {
-      error('Delete failed', 'An error occurred. Please try again.')
-    } finally {
-      setShowDeleteDialog(false)
-    }
-  }
-
   const code = form.watch('code')
   const title = isNew ? `${t('common.new')} ${t('nav.equipment')}` : code || t('nav.equipment')
+  const linked = !!current?.isLinked
 
   const tabs = [
-    { id: 'general', label: t('form.general'), content: <GeneralSection form={form} isNew={isNew} /> },
+    {
+      id: 'general',
+      label: t('form.general'),
+      content: (
+        <>
+          {banner && (
+            <div role="alert" className="mb-4 p-3 rounded-lg border border-red-200 bg-red-50 text-sm text-red-700">{banner}</div>
+          )}
+          <GeneralSection form={form} isNew={isNew} linked={linked} />
+        </>
+      ),
+    },
     { id: 'spec', label: t('form.specifications'), content: <SpecSection form={form} /> },
   ]
 
   return (
-    <>
-      <FormLayout
-        title={title}
-        subtitle={isNew ? 'Register new equipment' : equipmentID}
-        tabs={tabs}
-        isNew={isNew}
-        actions={
-          <div className="flex items-center gap-2">
-            {!isNew && (
-              <button
-                type="button"
-                onClick={() => setShowDeleteDialog(true)}
-                disabled={isDeleting}
-                className="px-4 py-2 text-sm font-medium rounded-lg border border-red-300 text-red-600 hover:bg-red-50 disabled:opacity-50"
-              >
-                {isDeleting ? t('common.loading') : t('common.delete')}
-              </button>
-            )}
+    <FormLayout
+      title={title}
+      subtitle={isNew ? 'Register new equipment' : current?.registrationNo || current?.code}
+      tabs={tabs}
+      isNew={isNew}
+      actions={
+        <div className="flex items-center gap-2">
+          {!isNew && (
+            // The asset register has no delete: an asset is switched off (Inactive / Disposed) instead.
             <button
               type="button"
-              onClick={() => router.back()}
-              className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+              disabled
+              title={t('equipment.noDelete')}
+              className="px-4 py-2 text-sm font-medium rounded-lg border border-red-300 text-red-600 opacity-40 cursor-not-allowed"
             >
-              {t('common.cancel')}
+              {t('common.delete')}
             </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={isSaving || !isDirty}
-              className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSaving ? t('common.loading') : t('common.save')}
-            </button>
-          </div>
-        }
-      />
-      <ConfirmDialog
-        open={showDeleteDialog}
-        title="Delete Equipment"
-        message={`Are you sure you want to delete "${form.getValues('code')}"? This action cannot be undone.`}
-        confirmLabel="Delete"
-        onConfirm={handleDelete}
-        onCancel={() => setShowDeleteDialog(false)}
-        destructive
-      />
-    </>
+          )}
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          >
+            {t('common.cancel')}
+          </button>
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={isSaving || !isDirty}
+            className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSaving ? t('common.loading') : t('common.save')}
+          </button>
+        </div>
+      }
+    />
   )
 }

@@ -1,59 +1,13 @@
-import { Suspense } from 'react'
-import { getWorkOrders } from '@/lib/data/work-orders'
-import { WorkOrderListClient } from '@/components/work-orders/WorkOrderListClient'
-import { WorkOrderFilters } from '@/components/work-orders/WorkOrderFilters'
-import { ListPage } from '@/components/shared/ListPage'
-import Link from 'next/link'
-import { getT } from '@/i18n/server'
+import { WorkOrdersListView } from '@/components/work-orders/WorkOrderViews'
 
 export const metadata = { title: 'Work Orders | Fleet' }
 
 interface PageProps {
-  searchParams: Promise<{
-    documentNo?: string
-    status?: string
-    serviceTypeCategory?: string
-    dateFrom?: string
-    dateTo?: string
-  }>
+  searchParams: Promise<{ documentNo?: string; status?: string; serviceTypeCategory?: string; dateFrom?: string; dateTo?: string }>
 }
 
+/** Work orders from the Fleet API, read in the browser. */
 export default async function WorkOrdersPage({ searchParams }: PageProps) {
-  const params = await searchParams
-  const { t } = await getT()
-  const workOrders = await getWorkOrders({
-    documentNo: params.documentNo,
-    status: params.status,
-    serviceTypeCategory: params.serviceTypeCategory,
-    dateFrom: params.dateFrom,
-    dateTo: params.dateTo,
-  })
-
-  return (
-    <ListPage
-      title={t('nav.workOrders')}
-      subtitle={`${workOrders.length} work order${workOrders.length !== 1 ? 's' : ''} found`}
-      actions={
-        <Link
-          href="/fleet/work-orders/new"
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700"
-        >
-          + {t('nav.workOrders')}
-        </Link>
-      }
-      filters={
-        <WorkOrderFilters
-          documentNo={params.documentNo ?? ''}
-          status={params.status ?? 'ALL'}
-          serviceTypeCategory={params.serviceTypeCategory ?? 'ALL'}
-          dateFrom={params.dateFrom ?? ''}
-          dateTo={params.dateTo ?? ''}
-        />
-      }
-    >
-      <Suspense fallback={null}>
-        <WorkOrderListClient initialData={workOrders} />
-      </Suspense>
-    </ListPage>
-  )
+  const p = await searchParams
+  return <WorkOrdersListView documentNo={p.documentNo ?? ''} status={p.status ?? 'ALL'} serviceTypeCategory={p.serviceTypeCategory ?? 'ALL'} dateFrom={p.dateFrom ?? ''} dateTo={p.dateTo ?? ''} />
 }

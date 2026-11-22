@@ -3,13 +3,19 @@
 import type { UseFormReturn } from 'react-hook-form'
 import type { StockFormValues } from '@/types/stock'
 import { useT } from '@/i18n/I18nContext'
+import { useCodeList } from '@/lib/api/fleet/setup'
+import { ITEM_CATEGORY_LIST, useItemCatalogue } from '@/lib/api/fleet/items'
+import type { WarehouseDto } from '@/lib/api/fleet/warehouses'
 
 interface Props {
   form: UseFormReturn<StockFormValues>
   isNew: boolean
+  /** The header branch's default store; null = Location / Lead Time disabled. */
+  warehouse?: WarehouseDto | null
 }
 
-const CATEGORY_OPTIONS = ['PARTS', 'LUBRICANT', 'CONSUMABLE', 'TYRE'] as const
+/** Used until the tenant's FLEET_ITEM_CATEGORY list has values. */
+const CATEGORY_FALLBACK = ['PARTS', 'LUBRICANT', 'CONSUMABLE', 'TYRE']
 const WARRANTY_PERIOD_OPTIONS = ['DAY', 'WEEK', 'MONTH', 'YEAR'] as const
 
 function Field({
@@ -41,8 +47,13 @@ function inputClass(hasError?: boolean, disabled?: boolean) {
   } ${disabled ? 'bg-gray-50 text-gray-500' : 'bg-white'}`
 }
 
-export function GeneralInfoSection({ form, isNew }: Props) {
+export function GeneralInfoSection({ form, isNew, warehouse }: Props) {
   const { t } = useT()
+  const catalogue = useItemCatalogue()
+  const categoryList = useCodeList(ITEM_CATEGORY_LIST)
+  const listed = categoryList.data?.filter((c) => c.isActive).map((c) => c.code) ?? []
+  const noStore = !warehouse
+  const noStoreHint = t('stock.noDefaultStore')
   const {
     register,
     watch,
@@ -52,6 +63,9 @@ export function GeneralInfoSection({ form, isNew }: Props) {
 
   const isActive = watch('isActive')
   const isOriginalPart = watch('isOriginalPart')
+  const category = watch('stockCategory')
+  const categoryOptions = listed.length ? listed : CATEGORY_FALLBACK
+  const CATEGORY_OPTIONS = category && !categoryOptions.includes(category) ? [category, ...categoryOptions] : categoryOptions
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -93,7 +107,7 @@ export function GeneralInfoSection({ form, isNew }: Props) {
         </div>
       </Field>
 
-      <Field label={t('form.category')}>
+      <Field label={t('form.category')} error={errors.stockCategory?.message}>
         <select {...register('stockCategory')} className={inputClass()}>
           <option value="">— Select —</option>
           {CATEGORY_OPTIONS.map((c) => (
@@ -104,36 +118,47 @@ export function GeneralInfoSection({ form, isNew }: Props) {
         </select>
       </Field>
 
-      <Field label="Stock Type">
+      <Field label="Stock Type" error={errors.stockType?.message}>
         <input
           {...register('stockType')}
-          className={inputClass()}
+          list="item-types"
+          className={inputClass(!!errors.stockType)}
           placeholder="FILTER, BELT, BRAKE…"
         />
+        <datalist id="item-types">
+          {catalogue.data?.itemTypes.map((x) => <option key={x} value={x} />)}
+        </datalist>
       </Field>
 
-      <Field label={t('form.brand')}>
-        <input {...register('brand')} className={inputClass()} placeholder="e.g. DENSO, SHELL" />
+      <Field label={t('form.brand')} error={errors.brand?.message}>
+        <input {...register('brand')} className={inputClass(!!errors.brand)} placeholder="e.g. DENSO, SHELL" />
       </Field>
 
-      <Field label={t('form.uom')}>
-        <input {...register('uom')} className={inputClass()} placeholder="PCS, BTL, SET…" />
+      <Field label={t('form.uom')} error={errors.uom?.message}>
+        <input {...register('uom')} list="item-uoms" className={inputClass(!!errors.uom)} placeholder="PCS, BTL, SET…" />
+        <datalist id="item-uoms">
+          {catalogue.data?.uoms.map((u) => <option key={u.code} value={u.code}>{u.description}</option>)}
+        </datalist>
       </Field>
 
-      <Field label="Location">
-        <input {...register('location')} className={inputClass()} placeholder="A-01-01" />
+      <Field label="Location" error={errors.location?.message ?? (noStore ? noStoreHint : undefined)}>
+        {/* The bin in the header branch's default store (a new code creates the bin). */}
+        <input {...register('location')} list="store-bins" disabled={noStore} title={noStore ? noStoreHint : warehouse?.warehouseCode} className={inputClass(!!errors.location, noStore)} placeholder="A-01-01" />
+        <datalist id="store-bins">
+          {warehouse?.bins.filter((b) => b.isActive).map((b) => <option key={b.binId} value={b.binCode}>{b.description ?? ''}</option>)}
+        </datalist>
       </Field>
 
-      <Field label="Lead Time (days)">
-        <input type="number" {...register('leadTime')} className={inputClass()} min={0} />
+      <Field label="Lead Time (days)" error={errors.leadTime?.message}>
+        <input type="number" {...register('leadTime')} disabled={noStore} title={noStore ? noStoreHint : undefined} className={inputClass(!!errors.leadTime, noStore)} min={0} />
       </Field>
 
-      <Field label="Warranty Value">
-        <input type="number" {...register('warrantyValue')} className={inputClass()} min={0} />
+      <Field label="Warranty Value" error={errors.warrantyValue?.message}>
+        <input type="number" {...register('warrantyValue')} className={inputClass(!!errors.warrantyValue)} min={0} />
       </Field>
 
-      <Field label="Warranty Period">
-        <select {...register('warrantyPeriod')} className={inputClass()}>
+      <Field label="Warranty Period" error={errors.warrantyPeriod?.message}>
+        <select {...register('warrantyPeriod')} className={inputClass(!!errors.warrantyPeriod)}>
           <option value="">— Select —</option>
           {WARRANTY_PERIOD_OPTIONS.map((p) => (
             <option key={p} value={p}>

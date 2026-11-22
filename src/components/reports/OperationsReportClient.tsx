@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { ReportSidebar, type ReportGroup } from './ReportSidebar'
 import { OperationsReportParams } from './OperationsReportParams'
 import { ReportPreview } from './ReportPreview'
+import { StockMovementReport } from './StockMovementReport'
 
 const REPORT_GROUPS: ReportGroup[] = [
   {
@@ -41,6 +42,7 @@ function findReportLabel(id: string | null): string | null {
   }
   return null
 }
+
 
 export function OperationsReportClient() {
   const [selectedReport, setSelectedReport] = useState<string | null>(null)
@@ -116,11 +118,15 @@ export function OperationsReportClient() {
         </div>
 
         <div className="bg-white rounded-lg border border-gray-200 p-6 min-h-64">
-          <ReportPreview
-            reportId={selectedReport}
-            reportLabel={reportLabel}
-            generated={generated}
-          />
+          {selectedReport === 'stock-movement-report' ? (
+            <StockMovementReport dateFrom={dateFrom} dateTo={dateTo} />
+          ) : (
+            <ReportPreview
+              reportId={selectedReport}
+              reportLabel={reportLabel}
+              generated={generated}
+            />
+          )}
         </div>
       </div>
     </div>

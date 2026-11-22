@@ -59,8 +59,11 @@ export function StandardRateFilters({
           className="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">{t('common.all')}</option>
-          <option value="draft">Draft</option>
-          <option value="approved">Approved</option>
+          <option value="DRAFT">DRAFT</option>
+          <option value="PENDING">PENDING</option>
+          <option value="APPROVED">APPROVED</option>
+          <option value="REJECTED">REJECTED</option>
+          <option value="WITHDRAWN">WITHDRAWN</option>
         </select>
       </div>
     </>

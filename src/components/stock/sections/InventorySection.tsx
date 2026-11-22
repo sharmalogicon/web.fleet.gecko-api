@@ -3,19 +3,24 @@
 import type { UseFormReturn } from 'react-hook-form'
 import type { StockFormValues } from '@/types/stock'
 import { useT } from '@/i18n/I18nContext'
+import type { WarehouseDto } from '@/lib/api/fleet/warehouses'
 
 interface Props {
   form: UseFormReturn<StockFormValues>
+  /** The header branch's default store: its reorder policy is edited here (null = inputs disabled). */
+  warehouse?: WarehouseDto | null
 }
 
 function Field({
   label,
   children,
   readOnly,
+  error,
 }: {
   label: string
   children: React.ReactNode
   readOnly?: boolean
+  error?: string
 }) {
   return (
     <div className="flex flex-col gap-1">
@@ -26,6 +31,7 @@ function Field({
         )}
       </label>
       {children}
+      {error && <p className="text-xs text-red-500">{error}</p>}
     </div>
   )
 }
@@ -41,9 +47,11 @@ function fmt(value: number | undefined): string {
   return value.toLocaleString('th-TH', { minimumFractionDigits: 0, maximumFractionDigits: 2 })
 }
 
-export function InventorySection({ form }: Props) {
+export function InventorySection({ form, warehouse }: Props) {
   const { t } = useT()
-  const { register, watch } = form
+  const { register, watch, formState: { errors } } = form
+  const noStore = !warehouse
+  const later = t('equipment.laterPhase')
 
   const totalQtyOnHand = watch('totalQtyOnHand')
   const avgCostPerUnit = watch('avgCostPerUnit')
@@ -110,13 +118,18 @@ export function InventorySection({ form }: Props) {
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
           Inventory Settings
         </p>
+        <p className="-mt-2 mb-3 text-xs text-gray-400">
+          {noStore ? t('stock.noDefaultStore') : t('stock.policyFor').replace('{store}', `${warehouse.warehouseCode} · ${warehouse.nameEn}`)}
+        </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <Field label={t('form.sellingPrice')}>
             <input
               type="number"
               step="0.01"
               {...register('sellingPrice')}
-              className={inputClass()}
+              disabled
+              title={later}
+              className={inputClass(true)}
               min={0}
               placeholder="0.00"
             />
@@ -127,44 +140,50 @@ export function InventorySection({ form }: Props) {
               type="number"
               step="0.01"
               {...register('markupClaim')}
-              className={inputClass()}
+              disabled
+              title={later}
+              className={inputClass(true)}
               min={0}
               placeholder="0.00"
             />
           </Field>
 
-          <Field label={t('form.reorderPoint')}>
+          <Field label={t('form.reorderPoint')} error={errors.reOrderLevel?.message}>
             <input
               type="number"
               {...register('reOrderLevel')}
-              className={inputClass()}
+              disabled={noStore}
+              className={inputClass(noStore)}
               min={0}
             />
           </Field>
 
-          <Field label={t('form.minStock')}>
+          <Field label={t('form.minStock')} error={errors.minQty?.message}>
             <input
               type="number"
               {...register('minQty')}
-              className={inputClass()}
+              disabled={noStore}
+              className={inputClass(noStore)}
               min={0}
             />
           </Field>
 
-          <Field label={t('form.maxStock')}>
+          <Field label={t('form.maxStock')} error={errors.maxQty?.message}>
             <input
               type="number"
               {...register('maxQty')}
-              className={inputClass()}
+              disabled={noStore}
+              className={inputClass(noStore)}
               min={0}
             />
           </Field>
 
-          <Field label={t('form.reorderQty')}>
+          <Field label={t('form.reorderQty')} error={errors.reOrderQty?.message}>
             <input
               type="number"
               {...register('reOrderQty')}
-              className={inputClass()}
+              disabled={noStore}
+              className={inputClass(noStore)}
               min={0}
             />
           </Field>
